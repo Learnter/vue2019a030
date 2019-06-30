@@ -48,7 +48,7 @@
 	}
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 
   .switchBox{
     position:fixed;
@@ -63,6 +63,7 @@
   .navBtn{
     margin:0 auto;
     width:60%;
+    font-size:14px;
     height:100%;
     color:white;
     display:flex;

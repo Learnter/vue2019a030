@@ -6,21 +6,19 @@
             </div>
 		</div>
     <div class="main uni-flex">
-      <div class="main_item" v-for="(item,index) in 20" :key="index">
-        
-          <!-- <video src="@/assets/tabImg/7777.mp4" ></video>  poster="@/assets/tabImg/2019_a030_2.png"-->
-          <!-- <video class="pv" controls  preload="auto">
-            <source src="@/assets/tabImg/7777.mp4" type="video/mp4">
-            您的浏览器不支持 video 标签。
-           </video> -->
+      <div class="main_item" v-for="(item,index) in videoList" :key="index">
 
-            <video id="myVideos" class="video-js pv  vjs-big-play-centered " >
-              <source src="@/assets/tabImg/7777.mp4" type="video/mp4" >
-           </video>
+          <!--判断playerOptions数组中有没数据-->
+          <video-player v-if="playerOptions.length != 0" class=" videoStyle  video-player-box" ref="videoPlayer" :options="playerOptions[index]" @play="onPlayerPlay($event,index)" @pause="onPlayerPause($event)"
+               @ended="onPlayerEnded($event)">
+            
+          </video-player>
 
-          <p class="duration">03:26</p>
+          <!--时间栏-->
+          <p class="duration" :class="index === playBtn ? 'videoStart':'videoEnd'">03:26</p> 
           
-          <div class="min_item_info uni-flex" :class="index == playBtn ? 'play' :''">
+          <!--视频信息栏-->
+          <div class="min_item_info uni-flex" :class="index === playBtn ? 'videoStart':'videoEnd'">
             <div class="min_item_info_left uni-flex">
                <div class="user_img">
                   <img src="@/assets/tabImg/2019_a030_1.png"/>
@@ -28,7 +26,7 @@
                 <p>网红1号</p>
             </div>
             <div class="min_item_info_left uni-flex">
-                <div class="heart_img">
+                <div class="heart_img" @click="likeBtn">
                    <img src="@/assets/tabImg/2019_a030_3.png"/>
                 </div>
                 <p>555</p>
@@ -40,35 +38,58 @@
 </template>
 
 <script>
-
 	export default {
     name:"samllVideo",
 		data(){
 			return {
-         playBtn:null,
+         playBtn:null,//是否点击播放
          actived:0,
-				 navList:[{id:0,title:"热门"},{id:1,title:"关注"},{id:2,title:"附近"}]
+				 navList:[{id:0,title:"热门"},{id:1,title:"关注"},{id:2,title:"附近"}],
+         videoList:[{src:require('@/assets/tabImg/1111.mp4'),id:0,pic:""},{src:require('@/assets/tabImg/2222.mp4'),id:1,pic:""},{src:require('@/assets/tabImg/3333.mp4'),id:2,pic:""},{src:require('@/assets/tabImg/4444.mp4'),id:3,pic:""},{src:require('@/assets/tabImg/5555.mp4'),id:4,pic:""},{src:require('@/assets/tabImg/6666.mp4'),id:5,pic:""}
+         ,{src:require('@/assets/tabImg/7777.mp4'),id:6,pic:""},{src:require('@/assets/tabImg/8888.mp4'),id:7,pic:""}],
+         playerOptions:[]  //多个视频对象配置数组
 			};
 		},
      mounted() { 
-          this.initVideo();
+       this.returnVideoSrc(); //视频初始化
     },
     methods: {
-        initVideo() {
-         
-        //初始化视频方法
-        let myPlayer = this.$video("myVideos", {
-            //确定播放器是否具有用户可以与之交互的控件。没有控件，启动视频播放的唯一方法是使用autoplay属性或通过Player API。
-            controls: true,
-            //自动播放属性,muted:静音播放
-            autoplay: "auto",
-            //建议浏览器是否应在<video>加载元素后立即开始下载视频数据。
-            preload: "auto"
-            //设置视频播放器的显示宽度（以像素为单位）
-        });
+
+        returnVideoSrc(){
+
+          let srcList = this.playerOptions; //获取视频配置对象
+
+          this.videoList.map((item)=>{
+
+             let attr = {  //每个视频对象的配置数据
+                muted: false, //是否开始静音
+                language: 'en', // 语言
+                sources: [{ //视频路径,类型
+                  type: "video/mp4",
+                  src:item.src
+                }],
+                poster:item.pic //视频提前加载的静态页面图
+             }; 
+             srcList.push(attr); //添加到视频数组
+          })
+        },
+         //视频点击播放
+        onPlayerPlay(ev,index){ 
+          this.playBtn = index; //将点击播放的视频索引赋值给playBtn
+        },
+        //视频暂停播放
+        onPlayerPause(ev,index){
+          this.playBtn = null;
+        },
+        //视频播放完后
+        onPlayerEnded(ev,index){
+           this.playBtn = null;
         },
         toggleNav(item){ //切换导航栏
         this.actived = item.id;
+      },
+      likeBtn(){
+        console.log("我点赞了哦.....");
       }
     },
     components:{
@@ -76,13 +97,39 @@
 	}
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 
+  /*点击播放隐藏视频信息栏,时间栏*/
+  .videoStart{
+    visibility:hidden;
+  }
+
+  /*视频播放完、暂停显示信息栏跟时间栏*/
+  .videoEnd{
+    visibility:visible;
+  }
+
+  .video-js{
+    width:100% !important;
+    height:100% !important;
+  }
+
+  .vjs-big-play-button{  
+        height: 40px !important;  
+        width: 40px !important;  
+        line-height: 40px !important;  
+        text-align: center;  
+        background:rgba(0, 0, 0, 0.8) !important;  
+        border-radius: 50% !important;  
+        top: 50% !important;  
+        left: 50% !important; 
+        transform:translate(-50%,-60%); 
+   }     
   
-  .pv{
-      width:100%;
-      height:100%;
-      object-fit:fill !important;
+  .videoStyle{
+      width:100% !important;
+      height:100% !important;
+      object-fit:fill;
   }
 
 .switchBox{
@@ -99,6 +146,7 @@
     margin:0 auto;
     width:60%;
     height:100%;
+    font-size:14px;
     color:white;
     justify-content:space-between;
     align-items:flex-end;
@@ -111,7 +159,7 @@
     color:#FFF700;
     transition: all 0.5 linear;
     &::after{
-      content: '';
+      content:'';
       position: absolute;
       bottom:-30%;
       left: 0;

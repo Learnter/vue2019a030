@@ -198,6 +198,7 @@
 <style lang="scss" scoped>
   .user_main {
     padding-bottom:60px;
+    font-size:14px;
   }
 
   .user_icon {

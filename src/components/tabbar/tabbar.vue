@@ -3,7 +3,7 @@
 		<div class="footer">
 			<div :class="'footer_item ' + (item.size=='big'?'big_item':'')  " :style="'width:'+item_width" @click="change_nav(index,item)" v-for="(item,index) in footer_nav" :key="index">
 				<img :src="index==now_index?item.select_icon:item.icon"/>
-				<div :class="index==now_index?'actived':''">{{item.name}}</div>
+				<div :class="index==now_index?'navActived':''">{{item.name}}</div>
 			</div>
 		</div>
 	</section>
@@ -64,7 +64,7 @@
     line-height:1;
   }
   
-  .actived{
+  .navActived{
     font-weight:bold;
     font-size:15px;
     color:#FFF700;
