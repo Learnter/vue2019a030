@@ -177,9 +177,11 @@
        },
        recharge(){ //充值
            console.log("我要充值");
+           this.$router.push("/personCenter/recharge");
        },
        deposit(){ //提现
            console.log("我要提现");
+           this.$router.push("/personCenter/userAccount");
        },
        numberAssets(){ //查看资产
            console.log("我要看的资产");

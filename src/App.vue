@@ -19,11 +19,13 @@ export default {
 </script>
 
 <style>
+
 #app {
   font-family:cursive;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
+  font-size:16px;
   color: #2c3e50;
   position: relative;
 }
@@ -37,6 +39,15 @@ export default {
 video,img{
   width:100%;
   height:100%;
+}
+
+button{
+  outline:none;
+}
+
+/* 视频填充满容器 */
+.vjs-tech{
+  object-fit:fill;
 }
 
 

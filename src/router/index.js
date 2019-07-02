@@ -35,7 +35,17 @@ export default new Router({
     {
       path:"/me",
       name:"Me",
-      component: resolve => require(["@/components/me"],resolve)
+      component: resolve => require(["@/components/personCenter/me"],resolve)
+    },
+    {
+      path:"/personCenter/recharge",
+      name:"Recharge",
+      component: resolve => require(["@/components/personCenter/recharge"],resolve)
+    },
+    {
+      path:"/personCenter/userAccount",
+      name:"userAccount",
+      component: resolve => require(["@/components/personCenter/userAccount"],resolve)
     }
   ]
 })

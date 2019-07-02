@@ -5,44 +5,62 @@
                 <p class="nav_item" :class="actived == index ? 'actived' :''" v-for="(item,index) in navList" :key="index"  @click="toggleNav(item)" v-text="item.title"></p>
             </div>
 		</div>
-    <div class="main uni-flex">
-      <div class="main_item" v-for="(item,index) in videoList" :key="index">
+    <div class="main_content">
+        <mt-loadmore :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" :auto-fill="false"   @bottom-status-change="handleBottomChange" ref="loadmore">
+          <ul>
+            <!-- <li v-for="item in list">{{ item }}</li> -->
+            <li class="main_item" v-for="(item,index) in videoList" :key="index">
 
-          <!--判断playerOptions数组中有没数据-->
-          <video-player v-if="playerOptions.length != 0" class=" videoStyle  video-player-box" ref="videoPlayer" :options="playerOptions[index]" @play="onPlayerPlay($event,index)" @pause="onPlayerPause($event)"
-               @ended="onPlayerEnded($event)">
-            
-          </video-player>
+                    <!--判断playerOptions数组中有没数据-->
+                    <video-player v-if="playerOptions.length != 0" class=" videoStyle  video-player-box" ref="videoPlayer" :options="playerOptions[index]" @play="onPlayerPlay($event,index)" @pause="onPlayerPause($event)"
+                        @ended="onPlayerEnded($event)">
+                      
+                    </video-player>
 
-          <!--时间栏-->
-          <p class="duration" :class="index === playBtn ? 'videoStart':'videoEnd'">03:26</p> 
-          
-          <!--视频信息栏-->
-          <div class="min_item_info uni-flex" :class="index === playBtn ? 'videoStart':'videoEnd'">
-            <div class="min_item_info_left uni-flex">
-               <div class="user_img">
-                  <img src="@/assets/tabImg/2019_a030_1.png"/>
-               </div>
-                <p>网红1号</p>
-            </div>
-            <div class="min_item_info_left uni-flex">
-                <div class="heart_img" @click="likeBtn">
-                   <img src="@/assets/tabImg/2019_a030_3.png"/>
-                </div>
-                <p>555</p>
-            </div> 
+                    <!--时间栏-->
+                    <p class="duration" :class="index === playBtn ? 'videoStart':'videoEnd'">03:26</p> 
+                    
+                    <!--视频信息栏-->
+                    <div class="min_item_info uni-flex" :class="index === playBtn ? 'videoStart':'videoEnd'">
+                      <div class="min_item_info_left uni-flex">
+                        <div class="user_img">
+                            <img src="@/assets/tabImg/2019_a030_1.png"/>
+                        </div>
+                          <p>网红1号</p>
+                      </div>
+                      <div class="min_item_info_left uni-flex">
+                          <div class="heart_img" @click="likeBtn">
+                            <img src="@/assets/tabImg/2019_a030_3.png"/>
+                          </div>
+                          <p>555</p>
+                      </div> 
+                    </div>
+                </li>
+          </ul>
+          <div slot="bottom" class="mint-loadmore-bottom">
+                        <span v-show="loadStatus !=='loading'" :class="{ 'rotate': loadStatus === 'drop' }">
+                             <span v-show="allLoaded">没有更多数据了</span>
+                             <span v-show="!allLoaded">加载更多...</span>
+                        </span>
+                        <span v-show="loadStatus === 'loading'">Loading...</span>
           </div>
-      </div>
+        </mt-loadmore>
+      
     </div>
 </div>
 </template>
 
 <script>
+
+ import { Toast } from 'mint-ui';
+
 	export default {
     name:"samllVideo",
 		data(){
 			return {
-         playBtn:null,//是否点击播放
+         loadStatus:'',//加载状态
+         allLoaded:false,//数据是否加载完
+         playBtn:null,//视频是否点击播放
          actived:0,
 				 navList:[{id:0,title:"热门"},{id:1,title:"关注"},{id:2,title:"附近"}],
          videoList:[{src:require('@/assets/tabImg/1111.mp4'),id:0,pic:""},{src:require('@/assets/tabImg/2222.mp4'),id:1,pic:""},{src:require('@/assets/tabImg/3333.mp4'),id:2,pic:""},{src:require('@/assets/tabImg/4444.mp4'),id:3,pic:""},{src:require('@/assets/tabImg/5555.mp4'),id:4,pic:""},{src:require('@/assets/tabImg/6666.mp4'),id:5,pic:""}
@@ -85,11 +103,24 @@
         onPlayerEnded(ev,index){
            this.playBtn = null;
         },
-        toggleNav(item){ //切换导航栏
+         //切换导航栏
+        toggleNav(item){
         this.actived = item.id;
       },
+       //点赞
       likeBtn(){
         console.log("我点赞了哦.....");
+      },
+      //上拉加载
+      loadBottom(){
+        console.log("下拉刷新");
+        // this.allLoaded = true;
+       this.$refs.loadmore.onBottomLoaded();
+      },
+      //加载状态改变
+      handleBottomChange(status){
+        console.log(status);
+        this.loadStatus = status;
       }
     },
     components:{
@@ -98,6 +129,7 @@
 </script>
 
 <style lang="scss">
+
 
   /*点击播放隐藏视频信息栏,时间栏*/
   .videoStart{
@@ -138,7 +170,7 @@
     width:100%;
     height:44px;
     padding-bottom:10px;
-    z-index:999;
+    z-index:10;
     background:linear-gradient(to right,#B40CFF,#793DFF);
   }
   
@@ -169,65 +201,68 @@
     }
   }
    
-   .main{
-     padding:62px 10px 60px;
+   .main_content{
+     padding:62px 10px 45px;
      background:white;
-     flex-wrap:wrap;
-     justify-content:space-between;
-   }
-   
-   .main_item{
-     position:relative;
-     width:49%;
-     height:240px;
-     color:white;
-     margin-bottom:8px;
-     border-radius:5px;
-     overflow:hidden;
-   }
-   
-     
-   .min_item_info{
-     position:absolute;
-     bottom:0;
-     width:100%;
-     box-sizing:border-box;
-     padding:5px;
-     font-size:12px;
-     background:rgba(0,0,0,0.1);
-     align-items:center;
-     justify-content:space-between;
-     z-index:10;
-   }
-      
-   .min_item_info_left{
-     height:100%;
-     align-items:center;
-     justify-content:space-between;
-   }
+     overflow-y:scroll;
+     -webkit-overflow-scrolling:touch;
+     ul{
+       display:flex;
+       flex-wrap:wrap;
+       justify-content:space-between;
+        .main_item{
+          position:relative;
+          width:49%;
+          height:240px;
+          color:white;
+          margin-bottom:8px;
+          border-radius:5px;
+        }  
+        .min_item_info{
+          position:absolute;
+          bottom:0;
+          width:100%;
+          box-sizing:border-box;
+          padding:5px;
+          font-size:12px;
+          background:rgba(0,0,0,0.1);
+          align-items:center;
+          justify-content:space-between;
+          z-index:2;
+        }
+            
+        .min_item_info_left{
+          height:100%;
+          align-items:center;
+          justify-content:space-between;
+        }
 
-   .user_img{
-     width:20px;
-     height:20px;
-     margin-right:5px;
+        .user_img{
+          width:20px;
+          height:20px;
+          margin-right:5px;
+        }
+        
+        .heart_img{
+          width:14px;
+          height:14px;
+          line-height:14px;
+          margin-right:5px;
+        }
+        
+        .duration{
+          position:absolute;
+          font-size:12px;
+          top:5px;
+          right:5px;
+          padding:5px;
+          border-radius:4px;
+          background:#FF8585;
+          z-index:2;
+       }
+     } 
    }
    
-   .heart_img{
-     width:14px;
-     height:14px;
-     line-height:14px;
-     margin-right:5px;
-   }
-   
-   .duration{
-     position:absolute;
-     font-size:12px;
-     top:5px;
-     right:5px;
-     padding:5px;
-     border-radius:4px;
-     background:#FF8585;
-     z-index:10;
-   }
+  
 
 </style>

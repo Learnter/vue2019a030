@@ -47,14 +47,14 @@ export default {
 		path:"/me"
     }	
 		],
-		now_page_index:0,
+		now_page_path:"/smallVideo",
 	},
 	mutations:{
 		change_nav_list(state,data){
 			state.footer_nav = data;
 		},
-		change_page(state,index){
-			state.now_page_index = index;
+		change_page(state,path){
+			state.now_page_path = path;
 		}
 	},
 	actions:{

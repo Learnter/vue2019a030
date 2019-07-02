@@ -1,9 +1,9 @@
 <template>
 	<section>
 		<div class="footer">
-			<div :class="'footer_item ' + (item.size=='big'?'big_item':'')  " :style="'width:'+item_width" @click="change_nav(index,item)" v-for="(item,index) in footer_nav" :key="index">
-				<img :src="index==now_index?item.select_icon:item.icon"/>
-				<div :class="index==now_index?'navActived':''">{{item.name}}</div>
+			<div :class="'footer_item ' + (item.size=='big'?'big_item':'')  " :style="'width:'+item_width" @click="change_nav(item)" v-for="(item,index) in footer_nav" :key="index">
+				<img :src="item.path==now_path?item.select_icon:item.icon"/>
+				<div :class="item.path==now_path?'navActived':''">{{item.name}}</div>
 			</div>
 		</div>
 	</section>
@@ -17,12 +17,20 @@
 				
 			};
 		},
+		mounted(){
+			this.refresh();//F5页面刷新
+		},
 		methods:{
-			change_nav(index,item){
-				this.$store.commit("change_page",index);
+			change_nav(item){ // 底部导航切换
+
+				this.$store.commit("change_page",item.path);
 
 				this.$router.push(item.path);
 
+			},
+			refresh(){ //页面刷新存储当前路由地址
+				let now_path =  location.hash.slice(1); 
+				 this.$store.commit('change_page',now_path);
 			}
 		},
 		computed:{
@@ -51,18 +59,14 @@
 			footer_nav(){
 				return this.$store.state.footer_store.footer_nav;
 			},
-			now_index(){
-				return this.$store.state.footer_store.now_page_index;
+			now_path(){
+				return this.$store.state.footer_store.now_page_path;
 			}
 		}
 	}
 </script>
 
-<style lang="scss" scoped>
-  
-  view{
-    line-height:1;
-  }
+<style lang="scss">
   
   .navActived{
     font-weight:bold;
@@ -75,13 +79,12 @@
 	position: fixed;
 	bottom: 0;
 	left: 0;
-    box-sizing:border-box;
 	width: 100%;
     height: 60px;
-    padding:3 0;
+	box-sizing:border-box;
+	z-index:10;
 	background:linear-gradient(to right,#B40CFF,#793DFF);
 	color: #fff;	
-    z-index:9999;
 }
 .footer_item{
 	float: left;
