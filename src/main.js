@@ -13,8 +13,13 @@ import 'video.js/dist/video-js.css'
 //使用VueVideoPlayer组件
 Vue.use(VueVideoPlayer);
 
-import Mint from 'mint-ui';
-Vue.use(Mint);
+// import Mint from 'mint-ui';
+// Vue.use(Mint);
+
+
+import Vant from 'vant'
+import 'vant/lib/index.css';
+Vue.use(Vant)
 
 // 状态数据
 Vue.prototype.$store = store;
@@ -33,3 +38,20 @@ new Vue({
   components: { App },
   template: '<App/>'
 })
+
+
+document.documentElement.addEventListener('touchstart', function (event) {
+  if (event.touches.length > 1) {
+    event.preventDefault();
+  }
+}, false);
+
+ //禁止双击放大
+var lastTouchEnd = 0;
+document.documentElement.addEventListener('touchend', function (event) {
+  var now = Date.now();
+  if (now - lastTouchEnd <= 300) {
+    event.preventDefault();
+  }
+  lastTouchEnd = now;
+}, false);

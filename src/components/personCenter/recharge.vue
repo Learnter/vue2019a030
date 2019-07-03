@@ -73,7 +73,7 @@ export default {
     data(){
         return{
             nav_right_color:"#CF1E81",//导航栏右侧字体颜色
-            nav_route_path:"/smallVideo",//导航栏右侧路由地址
+            nav_route_path:"/personCenter/assetDetails",//导航栏右侧路由地址
             recharge_way:0,//充值方式索引
             con_actived:0 //兑换方案索引
 

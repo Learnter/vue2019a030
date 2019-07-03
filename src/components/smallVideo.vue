@@ -6,60 +6,47 @@
             </div>
 		</div>
     <div class="main_content">
-        <mt-loadmore :bottom-method="loadBottom" :bottom-all-loaded="allLoaded" :auto-fill="false"   @bottom-status-change="handleBottomChange" ref="loadmore">
-          <ul>
-            <!-- <li v-for="item in list">{{ item }}</li> -->
-            <li class="main_item" v-for="(item,index) in videoList" :key="index">
 
-                    <!--判断playerOptions数组中有没数据-->
-                    <video-player v-if="playerOptions.length != 0" class=" videoStyle  video-player-box" ref="videoPlayer" :options="playerOptions[index]" @play="onPlayerPlay($event,index)" @pause="onPlayerPause($event)"
-                        @ended="onPlayerEnded($event)">
-                      
-                    </video-player>
+        <van-list class="main_ul" v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+          <van-cell class="main_item" v-for="(item,index) in videoList" :key="index">
+              <!-- 判断playerOptions数组中有没数据 -->
+              <video-player v-if="playerOptions.length != 0" class=" videoStyle  video-player-box" ref="videoPlayer" :options="playerOptions[index]" @play="onPlayerPlay($event,index)" @pause="onPlayerPause($event)"
+                  @ended="onPlayerEnded($event)">
+                
+              </video-player>
 
-                    <!--时间栏-->
-                    <p class="duration" :class="index === playBtn ? 'videoStart':'videoEnd'">03:26</p> 
-                    
-                    <!--视频信息栏-->
-                    <div class="min_item_info uni-flex" :class="index === playBtn ? 'videoStart':'videoEnd'">
-                      <div class="min_item_info_left uni-flex">
-                        <div class="user_img">
-                            <img src="@/assets/tabImg/2019_a030_1.png"/>
-                        </div>
-                          <p>网红1号</p>
-                      </div>
-                      <div class="min_item_info_left uni-flex">
-                          <div class="heart_img" @click="likeBtn">
-                            <img src="@/assets/tabImg/2019_a030_3.png"/>
-                          </div>
-                          <p>555</p>
-                      </div> 
+              <!-- 时间栏 -->
+              <p class="duration" :class="index === playBtn ? 'videoStart':'videoEnd'">03:26</p> 
+              
+              <!-- 视频信息栏 -->
+              <div class="min_item_info uni-flex" :class="index === playBtn ? 'videoStart':'videoEnd'">
+                <div class="min_item_info_left uni-flex">
+                  <div class="user_img">
+                      <img src="@/assets/tabImg/2019_a030_1.png"/>
+                  </div>
+                    <p>网红1号</p>
+                </div>
+                <div class="min_item_info_left uni-flex">
+                    <div class="heart_img" @click="likeBtn">
+                      <img src="@/assets/tabImg/2019_a030_3.png"/>
                     </div>
-                </li>
-          </ul>
-          <div slot="bottom" class="mint-loadmore-bottom">
-                        <span v-show="loadStatus !=='loading'" :class="{ 'rotate': loadStatus === 'drop' }">
-                             <span v-show="allLoaded">没有更多数据了</span>
-                             <span v-show="!allLoaded">加载更多...</span>
-                        </span>
-                        <span v-show="loadStatus === 'loading'">Loading...</span>
-          </div>
-        </mt-loadmore>
-      
+                    <p>555</p>
+                </div> 
+              </div>
+          </van-cell>   
+        </van-list>
     </div>
 </div>
 </template>
 
 <script>
 
- import { Toast } from 'mint-ui';
-
 	export default {
     name:"samllVideo",
 		data(){
 			return {
-         loadStatus:'',//加载状态
-         allLoaded:false,//数据是否加载完
+         loading:false,
+         finished:false,
          playBtn:null,//视频是否点击播放
          actived:0,
 				 navList:[{id:0,title:"热门"},{id:1,title:"关注"},{id:2,title:"附近"}],
@@ -111,16 +98,9 @@
       likeBtn(){
         console.log("我点赞了哦.....");
       },
-      //上拉加载
-      loadBottom(){
-        console.log("下拉刷新");
-        // this.allLoaded = true;
-       this.$refs.loadmore.onBottomLoaded();
-      },
-      //加载状态改变
-      handleBottomChange(status){
-        console.log(status);
-        this.loadStatus = status;
+      onLoad(){
+       this.loading = false;
+       this.finished = true;
       }
     },
     components:{
@@ -202,11 +182,11 @@
   }
    
    .main_content{
-     padding:62px 10px 45px;
+     padding:62px 10px 70px;
      background:white;
      overflow-y:scroll;
      -webkit-overflow-scrolling:touch;
-     ul{
+     .main_ul{
        display:flex;
        flex-wrap:wrap;
        justify-content:space-between;
@@ -214,7 +194,6 @@
           position:relative;
           width:49%;
           height:240px;
-          color:white;
           margin-bottom:8px;
           border-radius:5px;
         }  
@@ -225,6 +204,7 @@
           box-sizing:border-box;
           padding:5px;
           font-size:12px;
+          color:white;
           background:rgba(0,0,0,0.1);
           align-items:center;
           justify-content:space-between;
@@ -256,6 +236,8 @@
           top:5px;
           right:5px;
           padding:5px;
+          line-height:1.1;
+          color:white;
           border-radius:4px;
           background:#FF8585;
           z-index:2;

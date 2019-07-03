@@ -21,7 +21,10 @@ module.exports = {
           viewportHeight: 667,    // (Number) The height of the viewport.
           unitPrecision: 3,       // (Number) The decimal numbers to allow the REM units to grow to.
           viewportUnit: 'vw',     // (String) Expected units.
-          selectorBlackList: ['.ignore', '.hairlines','.vjs-loading-spinner:before','.vjs-loading-spinner:after'],  // (Array) The selectors to ignore and leave as px.
+          selectorBlackList: ['.ignore', '.hairlines','.vjs-loading-spinner:before',
+            '.vjs-loading-spinner:after','.van-loading__spinner--spinner i::before',
+          '.van-cell:not(:last-child)::after','.van-cell--required::before','.van-tabbar-item__icon--dot::after',
+          '.van-action-sheet__cancel::before','.van-dropdown-menu__title::after','van-contact-card::before','.van-step--vertical:first-child::before'],  // (Array) The selectors to ignore and leave as px.
           minPixelValue: 1,       // (Number) Set the minimum pixel value to replace.
           mediaQuery: false       // (Boolean) Allow px to be converted in media queries.
       }, 
