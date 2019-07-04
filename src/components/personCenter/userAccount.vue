@@ -82,7 +82,7 @@ export default {
 
             // console.log(returnNav);
 
-            if(scrollTop >= 54){
+            if(scrollTop >= 50){
             
                 returnNav.$el.style.background = "linear-gradient(to right,#B40CFF,#FE39A5,#793DFF)"; //设置背景渐变
 
@@ -107,7 +107,7 @@ export default {
 
    
    .hidden_withdrawal_icon{
-       visibility:hidden;
+       display:none;
    }
 
     .userAccount{

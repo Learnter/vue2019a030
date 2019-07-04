@@ -1,12 +1,5 @@
 <template>
     <section class="recharge" ref="recharge">
-      <!-- <div class="returnNav">
-          <div class="returnImg">
-              <img src="../../assets/tabImg/2019_a030_41.png" alt="返回按钮">
-          </div>
-          <h2>充值</h2>
-          <span>查看明细</span>
-      </div> -->
 
      <return-nav ref="returnNav" :color="nav_right_color" :path="nav_route_path">
          <template v-slot:middle>
@@ -89,7 +82,7 @@ export default {
 
         let returnNav = this.$refs.returnNav; //获取返回栏DOM对象
 
-        if(scrollTop >= 54){
+        if(scrollTop > 0){
         
             returnNav.$el.style.background = "linear-gradient(to right,#B40CFF,#FE39A5,#793DFF)"; //设置背景渐变
 
@@ -115,10 +108,9 @@ export default {
 
 
     .hidden_payment_icon{
-        visibility: hidden;
+        display:none;
     }
 
-    
     // 全局背景色
     .recharge{
         position:fixed;

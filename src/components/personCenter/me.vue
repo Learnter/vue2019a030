@@ -133,7 +133,7 @@
           </div>
           <p>我的团队</p>
         </div>
-        <div class="user_config_item uni-flex">
+        <div class="user_config_item uni-flex" @click="inviteFriends">
           <div class="user_icon config_icon">
             <img src="@/assets/tabImg/2019_a030_29.png"/>
           </div>
@@ -145,13 +145,13 @@
           </div>
           <p>玩法攻略</p>
         </div>
-        <div class="user_config_item uni-flex">
+        <div class="user_config_item uni-flex" @click='$router.push("/login/register")'>
           <div class="user_icon config_icon">
             <img src="@/assets/tabImg/2019_a030_31.png"/>
           </div>
           <p>版本更新</p>
         </div>
-        <div class="user_config_item uni-flex">
+        <div class="user_config_item uni-flex" @click='$router.push("/login/login")'>
           <div class="user_icon config_icon">
             <img src="@/assets/tabImg/2019_a030_32.png"/>
           </div>
@@ -188,6 +188,9 @@
        },
        convert(){ //邮票兑换
            console.log("我要兑换邮票");
+       },
+       inviteFriends(){ //邀请好友
+         this.$router.push("/personCenter/share");
        }
 
     },

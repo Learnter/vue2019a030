@@ -14,7 +14,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect:"/login/login"
+      redirect:"/personCenter/news"
     },
     {
       path:"/smallVideo",
@@ -61,6 +61,22 @@ export default new Router({
       path:"/login/login",
       name:"login",
       component: resolve => require(["@/components/login/login"],resolve)
+    },
+    {
+      path:"/login/register",
+      name:"register",
+      component: resolve => require(["@/components/login/register"],resolve)
+    },
+    {
+      path:"/personCenter/team",
+      name:"team",
+      component: resolve => require(["@/components/personCenter/team"],resolve)
+    },
+    {
+      path:"/personCenter/news",
+      name:"news",
+      component: resolve => require(["@/components/personCenter/news"],resolve)
     }
+
   ]
 })

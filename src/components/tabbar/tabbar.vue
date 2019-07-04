@@ -1,9 +1,12 @@
 <template>
 	<section>
 		<div class="footer">
-			<div :class="'footer_item ' + (item.size=='big'?'big_item':'')  " :style="'width:'+item_width" @click="change_nav(item)" v-for="(item,index) in footer_nav" :key="index">
-				<img :src="item.path==now_path?item.select_icon:item.icon"/>
-				<div :class="item.path==now_path?'navActived':''">{{item.name}}</div>
+			<div class="footer_item" @click="change_nav(item)" v-for="(item,index) in footer_nav" :key="index">
+				<div :class="item.size=='big'?'footer_big_icon':'footer_icon'">
+					<img :src="item.path == now_path ? item.select_icon : item.icon"/>
+				</div>
+				
+				<div :class="item.path == now_path ? 'navActived':''">{{item.name}}</div>
 			</div>
 		</div>
 	</section>
@@ -34,28 +37,6 @@
 			}
 		},
 		computed:{
-			item_width(){
-				let length = this.$store.state.footer_store.footer_nav.length;
-				switch (length){
-					case 1:
-						return '100%'
-						break;
-					case 2:
-						return '50%'
-						break;
-					case 3:
-						return '33.3%'
-						break;
-					case 4:
-						return '25%'
-						break;
-					case 5:
-						return '20%'
-						break;
-					default:
-						break;
-				}
-			},
 			footer_nav(){
 				return this.$store.state.footer_store.footer_nav;
 			},
@@ -85,24 +66,38 @@
 	z-index:10;
 	background:linear-gradient(to right,#B40CFF,#793DFF);
 	color: #fff;	
+	display:flex;
+	justify-content:space-between;
+	align-items:center;
 }
+
 .footer_item{
-	float: left;
-	width: 33.3%;
-    height:100%;
+	display:flex;
+	flex-direction:column;
+	justify-content:center;
+	align-items:center;
+	width:20%;
+	height:100%;
+	box-sizing:border-box;
 	text-align: center;
 	font-size: 14px;
 }
-.footer_item img{
-	width: 30px;
-	height: 30px;
+
+.footer_icon{
+	width:30px;
+	height:30px;
 }
-.footer_item.big_item{
+
+.footer_big_icon{
 	position: relative;
-	top: -20px;
-}
-.footer_item.big_item img{
-	width: 50px;
-	height: 50px;
+	top:-20px;
+	width:30px;
+	height:30px;
+	img{
+	   position: absolute;
+	   width: 50px;
+	   height: 50px;
+	   left:-10px; 
+	}
 }
 </style>
