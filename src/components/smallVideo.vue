@@ -10,7 +10,7 @@
         <van-list class="main_ul" v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
           <van-cell class="main_item" v-for="(item,index) in videoList" :key="index">
               <!-- 判断playerOptions数组中有没数据 -->
-              <video-player v-if="playerOptions.length != 0" class=" videoStyle  video-player-box" ref="videoPlayer" :options="playerOptions[index]" @play="onPlayerPlay($event,index)" @pause="onPlayerPause($event)"
+              <video-player v-if="playerOptions.length != 0" :playsinline="true" class=" videoStyle  video-player-box" ref="videoPlayer" :options="playerOptions[index]" @play="onPlayerPlay($event,index)" @pause="onPlayerPause($event)"
                   @ended="onPlayerEnded($event)">
                 
               </video-player>
@@ -67,7 +67,7 @@
           this.videoList.map((item)=>{
 
              let attr = {  //每个视频对象的配置数据
-                muted: false, //是否开始静音
+                muted:true, //是否开始静音
                 language: 'en', // 语言
                 sources: [{ //视频路径,类型
                   type: "video/mp4",
