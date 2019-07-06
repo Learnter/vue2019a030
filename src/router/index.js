@@ -14,7 +14,7 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect:"/video/fullScreen"
+      redirect:"/login"
     },
     {
       path:"/smallVideo",//小视频
@@ -58,14 +58,19 @@ export default new Router({
       component: resolve => require(["@/components/personCenter/share"],resolve)
     },
     {
-      path:"/login/login", //登录
+      path:"/login", //登录
       name:"login",
       component: resolve => require(["@/components/login/login"],resolve)
     },
     {
-      path:"/login/register",//注册
+      path:"/register",//注册
       name:"register",
       component: resolve => require(["@/components/login/register"],resolve)
+    },
+    {
+      path:"/protocol",//注册协议
+      name:"protocol",
+      component: resolve => require(["@/components/login/protocol"],resolve)
     },
     {
       path:"/personCenter/team",//我的团队

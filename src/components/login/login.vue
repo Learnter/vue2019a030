@@ -5,30 +5,86 @@
     </div>
     <div class="login_info">
       <van-cell-group>
-        <van-field v-model="username" clearable label="用户名" right-icon="question-o" placeholder="请输入用户名" @click-right-icon="$toast('question')"/>
+        <van-field
+          v-model="user.account"
+          clearable
+          label="用户名"
+          right-icon="question-o"
+          placeholder="请输入用户名"
+        />
 
-        <van-field v-model="password" type="password" label="密码" placeholder="请输入密码" clearable />
+        <van-field
+          v-model="user.password"
+          type="password"
+          label="密码"
+          placeholder="请输入密码"
+          clearable
+        />
       </van-cell-group>
-      <van-button class="loginBtn" icon="https://img.yzcdn.cn/vant/logo.png" type="info" round>立即登录</van-button>
+      <van-button
+        class="loginBtn"
+        icon="https://img.yzcdn.cn/vant/logo.png"
+        type="info"
+        round
+        @click="toLogin"
+      >立即登录</van-button>
       <div class="login_tips">
-        <van-button class="regestBtn" style="color:#007A"  size="mini">立即注册</van-button>
+        <van-button
+          class="regestBtn"
+          style="color:#007A"
+          size="mini"
+          @click="$router.push('/register')"
+        >立即注册</van-button>
         <div class="delimiter"></div>
-        <van-button class="regestBtn" type="info" size="mini">手机验证码登录</van-button>
+        <van-button class="regestBtn" type="info" size="mini" @click="getVerifyCode">手机验证码登录</van-button>
       </div>
     </div>
   </section>
 </template>
 <script>
 export default {
-  name: "login",
+  name:"login",
   data() {
     return {
-      username: "",
-      password: ""
+      user: {
+        account: "",
+        password: ""
+      }
     };
+  },
+  methods:{
+    toLogin(){ //登录
+      let url = "user/login";
+      // /* 账号/密码非空判断*/
+      // if (!(/^1[34578]\d{9}$/).test(account) ) {
+      //   this.$toast("手机号码不存在!");
+      //   return false;
+      // } else if (!(/^[a-zA-Z0-9]{6,}$/).test(password)) {/* 密码规则最少需要6位数*/
+      //   this.$toast("密码输入有误!");
+      //   return false;
+      // }
+
+      this.$https.post(url, this.user).then(res => {
+        if (res && res.data) {
+          let data = res.data;
+          if (data.code === 200) {
+            this.$toast("登录成功");
+            setTimeout(() => {
+              this.$router.push("/smallVideo");
+            }, 1000);
+          } else {
+            this.$toast(data.msg);
+            return false;
+          }
+        }
+      });
+    },
+    getVerifyCode(){ //获取手机验证码
+      this.$toast("未获取验证码");
+    }
   }
 };
-</script>
+</script> 
 <style lang="scss">
 .login {
   position: fixed;
@@ -48,7 +104,7 @@ export default {
   }
   .login_info {
     width: 70%;
-    padding:20px;
+    padding: 20px;
     margin: auto;
     .van-cell-group {
       background: transparent;
@@ -61,11 +117,11 @@ export default {
       }
     }
     .loginBtn {
-      margin:15px 0;
-      font-size:18px;
+      margin: 15px 0;
+      font-size: 18px;
       width: 100%;
-      border:none;
-      background: linear-gradient(to right, #6495ED, #9d33ff, #756afd);
+      border: none;
+      background: linear-gradient(to right, #6495ed, #9d33ff, #756afd);
       letter-spacing: 4px;
     }
 
@@ -74,12 +130,12 @@ export default {
       display: flex;
       align-items: center;
       justify-content: center;
-      .delimiter{
-        width:2px;
-        height:15px;
-        background:white;
+      .delimiter {
+        width: 2px;
+        height: 15px;
+        background: white;
         margin: 0 10px;
-        border-radius:2px;
+        border-radius: 2px;
       }
       .regestBtn {
         background: transparent;

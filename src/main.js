@@ -13,13 +13,18 @@ import 'video.js/dist/video-js.css'
 //使用VueVideoPlayer组件
 Vue.use(VueVideoPlayer);
 
-// import Mint from 'mint-ui';
-// Vue.use(Mint);
 
 
+
+//使用vantUI框架
 import Vant from 'vant'
 import 'vant/lib/index.css';
 Vue.use(Vant)
+
+//引用axios请求后端数据
+import https from "../src/axios/https.js";
+Vue.prototype.$https = https;
+
 
 // 状态数据
 Vue.prototype.$store = store;

@@ -14,6 +14,20 @@ export default {
   name: 'App',
   components:{
     tabbar
+  },
+  created(){
+    this.fetchConfig();
+  },
+  methods:{
+    fetchConfig(){ //获取平台全局配置
+      let url = "config/getInfo";
+      this.$https.get(url).then( res => {
+        if( res && res.data && res.data.data){
+           let webConfig = JSON.stringify(res.data.data);
+           sessionStorage.setItem("config",webConfig);
+        }
+      })
+    }
   }
 }
 </script>
