@@ -59,9 +59,27 @@ button{
   outline:none;
 }
 
+/*vue-video-player插件配置*/
 /* 视频填充满容器 */
 .vjs-tech{
   object-fit:fill;
 }
 
+.van-cell{
+          padding:0;
+  } 
+
+.video-js .vjs-control-bar{
+  bottom:35px;
+}  
+
+.video-js .vjs-control{
+  width:3em;
+}
+
+/*vantUI框架样式*/
+.van-list__finished-text{
+ line-height:24px;
+ margin:0 auto;
+}
 </style>

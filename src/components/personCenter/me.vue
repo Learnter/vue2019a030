@@ -5,22 +5,22 @@
 
       <div class="userTop">
 
-        <img src="@/assets/tabImg/2019_a030_18.png"/>
+        <img src="@/assets/tabImg/2019_a030_18.png" />
 
         <div class="setup" @click="setUp">
-          <img src="@/assets/tabImg/2019_a030_21.png"/>
+          <img src="@/assets/tabImg/2019_a030_21.png" />
         </div>
 
         <div class="user_content">
           <div class="userInfo uni-flex">
             <div class="user_img">
-              <img src="@/assets/tabImg/2019_a030_19.png"/>
+              <img src="@/assets/tabImg/2019_a030_19.png" />
             </div>
             <div class="user_detail">
               <div class="user_name uni-flex">
                 <p>钟馗收妖、</p>
                 <div class="user_tag">
-                  <img src="@/assets/tabImg/2019_a030_20.png"/>
+                  <img src="@/assets/tabImg/2019_a030_20.png" />
                 </div>
               </div>
               <p class="user_account">ID:153446</p>
@@ -55,25 +55,25 @@
         <div class="user_operation uni-flex">
           <div class="user_operation_item uni_watch_item" @click="recharge">
             <div class="user_icon operation_icon">
-              <img src="@/assets/tabImg/2019_a030_22.png"/>
+              <img src="@/assets/tabImg/2019_a030_22.png" />
             </div>
             <p>充值</p>
           </div>
-          <div class="user_operation_item uni_watch_item"  @click="deposit">
+          <div class="user_operation_item uni_watch_item" @click="deposit">
             <div class="user_icon operation_icon">
-              <img src="@/assets/tabImg/2019_a030_23.png"/>
+              <img src="@/assets/tabImg/2019_a030_23.png" />
             </div>
             <p>提现</p>
           </div>
-          <div class="user_operation_item uni_watch_item"  @click="numberAssets">
+          <div class="user_operation_item uni_watch_item" @click="numberAssets">
             <div class="user_icon operation_icon">
-              <img src="@/assets/tabImg/2019_a030_24.png"/>
+              <img src="@/assets/tabImg/2019_a030_24.png" />
             </div>
             <p>数字资产</p>
           </div>
-          <div class="user_operation_item uni_watch_item"  @click="convert">
+          <div class="user_operation_item uni_watch_item" @click="convert">
             <div class="user_icon operation_icon">
-              <img src="@/assets/tabImg/2019_a030_25.png"/>
+              <img src="@/assets/tabImg/2019_a030_25.png" />
             </div>
             <p>邮票兑换</p>
           </div>
@@ -117,43 +117,43 @@
       <div class="user_config">
         <div class="user_config_item uni-flex">
           <div class="user_icon config_icon">
-            <img src="@/assets/tabImg/2019_a030_26.png"/>
+            <img src="@/assets/tabImg/2019_a030_26.png" />
           </div>
           <p>消息</p>
         </div>
         <div class="user_config_item uni-flex">
           <div class="user_icon config_icon">
-            <img src="@/assets/tabImg/2019_a030_27.png"/>
+            <img src="@/assets/tabImg/2019_a030_27.png" />
           </div>
           <p>主播认证</p>
         </div>
         <div class="user_config_item uni-flex">
           <div class="user_icon config_icon">
-            <img src="@/assets/tabImg/2019_a030_28.png"/>
+            <img src="@/assets/tabImg/2019_a030_28.png" />
           </div>
           <p>我的团队</p>
         </div>
         <div class="user_config_item uni-flex" @click="inviteFriends">
           <div class="user_icon config_icon">
-            <img src="@/assets/tabImg/2019_a030_29.png"/>
+            <img src="@/assets/tabImg/2019_a030_29.png" />
           </div>
           <p>邀请好友</p>
         </div>
         <div class="user_config_item uni-flex">
           <div class="user_icon config_icon">
-            <img src="@/assets/tabImg/2019_a030_30.png"/>
+            <img src="@/assets/tabImg/2019_a030_30.png" />
           </div>
           <p>玩法攻略</p>
         </div>
         <div class="user_config_item uni-flex" @click='$router.push("/login/register")'>
           <div class="user_icon config_icon">
-            <img src="@/assets/tabImg/2019_a030_31.png"/>
+            <img src="@/assets/tabImg/2019_a030_31.png" />
           </div>
           <p>版本更新</p>
         </div>
         <div class="user_config_item uni-flex" @click='$router.push("/login/login")'>
           <div class="user_icon config_icon">
-            <img src="@/assets/tabImg/2019_a030_32.png"/>
+            <img src="@/assets/tabImg/2019_a030_32.png" />
           </div>
           <p>退出</p>
         </div>
@@ -163,47 +163,65 @@
 </template>
 
 <script>
-
   export default {
     name: "personCenter",
     data() {
       return {
-
+          statisticsData:{} //统计数据
       };
     },
-    methods:{
-       setUp(){ //设置按钮
-          console.log("点击设置按钮");
-       },
-       recharge(){ //充值
-           console.log("我要充值");
-           this.$router.push("/personCenter/recharge");
-       },
-       deposit(){ //提现
-           console.log("我要提现");
-           this.$router.push("/personCenter/userAccount");
-       },
-       numberAssets(){ //查看资产
-           console.log("我要看的资产");
-       },
-       convert(){ //邮票兑换
-           console.log("我要兑换邮票");
-       },
-       inviteFriends(){ //邀请好友
-         this.$router.push("/personCenter/share");
-       }
+    created() {
+      this.getStatistics();
+    },
+    methods: {
+      getStatistics() { //获取统计信息
+        let data ={
+          token:JSON.parse(sessionStorage.getItem("user")).token
+        }
+        if(!data.token || data.token.length === 0){
+            this.$toast("请先登录!");
+            this.$router.push("/login");
+        }
+        let url = "user/getStatistics";
+        this.$https.get(url,data).then(res => {
+          if(res && res.code === 200 && res.data){
+             this.statisticsData = res.data;
+          }
+        })
+      },
+      setUp() { //设置按钮
+        console.log("点击设置按钮");
+      },
+      recharge() { //充值
+        console.log("我要充值");
+        this.$router.push("/personCenter/recharge");
+      },
+      deposit() { //提现
+        console.log("我要提现");
+        this.$router.push("/personCenter/userAccount");
+      },
+      numberAssets() { //查看资产
+        console.log("我要看的资产");
+      },
+      convert() { //邮票兑换
+        console.log("我要兑换邮票");
+      },
+      inviteFriends() { //邀请好友
+        this.$router.push("/personCenter/share");
+      }
 
     },
     components: {
 
     }
   }
+
 </script>
 
 <style lang="scss" scoped>
   .user_main {
-    padding-bottom:60px;
-    font-size:14px;
+    padding-bottom: 60px;
+    font-size: 14px;
   }
 
   .user_icon {
@@ -267,8 +285,8 @@
     font-size: 11px;
   }
 
-  .user_detail{
-     text-align:left;
+  .user_detail {
+    text-align: left;
   }
 
 
@@ -288,7 +306,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    line-height:1.5;
+    line-height: 1.5;
   }
 
 

@@ -68,6 +68,8 @@ export default {
         if (res && res.data) {
           let data = res.data;
           if (data.code === 200) {
+            let userConfig = JSON.stringify(res.data.data);
+            sessionStorage.setItem("user",userConfig);
             this.$toast("登录成功");
             setTimeout(() => {
               this.$router.push("/smallVideo");

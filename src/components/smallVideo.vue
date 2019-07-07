@@ -196,7 +196,7 @@
           height:240px;
           margin-bottom:8px;
           border-radius:5px;
-        }  
+        } 
         .min_item_info{
           position:absolute;
           bottom:0;
