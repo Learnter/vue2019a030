@@ -5,28 +5,39 @@
     </return-nav>
 
     <van-dropdown-menu class="search_short">
-      <van-dropdown-item v-model="value1" :options="option1" />
-      <van-dropdown-item v-model="value2" :options="option2" />
-      <van-dropdown-item v-model="value3" :options="option3" />
+      <van-dropdown-item
+        v-model="categoryInit"
+        :options="categoryList"
+        title="分类"
+        @change="categorySort"
+      />
+      <van-dropdown-item v-model="dateInit" :options="dateList" title="日期" @change="dateSort" />
+      <van-dropdown-item v-model="sortInit" :options="sortList" title="排序" @change="sortWay" />
     </van-dropdown-menu>
 
     <div class="asset_main">
-      <div class="asset_list">
+      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad" :immediate-check='false'>
+        <!-- <van-cell v-for="item in list" :key="item" :title="item" /> -->
+        <div class="asset_list">
         <ul>
-          <li class="asset_details_li" v-for="(item,index) in 10" :key="index">
+          <li class="asset_details_li" v-for="(item,index) in assetList" :key="index">
             <div class="asset_details_icon">
-              <img src="../../assets/tabImg/2019_a030_1.png" alt />
+              <img src="@/assets/tabImg/2019_a030_22.png" alt />
             </div>
             <div class="asset_details_right">
               <div>
-                <span>静态受益</span>
-                <span>+900.00</span>
+                <span>{{item.note}}</span>
+                <span
+                  :style="item.money < 0  ? 'color:#9AD3E3' : 'color:#FF6868'"
+                >{{item.money > 0 ? '+'+item.money : item.money}}</span>
               </div>
-              <p>昨天&nbsp;10:11</p>
+              <p>{{item.edit_time}}</p>
             </div>
           </li>
         </ul>
       </div>
+      </van-list>
+      
     </div>
   </section>
 </template>
@@ -36,18 +47,88 @@ export default {
   name: "assetDetail",
   data() {
     return {
-      value1: 0,
-      value2: "a",
-      value3: "a",
-      option1: [
-        { text: "分类", value: 0 },
-        { text: "产品分类", value: 1 },
-        { text: "价格分类", value: 2 },
-        { text: "服装分类", value: 3 }
-      ],
-      option2: [{ text: "日期", value: "a" }],
-      option3: [{ text: "排序", value: "a" }]
+      loading:false,
+      finished:false,
+      categoryInit: "", //分类初始值
+      dateInit: "", //日期初始值
+      sortInit: "", //排序初始值
+      categoryList: [], //分类列表
+      dateList: [
+        { text: "一星期", value: "week" },
+        { text: "一个月", value: "month" },
+        { text: "3个月", value: "threeMonth" },
+        { text: "一年", value: "year" }
+      ], //时间列表
+      sortList: [
+        { text: "正序", value: "asc" },
+        { text: "倒序", value: "desc" }
+      ], //排序列表
+      requrstConfig: {
+        //请求配置参数
+        type: "",
+        note: "",
+        start_time: "",
+        end_time: "",
+        order: "",
+        sort: "asc",
+        page: 1,
+        rows: 10
+      },
+      assetList: [] //钱包列表
     };
+  },
+  created() {
+    this.fetchAssetData();
+    this.fetchCategory();
+  },
+  methods: {
+    fetchAssetData() {
+      //获取钱包列表
+      let url = "money/getMoneyLogList";
+      this.$https.get(url, this.requrstConfig).then(res => {
+        if (res.data.code === 200 && res.data.data){
+           let dataList = res.data.data;
+           if(dataList.length > 0){
+               res.data.data.forEach((item)=>{
+                    this.assetList.push(item);
+                })
+                this.loading = false;
+           }else{
+             this.finished = true;
+           }
+        }
+      });
+    },
+    fetchCategory() {
+      //获取排序分类数据
+      let url = "money/getMoneyLogType";
+      this.$https.get(url).then(res => {
+        if (res.data.code === 200 && res.data.data) {
+          this.categoryList = res.data.data;
+        }
+      });
+    },
+    categorySort(e) {
+      //排序分类
+      this.categoryInit = e;
+      this.requrstConfig.type = e;
+      this.fetchAssetData();
+    },
+    sortWay(e) {
+      //排序方式
+      this.sortInit = e;
+      this.requrstConfig.sort = e;
+      this.requrstConfig.order = "edit_time";
+      this.fetchAssetData();
+    },
+    dateSort(e) {
+      //日期排序
+      this.$toast("日期排序还没完善...");
+    },
+    onLoad(){
+       this.requrstConfig.page++;
+       this.fetchAssetData();
+    }
   },
   components: {
     returnNav

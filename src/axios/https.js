@@ -32,7 +32,7 @@ function checkStatus (response) {
 function checkCode (res) {
   // 如果code异常(这里已经包括网络错误，服务器错误，后端抛出的错误)，可以弹出一个错误提示，告诉用户
   if (res.status === -404) {
-    alert(res.msg)
+    alert(res.msg);
   }     
   // if (res.data && (!res.data.data)) {
   //   alert(res.data.msg)
@@ -42,6 +42,10 @@ function checkCode (res) {
 
 export default {
   post (url, data) {
+    //判断是否已经登录...
+    let token;
+    sessionStorage.getItem("user")? token = JSON.parse(sessionStorage.getItem("user")).token : token = '';
+
     return axios({
       method: 'post',
       baseURL: 'http://2019a030api.jiafuw.com/v1',
@@ -49,7 +53,8 @@ export default {
       data: data,
       timeout: 10000,
       headers: {
-        'content-type':'application/json'
+        'content-type':'application/json',
+        'token':token
       }
     }).then(
       (response) => {
@@ -62,6 +67,9 @@ export default {
     )
   },
   get (url, params) {
+     //判断是否已经登录...
+    let token;
+    sessionStorage.getItem("user")? token = JSON.parse(sessionStorage.getItem("user")).token : token = '';
     return axios({
       method: 'get',
       baseURL: 'http://2019a030api.jiafuw.com/v1',
@@ -70,7 +78,8 @@ export default {
       params, // get 请求时带的参数
       timeout: 10000,
       headers: {
-        'content-type': 'application/json'
+        'content-type': 'application/json',
+        'token':token
       }
     }).then(
       (response) => {

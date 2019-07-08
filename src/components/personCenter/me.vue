@@ -29,22 +29,22 @@
 
           <div class="user_watch uni-flex">
             <div class="uni_watch_item">
-              <div>16</div>
+              <div>{{statisticsData.video_num}}</div>
               <div>视频</div>
             </div>
             <div class="split_line"></div>
             <div class="uni_watch_item">
-              <div>16</div>
+              <div>{{statisticsData.follow_num}}</div>
               <div>关注</div>
             </div>
             <div class="split_line"></div>
             <div class="uni_watch_item">
-              <div>16</div>
+              <div>{{statisticsData.fans_num}}</div>
               <div>粉丝</div>
             </div>
             <div class="split_line"></div>
             <div class="uni_watch_item">
-              <div>16</div>
+              <div>{{statisticsData.team_num}}</div>
               <div>团队</div>
             </div>
           </div>
@@ -80,9 +80,9 @@
         </div>
 
         <div class="user_money uni-flex">
-          <div class="uni_watch_item">
-            <p>余额</p>
-            <p>666</p>
+          <div class="uni_watch_item" v-if="accountData['1']">
+            <p>{{accountData['1']['wallet_name']}}</p>
+            <p>{{accountData['1']['money']}}</p>
           </div>
           <div class="uni_watch_item">
             <p>今日回馈</p>
@@ -99,17 +99,17 @@
         </div>
 
         <div class="user_integral uni-flex">
-          <div class="uni_watch_item">
-            <p>邮币资产</p>
-            <p>500000</p>
+          <div class="uni_watch_item" v-if="accountData['2']">
+            <p>{{accountData['2']['wallet_name']}}</p>
+            <p>{{accountData['2']['money']}}</p>
           </div>
-          <div class="uni_watch_item">
-            <p>可用积分</p>
-            <p>66454546</p>
+          <div class="uni_watch_item" v-if="accountData['3']">
+            <p>{{accountData['3']['wallet_name']}}</p>
+            <p>{{accountData['3']['money']}}</p>
           </div>
-          <div class="uni_watch_item">
-            <p>邮票资产</p>
-            <p>6456445465</p>
+          <div class="uni_watch_item" v-if="accountData['4']">
+            <p>{{accountData['4']['wallet_name']}}</p>
+            <p>{{accountData['4']['money']}}</p>
           </div>
         </div>
       </div>
@@ -151,7 +151,7 @@
           </div>
           <p>版本更新</p>
         </div>
-        <div class="user_config_item uni-flex" @click='$router.push("/login/login")'>
+        <div class="user_config_item uni-flex" @click='exit'>
           <div class="user_icon config_icon">
             <img src="@/assets/tabImg/2019_a030_32.png" />
           </div>
@@ -165,29 +165,33 @@
 <script>
   export default {
     name: "personCenter",
-    data() {
+    data(){
       return {
-          statisticsData:{} //统计数据
+          statisticsData:{}, //统计数据
+          accountData:{} //账号资产信息
       };
     },
     created() {
       this.getStatistics();
+      this.fetchAccountMoney();
     },
     methods: {
       getStatistics() { //获取统计信息
-        let data ={
-          token:JSON.parse(sessionStorage.getItem("user")).token
-        }
-        if(!data.token || data.token.length === 0){
-            this.$toast("请先登录!");
-            this.$router.push("/login");
-        }
         let url = "user/getStatistics";
-        this.$https.get(url,data).then(res => {
-          if(res && res.code === 200 && res.data){
-             this.statisticsData = res.data;
+        this.$https.get(url).then(res => {
+          if(res.data.code === 200 && res.data.data){
+             this.statisticsData = res.data.data;
           }
         })
+      },
+      fetchAccountMoney(){ //获取账号资产
+          let url = 'money/getUserWalletAmount';
+          this.$https.get(url).then(res => {
+            // console.log(res);
+            if( res.data.code === 200 && res.data.data){
+                this.accountData = res.data.data;
+             }
+          })
       },
       setUp() { //设置按钮
         console.log("点击设置按钮");
@@ -208,8 +212,18 @@
       },
       inviteFriends() { //邀请好友
         this.$router.push("/personCenter/share");
+      },
+      exit(){ //用户退出
+        this.$dialog.confirm({
+          title:"重要提示",
+          message: '您确定要退出吗'
+        }).then(()=>{
+            sessionStorage.removeItem('user');//移除缓存信息
+            this.$router.push('/login'); //跳转到登录页面
+        }).catch(()=>{
+           return ;
+        })
       }
-
     },
     components: {
 
