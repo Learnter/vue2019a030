@@ -1,11 +1,63 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import footer_store from "./modules/footer_store.js"
 Vue.use(Vuex)
 
 const store = new Vuex.Store({
-	modules:{
-		footer_store
+	state:{
+		footer_nav:[
+			{
+				name:'小视频',
+				name_code:'smallVideo',
+				icon:require('@/assets/tabImg/2019_a030_7.png'),
+				select_icon:require('@/assets/tabImg/2019_a030_8.png'),
+				size:'small',
+				path:"/smallVideo"
+			},
+			{
+				name:'短视频',
+				name_code:'shortVideoTwo',
+				icon:require('@/assets/tabImg/2019_a030_9.png'),
+				select_icon:require('@/assets/tabImg/2019_a030_10.png'),
+				size:'small',
+				path:"/shortVideoTwo"
+			},
+		{
+			name:'发布',
+			name_code:'release',
+			icon:require('@/assets/tabImg/2019_a030_15.png'),
+			select_icon:require('@/assets/tabImg/2019_a030_16.png'),
+			size:'big',
+			path:"/release"
+		},
+    {
+    	name:'直播',
+    	name_code:'live',
+    	icon:require('@/assets/tabImg/2019_a030_11.png'),
+    	select_icon:require('@/assets/tabImg/2019_a030_12.png'),
+		size:'small',
+		path:"/live"
+    },
+    {
+    	name:'我的',
+    	name_code:'me',
+    	icon:require('@/assets/tabImg/2019_a030_13.png'),
+    	select_icon:require('@/assets/tabImg/2019_a030_14.png'),
+		size:'small',
+		path:"/me"
+    }	
+		],
+		now_page_path:"/smallVideo"
+	},
+	mutations:{
+		change_nav_list(state,data){ 
+			state.footer_nav = data;
+		},
+		change_page(state,path){ //改变当前路径
+			state.now_page_path = path;
+		}
+	},
+	actions:{
+		
 	}
 })
 

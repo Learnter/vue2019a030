@@ -56,6 +56,7 @@
         ], //排序列表
         requrstConfig: {
           //请求配置参数
+          mid:"",
           type: "",
           note: "",
           start_time: "",
@@ -69,6 +70,10 @@
       };
     },
     created() {
+      if(this.$route.query.mid){
+        this.requrstConfig.mid = this.$route.query.mid;
+      }
+      console.log(this.requrstConfig);
       this.fetchAssetData();
       this.fetchCategory();
     },
@@ -77,7 +82,7 @@
         //获取钱包列表
         let url = "money/getMoneyLogList";
         this.$https.get(url, this.requrstConfig).then(res => {
-          console.log(res);
+          // console.log(res);
           if (res.data.code === 200 && res.data.data) {
             this.assetList = res.data.data;
             if (this.assetList.length > 0) {

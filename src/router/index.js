@@ -25,17 +25,20 @@ export default new Router({
       }
     },
     {
-      path:"/shortVideo", //短视频
-      name:"ShortVideo",
-      component: resolve => require(["@/components/shortVideo"],resolve),
+      path:"/shortVideoTwo",//短视频2
+      name:"shortVideoTwo",
+      component: resolve => require(["@/components/shortVideoTwo"],resolve),
       meta:{
-       KeepAlive:true
-      }
+        KeepAlive:true
+       }
     },
     {
       path:"/me", // 个人中心
       name:"Me",
-      component: resolve => require(["@/components/personCenter/me"],resolve)
+      component: resolve => require(["@/components/personCenter/me"],resolve),
+      meta:{
+        KeepAlive:true
+      }
     },
     {
       path:"/personCenter/recharge", //充值
@@ -92,11 +95,7 @@ export default new Router({
       name:"fullScreen",
       component: resolve => require(["@/components/video/fullScreen"],resolve)
     },
-    {
-      path:"/video/shortVideoTwo",//短视频2
-      name:"shortVideoTwo",
-      component: resolve => require(["@/components/video/shortVideoTwo"],resolve)
-    },
+   
     {
       path:"/video/reward",//打赏
       name:"reward",

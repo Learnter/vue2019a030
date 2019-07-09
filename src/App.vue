@@ -25,7 +25,7 @@ export default {
         if( res && res.data && res.data.data){
            let webConfig = JSON.stringify(res.data.data);
            sessionStorage.setItem("config",webConfig);
-        }
+         }
       })
     }
   }
@@ -66,7 +66,7 @@ button{
 }
 
 .van-cell{
-          padding:0;
+    padding:0;
   } 
 
 .video-js .vjs-control-bar{

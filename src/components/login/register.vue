@@ -42,7 +42,7 @@ export default {
   name: "register",
   data() {
     return {
-      user: {
+      user:{
         reg_code: "",
         account: "",
         password: "",
@@ -54,7 +54,7 @@ export default {
     };
   },
   created(){
-    this.time = JSON.parse(sessionStorage.getItem("config")); //获取倒计时间；
+    this.time = JSON.parse(sessionStorage.getItem("config")).send_sms_time_out; //获取倒计时间；
   },
   computed: {
     verifyInfo() {//获取用户验证码信息

@@ -33,15 +33,15 @@
 			},
 			refresh(){ //页面刷新存储当前路由地址
 				let now_path =  location.hash.slice(1); 
-				 this.$store.commit('change_page',now_path);
+				this.$store.commit('change_page',now_path);
 			}
 		},
 		computed:{
 			footer_nav(){
-				return this.$store.state.footer_store.footer_nav;
+				return this.$store.state.footer_nav;
 			},
 			now_path(){
-				return this.$store.state.footer_store.now_page_path;
+				return this.$store.state.now_page_path;
 			}
 		}
 	}

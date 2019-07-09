@@ -8,12 +8,12 @@
     <div class="recharge_main">
       <div class="recharge_account">
         <div>
-          <h3>邮币资产</h3>
-          <p>5555555</p>
+          <h3>{{user_asset['2'].wallet_name}}</h3>
+          <p>{{user_asset['2'].money}}</p>
         </div>
         <div>
-          <h3>可用积分</h3>
-          <p>5555555</p>
+         <h3>{{user_asset['4'].wallet_name}}</h3>
+          <p>{{user_asset['4'].money}}</p>
         </div>
       </div>
 
@@ -21,21 +21,20 @@
         <p>充值方式:微信充值</p>
         <div class="payment_way_list">
           <ul>
-            <li v-for="(item,index) in 3" :key="index">
+            <li v-for="(item,index) in reacharge_way" :key="index">
               <div class="payment_img" @click="paymentTab(index)">
-                <img src="../../assets/tabImg/2019_a030_33.png" alt />
-                <div :class="index == recharge_way ? 'payment_icon' : 'hidden_payment_icon'">
+                <img :src="item.src" alt />
+                <div :class="index == recharge_way_index ? 'payment_icon' : 'hidden_payment_icon'">
                   <img src="@/assets/tabImg/2019_a030_36.png" alt />
                 </div>
               </div>
-              <p>微信充值</p>
+              <p>{{item.title}}</p>
             </li>
           </ul>
         </div>
       </div>
 
       <div class="convert_box">
-        <p>选择兑换象素的数量:</p>
         <div class="convert_box_list">
           <ul>
             <li
@@ -64,16 +63,22 @@ export default {
   name: "recharge",
   data() {
     return {
+      reacharge_way:[{id:0,src:require('@/assets/tabImg/2019_a030_33.png'),title:'微信'},{id:1,src:require('@/assets/tabImg/2019_a030_34.png'),title:'支付宝'},{id:2,src:require('@/assets/tabImg/2019_a030_35.png'),title:'余额'}],
       nav_right_color: "#CF1E81", //导航栏右侧字体颜色
       nav_route_path: "/personCenter/assetDetails", //导航栏右侧路由地址
-      recharge_way: 0, //充值方式索引
+      recharge_way_index: 0, //充值方式索引
       con_actived: 0,//兑换方案索引
-      rechargeCofig:[] //充值配置方案
+      rechargeCofig:[],//充值配置方案
+      user_asset:{} //用户资产
     };
+  },
+  created(){
+    this.user_asset = JSON.parse(sessionStorage.getItem("user_asset"));
+    console.log(this.user_asset);
+    this.fetchRecharge();
   },
   mounted() {
     this.$refs.recharge.addEventListener("scroll", this.pageScroll, false); //监听页面滚动
-    this.fetchRecharge();
   },
   methods: {
     fetchRecharge() {
@@ -103,7 +108,7 @@ export default {
     },
     paymentTab(index) {
       //支付方式切换
-      this.recharge_way = index;
+      this.recharge_way_index = index;
     }
   },
   components: {
@@ -173,10 +178,12 @@ export default {
           right: 0;
           height: 30%;
           width: 20px;
+          overflow:hidden;
         }
       }
-      p {
+      p{
         margin: 10px 0;
+        text-align:center;
       }
     }
   }

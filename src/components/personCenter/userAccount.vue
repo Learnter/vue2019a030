@@ -40,23 +40,21 @@
               <p>选择到账方式:</p>
               <div class="withdrawal_way_list">
                   <ul>
-                      <li v-for="(item,index) in 2" :key="index" @click="withdrawal_way_Tab(index)">
+                      <li v-for="(item,index) in withdrawal_way_list" :key="index" @click="withdrawal_way_Tab(index)">
                           <div class="withdrawal_Img">
-                              <img src="@/assets/tabImg/2019_a030_33.png" alt="">
+                              <img :src="item.src" alt="支付方式">
                           </div>
                           <span>微信支付</span>
-                          <div :class="index == sel_withdrawal_way ? 'withdrawal_icon' : 'hidden_withdrawal_icon'">
+                          <div :class="index == sel_withdrawal_way_index ? 'withdrawal_icon' : 'hidden_withdrawal_icon'">
                               <img src="@/assets/tabImg/2019_a030_36.png" alt="">
                           </div>
                       </li>
                   </ul>
               </div>
           </div>
-
           <div class="withdrawalBtn">
               <button>确认提现</button>
           </div>
-          
         </div>
     </section>
 </template>
@@ -67,7 +65,8 @@ export default {
     data(){
         return{
             sel_withdrawal_money:0, //提现的金额索引
-            sel_withdrawal_way:0 //提现方式索引
+            sel_withdrawal_way_index:0, //提现方式索引
+            withdrawal_way_list:[{id:0,src:require('@/assets/tabImg/2019_a030_33.png'),title:'微信支付'},{id:1,src:require('@/assets/tabImg/2019_a030_34.png'),title:'支付宝支付'}]
         }
     },
     mounted(){
@@ -94,7 +93,7 @@ export default {
             this.sel_withdrawal_money = index;
         },
          withdrawal_way_Tab(index){ //提现方式切换
-            this.sel_withdrawal_way = index;
+            this.sel_withdrawal_way_index = index;
         },
 
     },

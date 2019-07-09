@@ -14,16 +14,16 @@
         <div class="user_content">
           <div class="userInfo uni-flex">
             <div class="user_img">
-              <img src="@/assets/tabImg/2019_a030_19.png" />
+              <img :src="user_info.head" />
             </div>
             <div class="user_detail">
               <div class="user_name uni-flex">
-                <p>钟馗收妖、</p>
+                <p>{{user_info.nickname}}</p>
                 <div class="user_tag">
                   <img src="@/assets/tabImg/2019_a030_20.png" />
                 </div>
               </div>
-              <p class="user_account">ID:153446</p>
+              <p class="user_account">ID:{{user_info.account}}</p>
             </div>
           </div>
 
@@ -80,34 +80,34 @@
         </div>
 
         <div class="user_money uni-flex">
-          <div class="uni_watch_item" v-if="accountData['1']">
+          <div class="uni_watch_item" v-if="accountData['1']" @click="$router.push({path:'/personCenter/assetDetails',query:{mid:1}})">
             <p>{{accountData['1']['wallet_name']}}</p>
             <p>{{accountData['1']['money']}}</p>
           </div>
-          <div class="uni_watch_item">
+          <div class="uni_watch_item" @click="$router.push({path:'/personCenter/assetDetails',query:{mid:1}})">
             <p>今日回馈</p>
             <p>66678789</p>
           </div>
-          <div class="uni_watch_item">
+          <div class="uni_watch_item" @click="$router.push({path:'/personCenter/assetDetails',query:{mid:1}})">
             <p>佣金</p>
             <p>66152165</p>
           </div>
-          <div class="uni_watch_item">
+          <div class="uni_watch_item" @click="$router.push({path:'/personCenter/assetDetails',query:{mid:1}})">
             <p>总收入</p>
             <p>64565</p>
           </div>
         </div>
 
         <div class="user_integral uni-flex">
-          <div class="uni_watch_item" v-if="accountData['2']">
+          <div class="uni_watch_item" v-if="accountData['2']" @click="$router.push({path:'/personCenter/assetDetails',query:{mid:2}})">
             <p>{{accountData['2']['wallet_name']}}</p>
             <p>{{accountData['2']['money']}}</p>
           </div>
-          <div class="uni_watch_item" v-if="accountData['3']">
+          <div class="uni_watch_item" v-if="accountData['3']" @click="$router.push({path:'/personCenter/assetDetails',query:{mid:3}})">
             <p>{{accountData['3']['wallet_name']}}</p>
             <p>{{accountData['3']['money']}}</p>
           </div>
-          <div class="uni_watch_item" v-if="accountData['4']">
+          <div class="uni_watch_item" v-if="accountData['4']" @click="$router.push({path:'/personCenter/assetDetails',query:{mid:4}})">
             <p>{{accountData['4']['wallet_name']}}</p>
             <p>{{accountData['4']['money']}}</p>
           </div>
@@ -127,7 +127,7 @@
           </div>
           <p>主播认证</p>
         </div>
-        <div class="user_config_item uni-flex">
+        <div class="user_config_item uni-flex" @click="$router.push('/personCenter/team')">
           <div class="user_icon config_icon">
             <img src="@/assets/tabImg/2019_a030_28.png" />
           </div>
@@ -164,19 +164,21 @@
 
 <script>
   export default {
-    name: "personCenter",
+    name:"personCenter",
     data(){
       return {
+          user_info:{},//用户信息
           statisticsData:{}, //统计数据
           accountData:{} //账号资产信息
       };
     },
     created() {
+      this.user_info = JSON.parse(sessionStorage.getItem("user")).userInfo; //获取用户信息
       this.getStatistics();
       this.fetchAccountMoney();
     },
     methods: {
-      getStatistics() { //获取统计信息
+      getStatistics(){ //获取统计信息
         let url = "user/getStatistics";
         this.$https.get(url).then(res => {
           if(res.data.code === 200 && res.data.data){
@@ -190,6 +192,7 @@
             // console.log(res);
             if( res.data.code === 200 && res.data.data){
                 this.accountData = res.data.data;
+                sessionStorage.setItem("user_asset",JSON.stringify(res.data.data)); //将用户资产存储到sessionStorage中
              }
           })
       },
@@ -280,6 +283,12 @@
     border-radius: 50%;
     margin-right: 15px;
     background: linear-gradient(to right, #B40CFF, #793DFF);
+    overflow: hidden;
+    img{
+      width:100%;
+      height:100%;
+      border-radius:50%;
+    }
   }
 
   .user_name {
@@ -297,6 +306,7 @@
 
   .user_account {
     font-size: 11px;
+    margin-top:10px;
   }
 
   .user_detail {

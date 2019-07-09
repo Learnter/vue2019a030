@@ -8,22 +8,22 @@
                 <div class="share_bgImg">  
                     <div class="share_border">
                          <div class="share_QR">
-                            <img src="../../assets/tabImg/2019_a030_43.png" alt="二维码">
+                            <img :src="$store.state.userInfo.reg_code" alt="二维码">
                          </div>
                     </div>
 
                     <p class="share_tips">长按识别图中的二维码</p>
 
                     <div class="fingerprint">
-                        <img src="../../assets/tabImg/2019_a030_46.png" alt="指纹">
+                        <img src="@/assets/tabImg/2019_a030_46.png" alt="指纹">
                     </div>
                 </div>
                 <div class="recommend">
                     <div class="recommend_img">
-                        <img src="../../assets/tabImg/2019_a030_47.png" alt="头像">
+                         <img :src="$store.state.userInfo.head" alt="头像"/>
                     </div>
                     <div class="recommend_message">
-                        <p class="recommend_name">张珊</p>
+                        <p class="recommend_name">{{this.$store.state.userInfo.nickname}}</p>
                         <p>邀请您加入[狐邮视频]</p>
                     </div>
                 </div>
@@ -108,6 +108,11 @@ export default {
                         width:60px;
                         height:60px;
                         padding:0 5px;
+                        border-radius:50%;
+                        overflow: hidden;
+                        img{
+                            border-radius:50%;
+                        }
                     }
                     .recommend_message{
                         color:white;
