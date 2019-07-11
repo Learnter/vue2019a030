@@ -84,6 +84,16 @@ export default new Router({
       path:"/personCenter/news",//新闻中心
       name:"news",
       component: resolve => require(["@/components/personCenter/news"],resolve)
+    }, 
+    {
+      path:"/personCenter/digitalAsset",//数字资产
+      name:"digitalAsset",
+      component: resolve => require(["@/components/personCenter/digitalAsset"],resolve)
+    },
+    {
+      path:"/personCenter/exchange",//邮币兑换
+      name:"exchange",
+      component: resolve => require(["@/components/personCenter/exchange"],resolve)
     },
     {
       path:"/release",//发布页面
@@ -95,7 +105,6 @@ export default new Router({
       name:"fullScreen",
       component: resolve => require(["@/components/video/fullScreen"],resolve)
     },
-   
     {
       path:"/video/reward",//打赏
       name:"reward",

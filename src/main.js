@@ -21,6 +21,14 @@ import Vant from 'vant'
 import 'vant/lib/index.css';
 Vue.use(Vant)
 
+
+
+//图片懒加载插件
+import VueLazyLoad from 'vue-lazyload'
+Vue.use(VueLazyLoad)
+
+
+
 //引用axios请求后端数据
 import https from "../src/axios/https.js";
 Vue.prototype.$https = https;

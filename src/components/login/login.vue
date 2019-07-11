@@ -52,9 +52,22 @@ export default {
       }
     };
   },
+  created(){
+     this.beforLogin();
+  },
   methods:{
+    beforLogin(){ //判断以前是否有登陆
+      let localUser = JSON.parse(localStorage.getItem("userInfo"));
+      if(localUser){
+        this.user = localUser
+        this.$toast("自动登陆中...")
+        setTimeout(()=>{
+            this.toLogin();//自动登陆
+        },1000)
+      }
+    },
     toLogin(){ //登录
-      let url = "user/login";
+     
       // /* 账号/密码非空判断*/
       // if (!(/^1[34578]\d{9}$/).test(account) ) {
       //   this.$toast("手机号码不存在!");
@@ -64,21 +77,22 @@ export default {
       //   return false;
       // }
 
+      let url = "user/login";  
       this.$https.post(url, this.user).then(res => {
-        if (res && res.data) {
-          let data = res.data;
-          if (data.code === 200) {
+        if (res.data.code == 200 && res.data.data) {
+            if(!localStorage.getItem("userInfo")){
+                localStorage.setItem("userInfo",JSON.stringify(this.user)); //将登陆信息存储到localStorage
+            }
             let userConfig = JSON.stringify(res.data.data);
             sessionStorage.setItem("user",userConfig);
             this.$toast("登录成功");
             setTimeout(() => {
               this.$router.push("/smallVideo");
             }, 1000);
-          } else {
-            this.$toast(data.msg);
+        }else{
+            this.$toast(res.data.msg);
             return false;
           }
-        }
       });
     },
     getVerifyCode(){ //获取手机验证码

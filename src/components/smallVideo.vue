@@ -26,21 +26,7 @@
           :key="index"
           @click.stop="playVideo(item.id)"
         >
-          <!-- 判断playerOptions数组中有没数据
-          <video-player
-            v-if="playerOptions.length != 0"
-            :playsinline="true"
-            class="videoStyle video-player-box"
-            ref="videoPlayer"
-            :options="playerOptions[index]"
-            @play="onPlayerPlay($event,index)"
-            @pause="onPlayerPause($event)"
-            @ended="onPlayerEnded($event)"
-          ></video-player>-->
-          <img :src="item.poster" alt="加载失败" />
-
-          <!-- 时间栏 -->
-          <!-- <p class="duration" :class="index === playBtn ? 'videoStart':'videoEnd'">03:26</p> -->
+          <img  v-lazy="item.poster" alt="加载失败" />
 
           <!-- 视频信息栏 -->
           <div class="min_item_info uni-flex">
@@ -83,7 +69,7 @@ export default {
     };
   },
   created() {
-    this.fetchVideos();
+    // this.fetchVideos();
   },
   methods: {
     //获取视频列表
@@ -92,23 +78,8 @@ export default {
       this.$https.get(url).then(res => {
         if (res.data.code === 200 && res.data.data) {
           this.videoList = res.data.data;
-          // let playerConfig = this.playerOptions; //获取视频配置对象
-          // this.videoList.map(item => {
-          //   let attr = {
-          //     muted: true, //是否开始静音
-          //     language: "en", // 语言
-          //     sources: [
-          //       {
-          //         //视频路径,类型
-          //         type: "video/mp4",
-          //         src: item.video_url
-          //       }
-          //     ],
-          //     poster: item.poster
-          //   };
-          //   playerConfig.push(attr);
-          // });
-          console.log(this.videoList);
+          this.loading = false;
+          this.finished = true;
         }
       });
     },
@@ -145,11 +116,10 @@ export default {
         });
     },
     onLoad() {
-      this.loading = false;
-      this.finished = true;
+      this.fetchVideos();
     }
   },
-  components: {}
+  components:{}
 };
 </script>
 

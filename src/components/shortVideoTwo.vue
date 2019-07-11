@@ -13,7 +13,7 @@
         finished-text="没有更多了"
         @load="onLoad"
         :immediate-check="false"
-        :offset="30"
+        :offset="100"
       >
         <ul>
           <li class="video_item" v-for="(item,index) in videosList" :key="index">
@@ -68,6 +68,7 @@ export default {
       //获取短视频列表
       let url = "video/shortVideoList";
       this.$https.get(url).then(res => {
+         console.log(res);
         if (res.data.code === 200 && res.data.data) {
           console.log(res.data);
           this.videosList = res.data.data;

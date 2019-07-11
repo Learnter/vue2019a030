@@ -177,9 +177,9 @@
       this.getStatistics();
       this.fetchAccountMoney();
     },
-    methods: {
+    methods: { 
       getStatistics(){ //获取统计信息
-        let url = "user/getStatistics";
+        let url = "user/getStatistics"; 
         this.$https.get(url).then(res => {
           if(res.data.code === 200 && res.data.data){
              this.statisticsData = res.data.data;
@@ -208,10 +208,10 @@
         this.$router.push("/personCenter/userAccount");
       },
       numberAssets() { //查看资产
-        console.log("我要看的资产");
+        this.$router.push("/personCenter/digitalAsset");
       },
       convert() { //邮票兑换
-        console.log("我要兑换邮票");
+        this.$router.push("/personCenter/exchange");
       },
       inviteFriends() { //邀请好友
         this.$router.push("/personCenter/share");
@@ -222,6 +222,7 @@
           message: '您确定要退出吗'
         }).then(()=>{
             sessionStorage.removeItem('user');//移除缓存信息
+            localStorage.removeItem("userInfo"); //移除永久缓存信息
             this.$router.push('/login'); //跳转到登录页面
         }).catch(()=>{
            return ;

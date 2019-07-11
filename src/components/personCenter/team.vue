@@ -6,11 +6,11 @@
     <div class="team_account">
       <div>
         <p>直推总人数</p>
-        <p class="team_number">10</p>
+        <p class="team_number">{{teamNumber.zt_num}}</p>
       </div>
       <div>
         <p>团队总人数</p>
-        <p class="team_number">10</p>
+        <p class="team_number">{{teamNumber.team_num}}</p>
       </div>
     </div>
 
@@ -20,29 +20,23 @@
         :finished="finished"
         finished-text="没有更多了"
         @load="onLoad"
-        :immediate-check="false"
-        :offset="30"
+        :offset="100"
       >
         <div>
           <ul class="team_user">
-            <li class="team_user_one" v-for="(item,index) in 10" :key="index">
+            <li class="team_user_one" v-for="(item,index) in teamList" :key="index">
               <div class="team_user_one_left">
                 <div class="team_user_img">
-                  <img
-                    src="@/assets/tabImg/2019_a030_1.png"
-                    alt="头像"
-                    style="width:50px;hei
-                    50px"
-                  />
+                  <img :src="item.avatar" />
                 </div>
                 <div>
                   <P class="user_info">
-                    <span>姓名:</span>毛泽东
-                    <span class="info_last" style="color:#5077F8">(4)</span>
+                    <span>姓名:</span>{{item.username}}
+                    <span class="info_last" style="color:#5077F8">({{item.zt_num}})</span>
                   </P>
                   <P class="user_info">
                     <span>ID:</span>8
-                    <span class="info_last">账号:</span>18888555
+                    <span class="info_last">账号:</span>{{item.account}}
                   </P>
                 </div>
               </div>
@@ -53,36 +47,6 @@
           </ul>
         </div>
       </van-list>
-
-      <!-- <div>
-        <ul class="team_user">
-          <li class="team_user_one" v-for="(item,index) in 10" :key="index">
-            <div class="team_user_one_left">
-              <div class="team_user_img">
-                <img
-                  src="@/assets/tabImg/2019_a030_1.png"
-                  alt="头像"
-                  style="width:50px;hei
-                    50px"
-                />
-              </div>
-              <div>
-                <P class="user_info">
-                  <span>姓名:</span>毛泽东
-                  <span class="info_last" style="color:#5077F8">(4)</span>
-                </P>
-                <P class="user_info">
-                  <span>ID:</span>8
-                  <span class="info_last">账号:</span>18888555
-                </P>
-              </div>
-            </div>
-            <div class="right_arrows">
-              <img src="@/assets/tabImg/zpzpwz_47.png" alt="箭头" />
-            </div>
-          </li>
-        </ul>
-      </div>-->
     </div>
   </section>
 </template>
@@ -90,33 +54,48 @@
 import returnNav from "@/components/common/returnNav";
 export default {
   name: "team",
-  data() {
+  data(){
     return {
       loading: false,
-      finished: false
+      finished: false,
+      teamConfig:{
+        page:1,
+        row:10,
+        user_id:''
+      },//获取条件
+      teamNumber:{},//团队人数
+      teamList:{} //团队列表
     };
   },
-  mounted() {},
-  methods: {
-    onLoad() {
-      //滚动加载
-      // this.requrstConfig.page++;
-      // let url = "money/getMoneyLogList";
-      // this.$https.get(url, this.requrstConfig).then(res => {
-      //   if (res.data.code === 200 && res.data.data) {
-      //     let newData = res.data.data;
-      //     newData.forEach((item) => {
-      //       this.assetList.push(item); //新增数据
-      //     });
-      //     this.loading = false; //加载完成后,设置为false
-      //   } else {
-      //     this.loading = false;
-      //     this.finished = true; //没数据后,设置为true
-      //   }
-      //   console.log(this.assetList);
-      // });
-      this.loading = false;
-      this.finished = true;
+ created(){
+   //获取用户的id;
+   this.teamConfig.user_id = JSON.parse(sessionStorage.getItem("user")).userInfo.user_id;
+   this.fetchTeamInfo();
+ },
+  methods:{
+    fetchTeamInfo(){ //获取团队人数
+        let url = "user/getTeamNum";
+        this.$https.get(url).then(res => {
+           if(res.data.code === 200 && res.data.data){
+              this.teamNumber = res.data.data;
+           }
+        })
+    },
+    fetchTeamList(){ //获取团队列表
+        let url = "user/getTeamList";
+        this.$https.get(url,this.teamConfig).then(res => {
+           if(res.data.code === 200 && res.data.data.length > 0){
+              this.teamList = res.data.data;
+              this.teamConfig.page++;
+              this.loading = false;
+           }else{
+              this.loading = false;
+              this.finished = true;
+           }
+        })
+    },
+    onLoad(){
+      this.fetchTeamList();
     }
   },
   components: {
