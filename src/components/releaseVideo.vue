@@ -1,27 +1,60 @@
 <template>
   <section class="release">
-    <return-nav style="background:#10101A" path="/smallVideo">
-      <template v-slot:middle>输入连接</template>
-      <template v-slot:right>下一步</template>
-    </return-nav>
+
+    <van-nav-bar  title="输入链接"  right-text="下一步" left-arrow  @click-left="$router.go(-1)" @click-right="onClickRight"/>
     <div class="release_main">
+
+      <div class="upload">
+          <div class="upload_way">
+              <img src="@/assets/uploadImg/2019_a030_59.png">
+              <p>拍摄</p>
+          </div>
+          <div class="upload_way">
+              <img src="@/assets/uploadImg/2019_a030_58.png">
+              <p>上传</p>
+          </div>
+          <div class="upload_way">
+              <img src="@/assets/uploadImg/2019_a030_57.png">
+              <p>站外链接</p>
+          </div>
+      </div>
+
       <div class="release_search">
-        <input type="text" placeholder="长按粘贴外站播放页链接" />
+        <input
+          v-model="address"
+          type="text"
+          placeholder="长按粘贴外站播放页链接"
+          autofocus
+        />
       </div>
       <div class="release_tips">
-        <P>1.打开外站视频播放页,点击分享按钮</P>
-        <P>2.点击分享按钮上的复制链接按钮</P>
-        <P>3.把剪贴板上的链接复制到上方输入框</P>
+        <div class="release_tip_title">
+            <P>1.打开外站视频播放页,点击分享按钮</P>
+            <P>2.点击分享按钮上的复制链接按钮</P>
+            <P>3.把剪贴板上的链接复制到上方输入框</P>
+        </div>
       </div>
       <div class="outStation">
         <h3>支持外站</h3>
         <div>
           <ul class="outStation_items">
-            <li v-for="(item,index) in 6" :key="index">
+            <li>
               <div class="outStation_icon">
-                <img src="../assets/tabImg/2019_a030_10.png" alt="加载失败" />
+                <img src="@/assets/uploadImg/2019_a030_56.png" alt="加载失败" />
               </div>
               <p>抖音</p>
+            </li>
+            <li>
+              <div class="outStation_icon">
+                <img src="@/assets/uploadImg/2019_a030_55.png" alt="加载失败" />
+              </div>
+              <p>火山小视频</p>
+            </li>
+            <li>
+              <div class="outStation_icon">
+                <img src="@/assets/uploadImg/2019_a030_54.png" alt="加载失败" />
+              </div>
+              <p>快手</p>
             </li>
           </ul>
         </div>
@@ -30,18 +63,81 @@
   </section>
 </template>
 <script>
-import returnNav from "@/components/common/returnNav";
 export default {
   name: "release",
   data() {
-    return {};
+    return {
+      uploadType:"",//上传视频类型
+      address:"",//外链接地址
+    };
   },
-  components: {
-    returnNav
+  methods: {
+    onClickRight() { //点击下一步
+      if(this.address.trim().length !== 0 && /(http|https):\/\/([\w.]+\/?)\S*/.test(this.address)) {
+        let url;
+        let data = {
+          url: this.address
+        };
+        this.$https.post(url,data).then(res => {
+            if(res.data.code === 200 && res.data.data){
+              if(res.data.data.length === 0 || res.data.data.video_url.length === 0){
+                this.$toast({
+                  className:'parseFail',
+                  message:"视频解析失败!",
+                  duration:3000
+                });
+                return false;
+              }else{
+                let videoInfo = res.data.data; //获取解析成功后的视频信息
+                this.$toast.success({
+                  className:'parseSuccess',
+                  message:"视频解析成功"
+                });
+                setTimeout(()=>{
+                    this.$router.push({path:'/video/parseVideo',query:{video:JSON.stringify(videoInfo)}})
+                },3000)
+                
+              }
+            }else{
+               this.$toast({
+                  className:'parseFail',
+                  message:res.data.msg,
+                  duration:3000
+                });
+            }
+        });
+      }else{
+        this.$toast({
+          className:'parseFail',
+          message:"请正确输入解析地址!",
+          duration:3000
+        });
+      }
+    }
   }
 };
 </script>
 <style lang="scss">
+
+//解析失败样式
+.parseFail{ 
+  background:red;
+  color:#ffffff;
+}
+
+//解析成功样式
+.parseSuccess{
+  background:green;
+  color:#ffffff;
+}
+
+.van-nav-bar{
+  background-color:transparent !important;
+.van-nav-bar__title{
+  color:#ffffff;
+  }
+}
+
 .release {
   position: fixed;
   left: 0;
@@ -56,46 +152,69 @@ export default {
     width: 100%;
     bottom: 0;
     box-sizing: border-box;
-    padding: 15px 10px 0;
+    padding: 0 10px;
+    .upload{
+      display:flex;
+      justify-content:space-around;
+      align-items:center;
+      margin-bottom:30px;
+      letter-spacing:2px;
+      .upload_way{
+        color:#ffffff;
+        font-size:15px;
+        img{
+          width:50px;
+          height:50px;
+          margin-bottom:10px;
+        }
+      }
+    }
     .release_search {
-      padding: 6px 20px;
+      padding:3px 20px;
       background: #5b5964;
       border-radius: 15px;
       input {
-        width: 100%;
+        width:100%;
         background: #5b5964;
         border: none;
         color: #ffffff;
         &::-webkit-input-placeholder {
           color: #e8eaed;
           text-align: center;
-          letter-spacing: 2px;
-          font-size: 14px;
+          letter-spacing:4px;
+          font-size: 12px;
         }
       }
     }
     .release_tips {
-      padding: 40px 30px;
-      text-align: left;
+      padding:30px;
       color: #e8eaed;
-      font-size: 15px;
-      p {
-        margin-bottom: 10px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+      .release_tip_title{
+        margin:auto;
+        width:80%;
+        p{
+          font-size:14px;
+          text-align:left;
+          line-height: 24px;
+          margin-bottom: 15px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
       }
     }
     .outStation {
       text-align: center;
       color: #e8eaed;
-      h3{
-          margin:15px auto;
-          font-size:16px;
+      letter-spacing:2px;
+      h3 {
+        margin-bottom:15px;
+        font-size:15px;
       }
       .outStation_items {
         display: flex;
         flex-wrap: wrap;
+        justify-content:center;
         li {
           width: 25%;
           display: flex;
@@ -103,14 +222,14 @@ export default {
           align-items: center;
           margin-bottom: 15px;
           .outStation_icon {
-            width: 50px;
-            height: 50px;
-            margin-bottom:5px;
-            border-radius:50%;
+            width: 40px;
+            height: 40px;
+            margin-bottom: 15px;
+            border-radius: 50%;
           }
-          p{
-              font-size:14px;
-              color:#5077F8;
+          p {
+            font-size: 12px;
+            color: #ffffff;
           }
         }
       }

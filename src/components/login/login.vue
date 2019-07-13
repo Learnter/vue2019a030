@@ -91,6 +91,7 @@ export default {
             }, 1000);
         }else{
             this.$toast(res.data.msg);
+            localStorage.removeItem("userInfo"); //报错移除缓存信息,重新输入账号、密码登录;
             return false;
           }
       });

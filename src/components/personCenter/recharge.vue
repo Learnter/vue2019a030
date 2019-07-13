@@ -12,19 +12,22 @@
           <p>{{user_asset['2'].money}}</p>
         </div>
         <div>
-         <h3>{{user_asset['4'].wallet_name}}</h3>
+          <h3>{{user_asset['4'].wallet_name}}</h3>
           <p>{{user_asset['4'].money}}</p>
         </div>
       </div>
 
       <div class="payment_way">
-        <p>充值方式:微信充值</p>
+        <p>
+          充值方式&nbsp;:&nbsp;
+          <span style="color:#00AAEE;font-weight:700">{{reacharge_way_title}}</span>
+        </p>
         <div class="payment_way_list">
           <ul>
             <li v-for="(item,index) in reacharge_way" :key="index">
-              <div class="payment_img" @click="paymentTab(index)">
+              <div class="payment_img" @click="paymentTab(item,index)">
                 <img :src="item.src" alt />
-                <div :class="index == recharge_way_index ? 'payment_icon' : 'hidden_payment_icon'">
+                <div :class="reacharge_type == item.type ? 'payment_icon' : 'hidden_payment_icon'">
                   <img src="@/assets/tabImg/2019_a030_36.png" alt />
                 </div>
               </div>
@@ -52,7 +55,7 @@
       </div>
 
       <div class="rechargeBtn">
-        <button>立即充值</button>
+        <button @click="rechargeBtn">立即充值</button>
       </div>
     </div>
   </section>
@@ -63,10 +66,11 @@ export default {
   name: "recharge",
   data() {
     return {
-      reacharge_way:[{id:0,src:require('@/assets/tabImg/2019_a030_33.png'),title:'微信'},{id:1,src:require('@/assets/tabImg/2019_a030_34.png'),title:'支付宝'},{id:2,src:require('@/assets/tabImg/2019_a030_35.png'),title:'余额'}],
+      reacharge_way_title:"微信充值",//支付标题
+      reacharge_type:"weixin",//支付类型
+      reacharge_way:[{id:0,src:require('@/assets/tabImg/2019_a030_33.png'),title:'微信',type:'weixin'},{id:1,src:require('@/assets/tabImg/2019_a030_34.png'),title:'支付宝',type:"alipay"}],
       nav_right_color: "#CF1E81", //导航栏右侧字体颜色
       nav_route_path: "/personCenter/assetDetails", //导航栏右侧路由地址
-      recharge_way_index: 0, //充值方式索引
       con_actived: 0,//兑换方案索引
       rechargeCofig:[],//充值配置方案
       user_asset:{} //用户资产
@@ -74,7 +78,6 @@ export default {
   },
   created(){
     this.user_asset = JSON.parse(sessionStorage.getItem("user_asset"));
-    console.log(this.user_asset);
     this.fetchRecharge();
   },
   mounted() {
@@ -106,9 +109,39 @@ export default {
       //兑换方案切换
       this.con_actived = index;
     },
-    paymentTab(index) {
+    paymentTab(item,index) {
       //支付方式切换
-      this.recharge_way_index = index;
+      this.reacharge_way_title = item.title;
+      this.reacharge_type = item.type;
+    },
+    rechargeBtn(){ //点击充值
+      let url = "recharge/submitRecharge";
+      let data = {
+        pay_type:this.reacharge_type,
+        id:this.rechargeCofig[this.con_actived].id
+    }
+     this.$https.post(url,data).then(res => {
+
+         if(res.data.code === 200 && res.data.data){
+
+           let originUrl = location.origin+"/#/me"; //获取支付成功跳转的地址
+
+          var base64Url = this.base64EncodeUnicode(originUrl); //将地址转化为base64编码格式
+
+          let payUrl = res.data.data.pay_url+"?return_url="+base64Url; //支付的链接地址,成功的回调页面url
+
+           window.open(payUrl,"_self"); //打开支付窗口
+        }
+     })
+    },
+   base64EncodeUnicode(str) { //base64编码转化 字符串转base64编码
+   
+    return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+
+        return String.fromCharCode('0x' + p1);
+
+       }));
+
     }
   },
   components: {
@@ -164,26 +197,28 @@ export default {
   .payment_way_list {
     ul {
       display: flex;
-      justify-content: space-between;
-      padding: 15px 30px;
-      .payment_img {
-        position: relative;
-        width: 60px;
-        height: 60px;
-        margin: auto;
-        overflow: hidden;
-        .payment_icon {
-          position: absolute;
-          bottom: 0;
-          right: 0;
-          height: 30%;
-          width: 20px;
-          overflow:hidden;
+      justify-content: flex-start;
+      li {
+        padding: 15px 15px 0;
+        .payment_img {
+          position: relative;
+          width: 60px;
+          height: 60px;
+          margin: auto;
+          overflow: hidden;
+          .payment_icon {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            height: 30%;
+            width: 20px;
+            overflow: hidden;
+          }
         }
-      }
-      p{
-        margin: 10px 0;
-        text-align:center;
+        p {
+          margin: 10px 0;
+          text-align: center;
+        }
       }
     }
   }

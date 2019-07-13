@@ -46,7 +46,8 @@ const store = new Vuex.Store({
 		path:"/me"
     }	
 		],
-		now_page_path:"/smallVideo"
+		now_page_path:"/smallVideo",
+		uploadType:"" //上传视频的类型
 	},
 	mutations:{
 		change_nav_list(state,data){ 
@@ -54,6 +55,9 @@ const store = new Vuex.Store({
 		},
 		change_page(state,path){ //改变当前路径
 			state.now_page_path = path;
+		},
+		change_uploadType(state,type){ //改变视频类型,区分为小视频、短视频
+		   state.uploadType = type;
 		}
 	},
 	actions:{

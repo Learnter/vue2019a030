@@ -214,7 +214,8 @@
         this.$router.push("/personCenter/exchange");
       },
       inviteFriends() { //邀请好友
-        this.$router.push("/personCenter/share");
+        // this.$router.push("/personCenter/share");
+        this.$toast("接口尚未完善");
       },
       exit(){ //用户退出
         this.$dialog.confirm({

@@ -12,13 +12,46 @@
         :finished="finished"
         finished-text="没有更多了"
         @load="onLoad"
-        :immediate-check="false"
         :offset="100"
       >
         <ul>
-          <li class="video_item" v-for="(item,index) in videosList" :key="index">
+          <li class="video_item" v-for="(vItem,vIndex) in videosList" :key="vIndex">
             <div class="video_content">
-              <img src="@/assets/tabImg/2019_a030_4.png" alt />
+
+              <div class="video_container" style="width:100%;height:200px">
+            <!--video属性
+                          webkit-playsinline ios 小窗播放，使视频不脱离文本流，安卓则无效
+                          微信内置x5内核，
+                          x5-video-player-type="h5" 启用H5播放器,是wechat安卓版特性，添加此属性，微信浏览器会自动将视频置为全屏
+                          x5-video-player-fullscreen="true" 全屏设置，设置为 true 是防止横屏
+                          x5-video-orientation 控制横竖屏 landscape 横屏，portrain竖屏； 默认portrain
+                          x5-playsinline="" 使安卓实现h5同层播放，实现与ios同样效果，但兼容部分机型
+                          poster：封面
+                          src：播放地址
+            -->
+            <video
+              class="video_box"
+              width="100%"
+              height="100%"
+              webkit-playsinline="true"
+              x5-playsinline
+              x5-video-player-type="h5"
+              playsinline
+              preload="auto"
+              :poster="vItem.poster"
+              :src="vItem.video_url"
+              :playOrPause="playOrPause"
+              x-webkit-airplay="allow"
+              x5-video-orientation="landscape"
+              @click="pauseVideo"
+              @ended="onPlayerEnded($event)"
+            ></video>
+             <van-icon name="play-circle" v-show="isVideoShow" class="play" @click="playVideo(vItem,vIndex)" />
+            <!-- 播放暂停按钮 -->
+            <!-- <img v-show="iconPlayShow" class="icon_play" @click="playvideo" src="/video/icon_play.png" /> -->
+            <van-icon name="pause-circle" v-show="iconPlayShow" class="icon_play" @click="playVideo(vItem,vIndex)" />
+          </div>
+
               <div class="video_title">
                 <van-tag round type="danger" style="font-weight:400">热播</van-tag>
                 <span>市委书记和市长正在食堂吃饭,员工竟然跳在桌子上大喊两个人的名字</span>
@@ -27,19 +60,19 @@
             <div class="video_info">
               <div class="video_info_left">
                 <div class="video_info_img">
-                  <img src="@/assets/tabImg/2019_a030_4.png" alt />
+                  <img :src="vItem.avatar" alt />
                 </div>
                 <div class="video_info_title">
                   <h3>
-                    {{item.title}}
+                    {{vItem.title}}
                     <span style="color:red">+关注</span>
                   </h3>
                   <p>天津初一文化传媒有限公司</p>
                 </div>
               </div>
               <div class="video_info_icons">
-                <van-icon name="thumb-circle-o" :info="item.praise_num" />
-                <van-icon name="chat-o" :info="item.collect_num" />
+                <van-icon name="thumb-circle-o" :info="vItem.praise_num" />
+                <van-icon name="chat-o" :info="vItem.collect_num" />
                 <van-icon name="ellipsis" />
               </div>
             </div>
@@ -52,8 +85,16 @@
 <script>
 export default {
   name: "shortVideoTwo",
-  data() {
+  data(){
+    let u = navigator.userAgent;
     return {
+      current: 0, //当前播放视频索引
+      video_show_id:'',//当前播放视频Id
+      isVideoShow: true, //是否显示播放按钮
+      playOrPause: true,
+      iconPlayShow: false,
+      isAndroid: u.indexOf("Android") > -1 || u.indexOf("Adr") > -1, // android终端
+      isiOS: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), // ios终端
       search_text: "",
       loading: false,
       finished: false,
@@ -61,31 +102,115 @@ export default {
     };
   },
   created() {
-    this.fetchVideoList();
+
   },
   methods: {
     fetchVideoList() {
       //获取短视频列表
       let url = "video/shortVideoList";
       this.$https.get(url).then(res => {
-         console.log(res);
         if (res.data.code === 200 && res.data.data) {
-          console.log(res.data);
+          // console.log(res.data);
           this.videosList = res.data.data;
+          this.loading = false;
+          this.finished = true;
         }
       });
+    },
+    playVideo(obj,index) {
+      console.log("点击播放按钮........");
+      this.current = index;
+      this.video_show_id = obj.id;
+
+      let video = document.querySelectorAll("video")[this.current];
+      console.log("playvideo：" + this.current);
+
+      this.isVideoShow = false;
+      this.iconPlayShow = false;
+      video.play();
+    },
+    pauseVideo() {
+      //暂停\播放
+      let video = document.querySelectorAll("video")[this.current];
+      console.log("pauseVideo" + this.current);
+      if (this.playOrPause) {
+        video.pause();
+        this.iconPlayShow = true;
+      } else {
+        video.play();
+        this.iconPlayShow = false;
+      }
+      this.playOrPause = !this.playOrPause;
+    },
+    onPlayerEnded(player) {
+      //视频结束
+      this.isVideoShow = true;
+      this.current += this.current;
     },
     onSearch() {
       console.log("点击搜索按钮" + this.search_text);
     },
+    playvideo(){ //点击暂停、播放按钮
+
+    },
     onLoad() {
-      this.loading = false;
-      this.finished = true;
+      this.fetchVideoList();
     }
   }
 };
 </script>
 <style lang="scss">
+
+
+.video_box {
+  object-fit: fill !important;
+  z-index:999;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+}
+
+video {
+  object-position: 0 0;
+}
+
+.icon_play {
+  font-size: 50px;
+  position: absolute;
+  top: 44%;
+  right: 0;
+  left: 0;
+  bottom: auto;
+  margin: auto;
+  z-index:999;
+  height: 60px;
+  border-radius: 50%;
+  color: blueviolet;
+}
+
+.play {
+  font-size: 50px;
+  position: absolute;
+  top: 44%;
+  right: 0;
+  left: 0;
+  bottom: auto;
+  margin: auto;
+  z-index:999;
+  height: 60px;
+  border-radius: 50%;
+  color: blueviolet;
+}
+
+
+
+
+
+
+
 .shortVideoTwo {
   position: fixed;
   top: 0;
@@ -121,6 +246,7 @@ export default {
       position: relative;
       .video_title {
         position: absolute;
+        z-index:999;
         top: 10px;
         left: 10px;
         right: 10px;

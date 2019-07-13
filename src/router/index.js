@@ -101,6 +101,11 @@ export default new Router({
       component: resolve => require(["@/components/releaseVideo"],resolve)
     },
     {
+      path:"/video/parseVideo",//视频解析
+      name:"parseVideo",
+      component: resolve => require(["@/components/video/parseVideo"],resolve)
+    },
+    {
       path:"/video/fullScreen",//全屏页面
       name:"fullScreen",
       component: resolve => require(["@/components/video/fullScreen"],resolve)
