@@ -33,17 +33,20 @@
               @click="pauseVideo"
               @ended="onPlayerEnded($event)"
             ></video>
-            <!-- 封面 -->
-            <!-- <img v-show="isVideoShow" class="play" @click="playvideo" :src="item.cover" /> -->
-            <van-icon name="play-circle" v-show="isVideoShow" class="play" @click="playvideo" />
-            <!-- 播放暂停按钮 -->
-            <!-- <img v-show="iconPlayShow" class="icon_play" @click="playvideo" src="/video/icon_play.png" /> -->
-            <van-icon
-              name="pause-circle"
-              v-show="iconPlayShow"
-              class="icon_play"
-              @click="playvideo"
-            />
+
+            <div v-if="isVideoShow||iconPlayShow" class="playOrPause">
+              <!-- 封面 -->
+              <!-- <img v-show="isVideoShow" class="play" @click="playvideo" :src="item.cover" /> -->
+              <van-icon name="play-circle" v-show="isVideoShow" class="play" @click="playvideo" />
+              <!-- 播放暂停按钮 -->
+              <!-- <img v-show="iconPlayShow" class="icon_play" @click="playvideo" src="/video/icon_play.png" /> -->
+              <van-icon
+                name="pause-circle"
+                v-show="iconPlayShow"
+                class="icon_play"
+                @click="pauseVideo"
+              />
+            </div>
           </div>
 
           <!-- 顶部邮票功能 -->
@@ -162,9 +165,9 @@ export default {
       sel_gift_id:'',//选择礼物的id
       sel_gift_number:1,//选择礼物数量
       selActive:0,
-      current: 0,
+      current: 0, //当前视频索引
       isVideoShow: true,
-      playOrPause: true,
+      playOrPause: true, //播放或暂停
       video: null,
       iconPlayShow: false,
       isAndroid: u.indexOf("Android") > -1 || u.indexOf("Adr") > -1, // android终端
@@ -226,6 +229,7 @@ export default {
       video.pause();
       this.playOrPause = false;
       this.current = index;
+      console.log("滑动改变视频");
       if (this.isiOS) {
         //ios切换直接自动播放下一个
         this.isVideoShow = false;
@@ -238,7 +242,7 @@ export default {
     },
     playvideo(event) {
       let video = document.querySelectorAll("video")[this.current];
-      console.log("playvideo：" + this.current);
+      console.log("播放当前视频索引" + this.current);
       this.isVideoShow = false;
       this.iconPlayShow = false;
       video.play();
@@ -250,10 +254,11 @@ export default {
     pauseVideo() {
       //暂停\播放
       let video = document.querySelectorAll("video")[this.current];
-      console.log("pauseVideo" + this.current);
+      console.log("暂停播放当前视频索引" + this.current);
       if (this.playOrPause) {
         video.pause();
         this.iconPlayShow = true;
+        this.isVideoShow = false;
       } else {
         video.play();
         this.iconPlayShow = false;
@@ -263,7 +268,9 @@ export default {
     onPlayerEnded(player) {
       //视频结束
       this.isVideoShow = true;
-      this.current += this.current;
+      console.log("视频结束了");
+      // this.current += this.current;
+      // this.current += 1;
     },
     //复制当前链接
     copyUrl() {
@@ -359,7 +366,14 @@ video {
   object-position: 0 0;
 }
 
-.icon_play {
+.playOrPause{
+  position:absolute;
+  left:0;
+  top:0;
+  right:0;
+  bottom:0;
+  z-index:999;
+  .icon_play {
   font-size: 50px;
   position: absolute;
   top: 44%;
@@ -387,6 +401,8 @@ video {
   color: blueviolet;
 }
 
+}
+
 .platStart {
   position: absolute;
   margin: auto;
@@ -405,21 +421,16 @@ video {
   right: 0;
   display: flex;
   color: #ffffff;
-  h2 {
-    position: absolute;
-    left: -30px;
-    top: 1px;
-    background: rgba(255, 255, 255, 0.3);
-    padding-right: 3px;
-    border-radius: 5px;
-    font-size: 18px;
-  }
+  background: rgba(0, 0, 0, 0.2);
+  border-radius:10px;
+  line-height:20px;
+  padding: 0 10px;
+  font-size:14px;
   p {
-    background: rgba(0, 0, 0, 0.2);
-    padding: 0 10px;
-    border-radius: 0 10px 10px 0;
-    line-height: 20px;
-    font-size: 12px;
+    margin-left:5px;
+    line-height:20px;
+    height:100%;
+    font-size:12px;
   }
 }
 
@@ -465,19 +476,6 @@ video {
   width: 100%;
   left: 0;
   box-sizing: border-box;
-  background: -webkit-linear-gradient(
-    top,
-    rgba(0, 0, 0, 0.2),
-    rgba(0, 0, 0, 0)
-  );
-  /* Safari 5.1 - 6.0 */
-  background: -o-linear-gradient(top, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));
-  /* Opera 11.1 - 12.0 */
-  background: -moz-linear-gradient(top, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));
-  /* Firefox 3.6 - 15 */
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0));
-  /* 标准的语法 */
-
   display: flex;
   justify-content: space-between;
 
