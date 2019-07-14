@@ -3,9 +3,9 @@
     <van-search v-model="search_text" placeholder="请输入搜索关键词" show-action clearable shape="round">
       <div slot="action" @click="onSearch">搜索</div>
     </van-search>
-    <van-tabs>
+    <!--<van-tabs>
       <van-tab v-for="(item,index) in 8" :title="'推荐' + index" :key="index"></van-tab>
-    </van-tabs>
+    </van-tabs>-->
     <div class="video_main">
       <van-list
         v-model="loading"
@@ -37,6 +37,7 @@
               x5-playsinline
               x5-video-player-type="h5"
               playsinline
+              controls
               preload="auto"
               :poster="vItem.poster"
               :src="vItem.video_url"
@@ -46,12 +47,13 @@
               @click="pauseVideo"
               @ended="onPlayerEnded($event)"
             ></video>
-             <van-icon name="play-circle" v-show="isVideoShow" class="play" @click="playVideo(vItem,vIndex)" />
+            <div class="playOrPause" v-if="vItem.isPlay||vItem.isPause">
+             <van-icon name="play-circle" v-show="vItem.isPlay" class="play" @click="playVideo(vIndex)" />
             <!-- 播放暂停按钮 -->
             <!-- <img v-show="iconPlayShow" class="icon_play" @click="playvideo" src="/video/icon_play.png" /> -->
-            <van-icon name="pause-circle" v-show="iconPlayShow" class="icon_play" @click="playVideo(vItem,vIndex)" />
+            <van-icon name="pause-circle" v-show="vItem.isPause" class="icon_play" @click="pauseVideo" />
+            </div>
           </div>
-
               <div class="video_title">
                 <van-tag round type="danger" style="font-weight:400">热播</van-tag>
                 <span>市委书记和市长正在食堂吃饭,员工竟然跳在桌子上大喊两个人的名字</span>
@@ -89,10 +91,7 @@ export default {
     let u = navigator.userAgent;
     return {
       current: 0, //当前播放视频索引
-      video_show_id:'',//当前播放视频Id
-      isVideoShow: true, //是否显示播放按钮
       playOrPause: true,
-      iconPlayShow: false,
       isAndroid: u.indexOf("Android") > -1 || u.indexOf("Adr") > -1, // android终端
       isiOS: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), // ios终端
       search_text: "",
@@ -110,48 +109,54 @@ export default {
       let url = "video/shortVideoList";
       this.$https.get(url).then(res => {
         if (res.data.code === 200 && res.data.data) {
-          // console.log(res.data);
-          this.videosList = res.data.data;
+           let list = res.data.data;
+          
+          for(let i = 0 ; i < list.length ; i++){
+              list[i].isPlay = true;
+              list[i].isPause = false;
+          }
+        
+          this.videosList = list;
+
+          // console.log(this.videosList);
+
           this.loading = false;
           this.finished = true;
         }
       });
     },
-    playVideo(obj,index) {
-      console.log("点击播放按钮........");
+    playVideo(index) {
+
       this.current = index;
-      this.video_show_id = obj.id;
+
+      this.videosList[this.current].isPlay = false;
 
       let video = document.querySelectorAll("video")[this.current];
-      console.log("playvideo：" + this.current);
 
-      this.isVideoShow = false;
-      this.iconPlayShow = false;
       video.play();
     },
     pauseVideo() {
       //暂停\播放
       let video = document.querySelectorAll("video")[this.current];
-      console.log("pauseVideo" + this.current);
+
       if (this.playOrPause) {
+        
         video.pause();
-        this.iconPlayShow = true;
+        this.videosList[this.current].isPause = true;
+
+         
       } else {
         video.play();
-        this.iconPlayShow = false;
+        this.videosList[this.current].isPause = false;
       }
       this.playOrPause = !this.playOrPause;
     },
     onPlayerEnded(player) {
       //视频结束
-      this.isVideoShow = true;
-      this.current += this.current;
+      this.videosList[this.current].isPlay = true;
     },
     onSearch() {
       console.log("点击搜索按钮" + this.search_text);
-    },
-    playvideo(){ //点击暂停、播放按钮
-
     },
     onLoad() {
       this.fetchVideoList();
@@ -160,7 +165,6 @@ export default {
 };
 </script>
 <style lang="scss">
-
 
 .video_box {
   object-fit: fill !important;
@@ -177,7 +181,7 @@ video {
   object-position: 0 0;
 }
 
-.icon_play {
+/*.icon_play {
   font-size: 50px;
   position: absolute;
   top: 44%;
@@ -203,9 +207,44 @@ video {
   height: 60px;
   border-radius: 50%;
   color: blueviolet;
+}*/
+
+
+.playOrPause{
+  position:absolute;
+  left:0;
+  top:0;
+  right:0;
+  bottom:0;
+  z-index:999;
+  .icon_play {
+  font-size: 50px;
+  position: absolute;
+  top: 44%;
+  right: 0;
+  left: 0;
+  bottom: auto;
+  margin: auto;
+  z-index: 999;
+  height: 60px;
+  border-radius: 50%;
+  color: blueviolet;
 }
 
-
+.play {
+  font-size: 50px;
+  position: absolute;
+  top: 44%;
+  right: 0;
+  left: 0;
+  bottom: auto;
+  margin: auto;
+  z-index: 999;
+  height: 60px;
+  border-radius: 50%;
+  color: blueviolet;
+}
+}
 
 
 
@@ -231,7 +270,7 @@ video {
 
   .video_main {
     position: absolute;
-    top: 100px;
+    top: 54px;
     left: 0;
     width: 100%;
     bottom: 64px;
