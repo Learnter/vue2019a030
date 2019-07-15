@@ -2,18 +2,18 @@
   <div class="container_box" id="video_box">
     <div class="van_swipe">
       <!--vant van-swipe 滑动组件 -->
-      <van-swipe :show-indicators="false" @change="onChange" vertical :loop="false">
+      <van-swipe :show-indicators="false" @change="onChange" vertical :loop="false" :initial-swipe="current">
         <van-swipe-item v-for="(vItem, vIndex) in videoList" :key="vIndex" class="product_swiper">
           <div class="video_container">
             <!--video属性
-                          webkit-playsinline ios 小窗播放，使视频不脱离文本流，安卓则无效
-                          微信内置x5内核，
-                          x5-video-player-type="h5" 启用H5播放器,是wechat安卓版特性，添加此属性，微信浏览器会自动将视频置为全屏
-                          x5-video-player-fullscreen="true" 全屏设置，设置为 true 是防止横屏
-                          x5-video-orientation 控制横竖屏 landscape 横屏，portrain竖屏； 默认portrain
-                          x5-playsinline="" 使安卓实现h5同层播放，实现与ios同样效果，但兼容部分机型
-                          poster：封面
-                          src：播放地址
+                webkit-playsinline ios 小窗播放，使视频不脱离文本流，安卓则无效
+                微信内置x5内核，
+                x5-video-player-type="h5" 启用H5播放器,是wechat安卓版特性，添加此属性，微信浏览器会自动将视频置为全屏
+                x5-video-player-fullscreen="true" 全屏设置，设置为 true 是防止横屏
+                x5-video-orientation 控制横竖屏 landscape 横屏，portrain竖屏； 默认portrain
+                x5-playsinline="" 使安卓实现h5同层播放，实现与ios同样效果，但兼容部分机型
+                poster：封面
+                src：播放地址
             -->
             <video
               class="video_box"
@@ -61,6 +61,7 @@
               <img :src="vItem.avatar" />
             </div>
             <div class="tools_r_li" @click.stop="changeFollow(vItem,vIndex)">
+              <van-tag type="danger">{{likeNum}}</van-tag>
               <van-icon
                 name="youzan-shield"
                 class="iconfont icon-shoucang icon_right"
@@ -161,6 +162,7 @@ export default {
   data() {
     let u = navigator.userAgent;
     return {
+      likeNum:'',//每日点赞数
       isPresent:false,//是否赠送礼物
       sel_gift_id:'',//选择礼物的id
       sel_gift_number:1,//选择礼物数量
@@ -178,41 +180,70 @@ export default {
       giftList: [] //礼物列表
     };
   },
-  created() {
+  created(){
+    this.current =  parseInt(this.$route.query.vIndex); //获取传过来的视频索引;
     this.fetchVideos();
-    this.fetchGifts();
   },
   methods: {
-    //获取视频
-    fetchVideos() {
-      let url = "video/smallVideoList";
+    fetchVideos() { //获取数据
+      let url = "video/smallVideoList"; //获取视频列表
       this.$https.get(url).then(res => {
         if (res.data.code === 200 && res.data.data) {
           this.videoList = res.data.data;
         }
       });
-    },
-    //获取礼物
-    fetchGifts() {
-      let url = "video/giftList";
-      this.$https.get(url).then(res => {
-        if (res.data.code === 200 && res.data.data) {
+
+      let likeUrl = "user/userTodayLavePraiseNum"; //获取点赞数
+      this.$https.get(likeUrl).then(res => {
+         if(res.data.code === 200){
+            this.likeNum = res.data.data;
+         } 
+      })
+
+      let giftUrl = "video/giftList";  //获取礼物列表
+      this.$https.get(giftUrl).then(res => {
+        if(res.data.code === 200 && res.data.data) {
           this.giftList = res.data.data;
-          console.log(this.giftList);
         }
       });
     },
     //改变菜单
-    changeTab(index) {
-      this.tabIndex = index;
-    },
+    // changeTab(index) {
+    //   this.tabIndex = index;
+    // },
     //查看视频资料
-    photoBtn() {
+    photoBtn(){
       console.log("点击头像");
     },
-    //改变收藏状态
-    changeFollow(item, index) {
-      this.videoList[index].is_praise = !this.videoList[index].is_praise;
+    //点赞
+    changeFollow(item,index) {
+     let objVideo = this.videoList[index];
+     if( this.likeNum < 0){
+       this.$toast("今天点赞数已用完");
+     }else{
+
+       if(!objVideo.is_praise){
+       let url = "video/praiseVideo";
+       let data = {
+         id:item.id
+       }
+       this.$https.post(url,data).then(res => {
+          if(res.data.code === 200){
+             objVideo.is_praise = true;
+             objVideo.praise_num++;
+             this.likeNum--;
+             this.$toast("今天还剩下"+this.likeNum+"点赞");
+          }else{
+            this.$toast(res.data.msg);
+          }
+       })
+       
+     }else{
+       this.$toast("今天已点赞");
+     }
+
+     }
+
     },
     //展示分享弹窗
     changeShare() {
@@ -229,7 +260,7 @@ export default {
       video.pause();
       this.playOrPause = false;
       this.current = index;
-      console.log("滑动改变视频");
+      // console.log("滑动改变视频");
       if (this.isiOS) {
         //ios切换直接自动播放下一个
         this.isVideoShow = false;
@@ -254,7 +285,6 @@ export default {
     pauseVideo() {
       //暂停\播放
       let video = document.querySelectorAll("video")[this.current];
-      console.log("暂停播放当前视频索引" + this.current);
       if (this.playOrPause) {
         video.pause();
         this.iconPlayShow = true;
@@ -268,9 +298,6 @@ export default {
     onPlayerEnded(player) {
       //视频结束
       this.isVideoShow = true;
-      console.log("视频结束了");
-      // this.current += this.current;
-      // this.current += 1;
     },
     //复制当前链接
     copyUrl() {
@@ -289,7 +316,7 @@ export default {
       this.isPresent = true;
     },
     //切换礼物
-    toggleGift(id,){
+    toggleGift(id){
       
     },
     //赠送礼物
@@ -376,29 +403,35 @@ video {
   .icon_play {
   font-size: 50px;
   position: absolute;
-  top: 44%;
-  right: 0;
-  left: 0;
-  bottom: auto;
-  margin: auto;
-  z-index: 999;
-  height: 60px;
-  border-radius: 50%;
-  color: blueviolet;
+  // top: 44%;
+  // right: 0;
+  // left: 0;
+  // bottom: auto;
+  // margin: auto;
+  // z-index: 999;
+  // height: 60px;
+  left:50%;
+  top:50%;
+  transform:translate(-50%);
+  border-radius:50%;
+  color:rgba(0,0,0,0.5);
 }
 
 .play {
   font-size: 50px;
   position: absolute;
-  top: 44%;
-  right: 0;
-  left: 0;
-  bottom: auto;
-  margin: auto;
-  z-index: 999;
-  height: 60px;
+  left:50%;
+  top:50%;
+  transform:translate(-50%);
+  // top: 44%;
+  // right: 0;
+  // left: 0;
+  // bottom: auto;
+  // margin: auto;
+  // z-index: 999;
+  // height: 60px;
   border-radius: 50%;
-  color: blueviolet;
+  color:rgba(0,0,0,0.5);
 }
 
 }
@@ -446,11 +479,20 @@ video {
   margin-bottom: 20px;
   color: #fff;
   font-size: 14px;
+  position: relative;
+  .van-tag{
+    border-radius:50%;
+    padding:2px;
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
+  }
   img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
   }
+
 }
 
 .tools_r_li:last-child {

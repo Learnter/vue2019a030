@@ -18,6 +18,15 @@
       x-webkit-airplay="allow"
       x5-video-orientation="portrait"
     ></video>
+
+    <div class="playOrPause">
+        <van-icon
+        name="pause-circle"
+        class="icon_play"
+        @click="pauseVideo"
+      />
+    </div>
+      
     <div class="publishVideo">
       <van-cell-group>
         <van-field
@@ -39,6 +48,7 @@ export default {
   name: "parseVideo",
   data() {
     return {
+      playOrPause:true,//播放或暂停
       video_title: "", //视频标题
       video: {} //视频对象
     };
@@ -66,10 +76,10 @@ export default {
         url = "video/addSmallVideoideo";
       } else if (this.videoType == "uploadShortVideo") {
         url = "video/addShortVideo";
-      }else{
+      } else {
+        this.$toast("不清楚视频类型,请重新发布");
         return false;
       }
-
       let data = {
         title: this.video_title,
         video_url: this.video.video_url,
@@ -77,6 +87,7 @@ export default {
       };
 
       this.$https.post(url, data).then(res => {
+        console.log(res);
         if (res.data.code === 200) {
           this.$toast.success({
             message: "视频上传成功!"
@@ -86,6 +97,15 @@ export default {
           }, 2000);
         }
       });
+    },
+    pauseVideo(){ //暂停按钮
+      let video = document.querySelectorAll("video")[0];
+      if(this.playOrPause){
+         video.pause();
+      }else{
+        video.play();
+      }
+     this.playOrPause = !this.playOrPause;
     }
   }
 };
@@ -127,6 +147,24 @@ export default {
 
 video {
   object-position: 0 0;
+}
+
+.playOrPause {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
+  .icon_play {
+    font-size:60px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%);
+    border-radius: 50%;
+    color: rgba(0, 0, 0, 0.3);
+  }
 }
 
 .publishVideo {

@@ -7,19 +7,22 @@
       <van-tab v-for="(item,index) in 8" :title="'推荐' + index" :key="index"></van-tab>
     </van-tabs>-->
     <div class="video_main">
-      <van-list
-        v-model="loading"
-        :finished="finished"
-        finished-text="没有更多了"
-        @load="onLoad"
-        :offset="100"
-      >
-        <ul>
-          <li class="video_item" v-for="(vItem,vIndex) in videosList" :key="vIndex">
-            <div class="video_content">
-
-              <div class="video_container" style="width:100%;height:200px">
-            <!--video属性
+      <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+        <van-list
+          v-model="loading"
+          :finished="finished"
+          finished-text="没有更多了"
+          @load="onLoad"
+          :offset="100"
+        >
+          <ul>
+            <li class="video_item" v-for="(vItem,vIndex) in videosList" :key="vIndex">
+              <div class="video_content">
+                <div class="video_title">
+                  <span>{{vItem.title}}</span>
+                </div>
+                <div class="video_container" style="width:100%;height:200px">
+                  <!--video属性
                           webkit-playsinline ios 小窗播放，使视频不脱离文本流，安卓则无效
                           微信内置x5内核，
                           x5-video-player-type="h5" 启用H5播放器,是wechat安卓版特性，添加此属性，微信浏览器会自动将视频置为全屏
@@ -28,66 +31,73 @@
                           x5-playsinline="" 使安卓实现h5同层播放，实现与ios同样效果，但兼容部分机型
                           poster：封面
                           src：播放地址
-            -->
-            <video
-              class="video_box"
-              width="100%"
-              height="100%"
-              webkit-playsinline="true"
-              x5-playsinline
-              x5-video-player-type="h5"
-              playsinline
-              controls
-              preload="auto"
-              :poster="vItem.poster"
-              :src="vItem.video_url"
-              :playOrPause="playOrPause"
-              x-webkit-airplay="allow"
-              x5-video-orientation="landscape"
-              @click="pauseVideo"
-              @ended="onPlayerEnded($event)"
-            ></video>
-            <div class="playOrPause" v-if="vItem.isPlay||vItem.isPause">
-             <van-icon name="play-circle" v-show="vItem.isPlay" class="play" @click="playVideo(vIndex)" />
-            <!-- 播放暂停按钮 -->
-            <!-- <img v-show="iconPlayShow" class="icon_play" @click="playvideo" src="/video/icon_play.png" /> -->
-            <van-icon name="pause-circle" v-show="vItem.isPause" class="icon_play" @click="pauseVideo" />
-            </div>
-          </div>
-              <div class="video_title">
-                <van-tag round type="danger" style="font-weight:400">热播</van-tag>
-                <span>市委书记和市长正在食堂吃饭,员工竟然跳在桌子上大喊两个人的名字</span>
-              </div>
-            </div>
-            <div class="video_info">
-              <div class="video_info_left">
-                <div class="video_info_img">
-                  <img :src="vItem.avatar" alt />
-                </div>
-                <div class="video_info_title">
-                  <h3>
-                    {{vItem.title}}
-                    <span style="color:red">+关注</span>
-                  </h3>
-                  <p>天津初一文化传媒有限公司</p>
+                  -->
+                  <video
+                    class="video_box"
+                    width="100%"
+                    height="100%"
+                    webkit-playsinline="true"
+                    x5-playsinline
+                    x5-video-player-type="h5"
+                    playsinline
+                    preload="auto"
+                    :poster="vItem.poster"
+                    :src="vItem.video_url"
+                    :playOrPause="playOrPause"
+                    x-webkit-airplay="allow"
+                    x5-video-orientation="landscape"
+                    @click="pauseVideo(vIndex)"
+                    @ended="onPlayerEnded($event)"
+                  ></video>
+                  <div class="playOrPause" v-if="vItem.isPlay||vItem.isPause">
+                    <van-icon
+                      name="play-circle"
+                      v-show="vItem.isPlay"
+                      class="play"
+                      @click="playVideo(vIndex)"
+                    />
+                    <!-- 播放暂停按钮 -->
+                    <!-- <img v-show="iconPlayShow" class="icon_play" @click="playvideo" src="/video/icon_play.png" /> -->
+                    <van-icon
+                      name="pause-circle"
+                      v-show="vItem.isPause"
+                      class="icon_play"
+                      @click="pauseVideo(vIndex)"
+                    />
+                  </div>
                 </div>
               </div>
-              <div class="video_info_icons">
-                <van-icon name="thumb-circle-o" :info="vItem.praise_num" />
-                <van-icon name="chat-o" :info="vItem.collect_num" />
-                <van-icon name="ellipsis" />
+              <div class="video_info">
+                <div class="video_info_left">
+                  <div class="video_info_img">
+                    <img :src="vItem.avatar" alt />
+                  </div>
+                  <van-tag color="#f2826a" class="video_info_title">+关注</van-tag>
+                </div>
+                <div class="video_info_icons">
+                  <!-- <van-icon
+                    name="thumb-circle-o"
+                    :class="vItem.is_praise?'follow_active':''"
+                    :info="vItem.praise_num"
+                    @click="shortLike(vItem,vIndex)"
+                  />
+                  <van-icon name="chat-o" :info="vItem.collect_num" />
+                  <van-icon name="ellipsis" /> -->
+                  <p>{{vItem.collect_num}}</p>
+                  <van-icon :class="vItem.is_collect == true ? 'follow_active':''"  name="like" @click.stop="likeBtn(vItem,vIndex)"/>
+                </div>
               </div>
-            </div>
-          </li>
-        </ul>
-      </van-list>
+            </li>
+          </ul>
+        </van-list>
+      </van-pull-refresh>
     </div>
   </section>
 </template>
 <script>
 export default {
   name: "shortVideoTwo",
-  data(){
+  data() {
     let u = navigator.userAgent;
     return {
       current: 0, //当前播放视频索引
@@ -97,63 +107,111 @@ export default {
       search_text: "",
       loading: false,
       finished: false,
+      isLoading: false,
       videosList: []
     };
   },
-  created() {
-
-  },
+  created() {},
   methods: {
     fetchVideoList() {
       //获取短视频列表
       let url = "video/shortVideoList";
       this.$https.get(url).then(res => {
         if (res.data.code === 200 && res.data.data) {
-           let list = res.data.data;
-          
-          for(let i = 0 ; i < list.length ; i++){
-              list[i].isPlay = true;
-              list[i].isPause = false;
+          let list = res.data.data;
+          for (let i = 0; i < list.length; i++) {
+            list[i].isPlay = true;
+            list[i].isPause = false;
           }
-        
           this.videosList = list;
-
-          // console.log(this.videosList);
-
           this.loading = false;
           this.finished = true;
         }
       });
     },
-    playVideo(index) {
+    playVideo(index) { //点击播放按钮
 
       this.current = index;
 
-      this.videosList[this.current].isPlay = false;
-
       let video = document.querySelectorAll("video")[this.current];
+ 
+      this.otherVideoPause(index);
+    
+      this.videosList[this.current].isPlay = false; //隐藏播放按钮
 
       video.play();
     },
-    pauseVideo() {
-      //暂停\播放
+    pauseVideo(index) { //暂停\播放
+      this.current = index;
       let video = document.querySelectorAll("video")[this.current];
-
       if (this.playOrPause) {
-        
         video.pause();
-        this.videosList[this.current].isPause = true;
-
-         
+        this.videosList[this.current].isPause = true; //显示暂停按钮
       } else {
+        this.otherVideoPause(index);
         video.play();
-        this.videosList[this.current].isPause = false;
+        this.videosList[this.current].isPause = false; //隐藏暂停按钮
       }
       this.playOrPause = !this.playOrPause;
     },
-    onPlayerEnded(player) {
-      //视频结束
-      this.videosList[this.current].isPlay = true;
+    otherVideoPause(index){ //暂停其他视频播放
+        let allVideo = document.querySelectorAll("video");
+        for(let i = 0; i < allVideo.length ;i++){
+            if(index === i){
+              continue;
+            }else{
+              allVideo[i].pause();
+            }
+        }
+    },
+    onPlayerEnded(player) { //视频结束
+      this.videosList[this.current].isPlay = true; //显示播放按钮
+    },
+    onRefresh() { //下拉刷新
+      setTimeout(() => {
+        this.$toast("刷新成功");
+        this.isLoading = false;
+      }, 500);
+       //下拉重新获取数据
+    },
+    // shortLike(item, val) { //短视频点赞
+    //   let objVideo = this.videosList[val];
+    //   if (!objVideo.is_praise) {
+    //     let url = "video/praiseVideo";
+    //     let data = {
+    //       id:item.id
+    //     };
+    //     this.$https.post(url, data).then(res => {
+    //       if (res.data.code === 200) {
+    //         objVideo.is_praise = true;
+    //         objVideo.praise_num++;
+    //       } else {
+    //         this.$toast(res.data.msg);
+    //       }
+    //     });
+    //   } else {
+    //     this.$toast("今天已点赞");
+    //   }
+    // },
+    //收藏按钮
+    likeBtn(item,index) {
+        let url = "video/collectVideo";
+        let data = { id:item.id };
+        this.$https.post(url,data).then(res => {
+          if (res.data.code === 200) {
+            if( this.videosList[index].is_collect == true){
+              this.$toast("已取消收藏");
+              this.videosList[index].collect_num--;
+              this.videosList[index].is_collect = false;
+            }else{
+              this.$toast("已收藏");
+              this.videosList[index].collect_num++;
+              this.videosList[index].is_collect = true;
+            }
+          }else{
+            this.$toast(res.data.msg);
+          }
+        });
     },
     onSearch() {
       console.log("点击搜索按钮" + this.search_text);
@@ -165,10 +223,9 @@ export default {
 };
 </script>
 <style lang="scss">
-
 .video_box {
   object-fit: fill !important;
-  z-index:999;
+  z-index: 999;
   width: 100%;
   height: 100%;
   position: absolute;
@@ -209,46 +266,33 @@ video {
   color: blueviolet;
 }*/
 
-
-.playOrPause{
-  position:absolute;
-  left:0;
-  top:0;
-  right:0;
-  bottom:0;
-  z-index:999;
+.playOrPause {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
   .icon_play {
-  font-size: 50px;
-  position: absolute;
-  top: 44%;
-  right: 0;
-  left: 0;
-  bottom: auto;
-  margin: auto;
-  z-index: 999;
-  height: 60px;
-  border-radius: 50%;
-  color: blueviolet;
+    font-size: 45px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%);
+    border-radius: 50%;
+    color: rgba(0, 0, 0, 0.4);
+  }
+
+  .play {
+    font-size: 45px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%);
+    border-radius: 50%;
+    color: rgba(0, 0, 0, 0.4);
+  }
 }
-
-.play {
-  font-size: 50px;
-  position: absolute;
-  top: 44%;
-  right: 0;
-  left: 0;
-  bottom: auto;
-  margin: auto;
-  z-index: 999;
-  height: 60px;
-  border-radius: 50%;
-  color: blueviolet;
-}
-}
-
-
-
-
 
 .shortVideoTwo {
   position: fixed;
@@ -274,26 +318,30 @@ video {
     left: 0;
     width: 100%;
     bottom: 64px;
+    box-sizing:border-box;
+    padding: 0 5px;
     overflow: scroll;
-    .video_item {
-      margin-bottom: 10px;
-    }
+
+   .video_item{
+     margin-bottom:10px;
+   }
 
     .video_content {
-      width: 100%;
-      height: 200px;
       position: relative;
       .video_title {
-        position: absolute;
-        z-index:999;
-        top: 10px;
-        left: 10px;
-        right: 10px;
         text-align: left;
-        color: #ffffff;
-        font-size: 16px;
+        color:#000000;
+        font-size: 15px;
         line-height: 24px;
-        font-weight: 700;
+        font-weight:500;
+        padding:10px 0;
+        letter-spacing:2px;
+        border-top:1px solid rgba(0,0,0,0.1);
+      }
+      .video_container{
+        width:100%;
+        height:200px;
+        position: relative;
       }
     }
 
@@ -302,41 +350,45 @@ video {
       align-items: center;
       justify-content: space-between;
       background: #ffffff;
-      padding: 10px;
+      padding: 0 10px;
+      border-bottom:1px solid rgba(0,0,0,0.1);
       .video_info_left {
         flex: 1;
         display: flex;
         text-align: left;
+        align-items:center;
         .video_info_img {
           width: 40px;
           height: 40px;
-          margin-right:5px;
+          margin-right: 5px;
           overflow: hidden;
-          img{
-              border-radius:50%;
+          img {
+            border-radius: 50%;
           }
         }
         .video_info_title {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          padding: 3px 0;
-          h3 {
-            font-size: 14px;
-            font-weight: bold;
-          }
-          p {
-            font-size: 12px;
-            color: #b2b2b2;
-          }
+          height:18px;
+          line-height:19px;
+          letter-spacing:2px;
+          padding:0;
+          
         }
       }
       .video_info_icons {
         width: 30%;
         display: flex;
-        justify-content: space-between;
         align-items: center;
         font-size: 20px;
+        color:gray;
+        P{
+          margin-right:10px;
+          font-size:16px;
+          color:black;
+        }
+        .follow_active {
+          color: #f44;
+          animation: showHeart 0.5s ease-in-out 0s;
+        }
       }
     }
   }

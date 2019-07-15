@@ -74,11 +74,12 @@ export default {
   methods: {
     onClickRight() { //点击下一步
       if(this.address.trim().length !== 0 && /(http|https):\/\/([\w.]+\/?)\S*/.test(this.address)) {
-        let url;
+        let url = "uploadVideo/url";
         let data = {
           url: this.address
         };
         this.$https.post(url,data).then(res => {
+          // console.log(res);
             if(res.data.code === 200 && res.data.data){
               if(res.data.data.length === 0 || res.data.data.video_url.length === 0){
                 this.$toast({

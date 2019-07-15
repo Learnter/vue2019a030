@@ -89,7 +89,6 @@
 	width: 100%;
     height: 60px;
 	box-sizing:border-box;
-	z-index:10;
 	background:linear-gradient(to right,#B40CFF,#793DFF);
 	color: #fff;	
 	display:flex;

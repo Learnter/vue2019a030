@@ -33,12 +33,12 @@
               <div>视频</div>
             </div>
             <div class="split_line"></div>
-            <div class="uni_watch_item">
+            <div class="uni_watch_item" @click="attentionsBtn">
               <div>{{statisticsData.follow_num}}</div>
               <div>关注</div>
             </div>
             <div class="split_line"></div>
-            <div class="uni_watch_item">
+            <div class="uni_watch_item" @click="fansBtn">
               <div>{{statisticsData.fans_num}}</div>
               <div>粉丝</div>
             </div>
@@ -145,7 +145,7 @@
           </div>
           <p>玩法攻略</p>
         </div>
-        <div class="user_config_item uni-flex" @click='$router.push("/login/register")'>
+        <div class="user_config_item uni-flex" @click='updateVersion'>
           <div class="user_icon config_icon">
             <img src="@/assets/tabImg/2019_a030_31.png" />
           </div>
@@ -174,8 +174,10 @@
     },
     created() {
       this.user_info = JSON.parse(sessionStorage.getItem("user")).userInfo; //获取用户信息
-      this.getStatistics();
       this.fetchAccountMoney();
+    },
+    mounted(){
+      this.getStatistics();
     },
     methods: { 
       getStatistics(){ //获取统计信息
@@ -197,14 +199,12 @@
           })
       },
       setUp() { //设置按钮
-        console.log("点击设置按钮");
+       this.$toast("接口尚未完善");
       },
       recharge() { //充值
-        console.log("我要充值");
         this.$router.push("/personCenter/recharge");
       },
       deposit() { //提现
-        console.log("我要提现");
         this.$router.push("/personCenter/userAccount");
       },
       numberAssets() { //查看资产
@@ -216,6 +216,15 @@
       inviteFriends() { //邀请好友
         // this.$router.push("/personCenter/share");
         this.$toast("接口尚未完善");
+      },
+      updateVersion(){ //更新版本
+        this.$toast("接口尚未完善");
+      },
+      fansBtn(){ //粉丝列表
+         this.$router.push("/personCenter/fans");
+      },
+      attentionsBtn(){ //关注列表
+        this.$router.push("/personCenter/attentions");
       },
       exit(){ //用户退出
         this.$dialog.confirm({

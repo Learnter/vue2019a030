@@ -12,20 +12,9 @@
         ></p>
       </div>
     </div>
-    <van-list
-      class="main_content"
-      v-model="loading"
-      :finished="finished"
-      finished-text="没有更多了"
-      @load="onLoad"
-    >
+    <van-list class="main_content" v-model="loading" :finished="finished" finished-text="没有更多了"  @load="onLoad">
       <div class="main_ul">
-        <van-cell
-          class="main_item"
-          v-for="(item,index) in videoList"
-          :key="index"
-          @click.stop="playVideo(item.id)"
-        >
+        <van-cell class="main_item" v-for="(item,index) in videoList" :key="index">
           <img  v-lazy="item.poster" alt="加载失败" />
 
           <!-- 视频信息栏 -->
@@ -36,7 +25,7 @@
               </div>
               <p>{{item.title}}</p>
             </div>
-            <div class="min_item_info_left">
+            <div class="min_item_info_right">
               <van-icon
                 :class="item.is_collect == true ? 'van_icon':''"
                 name="like"
@@ -45,6 +34,10 @@
               <p>{{item.collect_num}}</p>
             </div>
           </div>
+
+           <!--播放按钮-->
+           <van-icon name="play-circle" class="play" @click.stop="playVideo(index)" />
+
         </van-cell>
       </div>
     </van-list>
@@ -78,6 +71,7 @@ export default {
       this.$https.get(url).then(res => {
         if (res.data.code === 200 && res.data.data) {
           this.videoList = res.data.data;
+          // console.log( this.videoList);
           this.loading = false;
           this.finished = true;
         }
@@ -85,13 +79,13 @@ export default {
     },
     //切换导航栏
     toggleNav(item) {
-      this.actived = item.id;
+      this.actived = item.id; 
     },
     //点击图片跳转视频详情
-    playVideo(ID) {
+    playVideo(val) {
       this.$router.push({
         path: "video/fullScreen",
-        query:{id:ID}
+        query:{vIndex:val}
       });
     },
     //收藏按钮
@@ -115,7 +109,7 @@ export default {
           }
         });
     },
-    onLoad() {
+    onLoad(){
       this.fetchVideos();
     }
   },
@@ -123,7 +117,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 /*点击播放隐藏视频信息栏,时间栏*/
 .videoStart {
   visibility: hidden;
@@ -163,7 +157,7 @@ export default {
   width: 100%;
   height: 44px;
   padding-bottom: 10px;
-  z-index: 10;
+  z-index:999;
   background: linear-gradient(to right, #b40cff, #793dff);
 }
 
@@ -209,7 +203,19 @@ export default {
       height: 240px;
       margin-bottom: 8px;
       border-radius: 5px;
+      border:1px solid rgba(0, 0, 0, 0.1);
     }
+
+      .play {
+        font-size:40px;
+        position: absolute;
+        top:50%;
+        left:50%;
+        transform:translate(-50%);
+        border-radius: 50%;
+        color: rgba(0,0,0,0.5);
+      }
+
     .min_item_info {
       position: absolute;
       bottom: 0;
@@ -221,7 +227,6 @@ export default {
       background: rgba(0, 0, 0, 0.1);
       align-items: center;
       justify-content: space-between;
-      z-index: 2;
     }
 
     .min_item_info_left {
@@ -229,37 +234,51 @@ export default {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      .van_icon {
-        font-size:16px;
-        color: brown;
-      }
-      p {
+      overflow: hidden;
+      p{
         margin-left: 5px;
+        white-space:nowrap;
+        text-overflow:ellipsis;
+        overflow: hidden;
       }
       .user_img {
         width: 20px;
         height: 20px;
       }
     }
-    .heart_img {
-      width: 14px;
-      height: 14px;
-      line-height: 14px;
-      margin-right: 5px;
+
+    .min_item_info_right{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+       .van_icon {
+        font-size:16px;
+        color: brown;
+      }
+      p{
+        margin-left: 5px;
+      }
     }
 
-    .duration {
-      position: absolute;
-      font-size: 12px;
-      top: 5px;
-      right: 5px;
-      padding: 5px;
-      line-height: 1.1;
-      color: white;
-      border-radius: 4px;
-      background: #ff8585;
-      z-index: 2;
-    }
+    // .heart_img {
+    //   width: 14px;
+    //   height: 14px;
+    //   line-height: 14px;
+    //   margin-right: 5px;
+    // }
+
+  //   .duration {
+  //     position: absolute;
+  //     font-size: 12px;
+  //     top: 5px;
+  //     right: 5px;
+  //     padding: 5px;
+  //     line-height: 1.1;
+  //     color: white;
+  //     border-radius: 4px;
+  //     background: #ff8585;
+  //     z-index: 2;
+  //   }
   }
 }
 </style>

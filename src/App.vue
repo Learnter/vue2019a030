@@ -42,6 +42,8 @@ export default {
   font-size:16px;
   color: #2c3e50;
   position: relative;
+  width:100vw;
+  height:100vh;
 }
 
 .uni-flex{
