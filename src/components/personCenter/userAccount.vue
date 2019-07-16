@@ -12,7 +12,7 @@
 
         <div class="account_money">
             <div class="balance">
-                <h2><span>41235</span>&yen;</h2>
+                <h2><span>{{user_money}}</span>&yen;</h2>
                 <p>可用余额</p>
             </div>
         </div>
@@ -71,6 +71,11 @@ export default {
     },
     mounted(){
         this.$refs.userAccount.addEventListener("scroll",this.pageScroll,false); //监听页面滚动
+    },
+    computed:{
+        user_money(){
+            return this.$store.state.user_asset["1"].money; //用户资产
+        }
     },
     methods:{
         pageScroll(e){ //页面滚动

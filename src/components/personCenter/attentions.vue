@@ -90,7 +90,10 @@ export default {
           font-size:18px;
           color:#ffffff;
       }
-
+      .van-icon{
+         font-size: 24px;
+         color: white;
+      }
   }
 
   .fans_main{

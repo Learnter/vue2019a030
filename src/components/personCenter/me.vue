@@ -28,7 +28,7 @@
           </div>
 
           <div class="user_watch uni-flex">
-            <div class="uni_watch_item">
+            <div class="uni_watch_item" @click="videosBtn">
               <div>{{statisticsData.video_num}}</div>
               <div>视频</div>
             </div>
@@ -176,7 +176,7 @@
       this.user_info = JSON.parse(sessionStorage.getItem("user")).userInfo; //获取用户信息
       this.fetchAccountMoney();
     },
-    mounted(){
+    activated(){
       this.getStatistics();
     },
     methods: { 
@@ -194,7 +194,8 @@
             // console.log(res);
             if( res.data.code === 200 && res.data.data){
                 this.accountData = res.data.data;
-                sessionStorage.setItem("user_asset",JSON.stringify(res.data.data)); //将用户资产存储到sessionStorage中
+                // sessionStorage.setItem("user_asset",JSON.stringify(res.data.data)); //将用户资产存储到sessionStorage中
+                this.$store.commit("change_user_asset",res.data.data); //将用户资产存储到vuex中
              }
           })
       },
@@ -225,6 +226,9 @@
       },
       attentionsBtn(){ //关注列表
         this.$router.push("/personCenter/attentions");
+      },
+      videosBtn(){ //视频列表
+        this.$router.push("/personCenter/videoDetails");
       },
       exit(){ //用户退出
         this.$dialog.confirm({

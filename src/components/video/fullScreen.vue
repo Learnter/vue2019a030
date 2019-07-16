@@ -2,7 +2,7 @@
   <div class="container_box" id="video_box">
     <div class="van_swipe">
       <!--vant van-swipe 滑动组件 -->
-      <van-swipe :show-indicators="false" @change="onChange" vertical :loop="false" :initial-swipe="current">
+      <van-swipe :show-indicators="false" @change="onChange" vertical :loop="false" :initial-swipe="current" :duration="1000">
         <van-swipe-item v-for="(vItem, vIndex) in videoList" :key="vIndex" class="product_swiper">
           <div class="video_container">
             <!--video属性

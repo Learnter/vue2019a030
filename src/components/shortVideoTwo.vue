@@ -7,7 +7,7 @@
       <van-tab v-for="(item,index) in 8" :title="'推荐' + index" :key="index"></van-tab>
     </van-tabs>-->
     <div class="video_main">
-      <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+      <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="刷新成功">
         <van-list
           v-model="loading"
           :finished="finished"
@@ -71,8 +71,12 @@
                 <div class="video_info_left">
                   <div class="video_info_img">
                     <img :src="vItem.avatar" alt />
+                     <!-- <img src="../assets/tabImg/2019_a030_17.png" alt /> -->
                   </div>
-                  <van-tag color="#f2826a" class="video_info_title">+关注</van-tag>
+                  <div v-if="vItem.uid !== 0">
+                       <van-tag color="#f2826a" v-if="!vItem.is_follow" class="video_info_title" @click="attentionBtn(vItem,vIndex)">+关注</van-tag>
+                       <van-tag color="#F00" v-else class="video_info_title" @click="attentionBtn(vItem,vIndex)">已关注</van-tag>
+                  </div>
                 </div>
                 <div class="video_info_icons">
                   <!-- <van-icon
@@ -111,7 +115,6 @@ export default {
       videosList: []
     };
   },
-  created() {},
   methods: {
     fetchVideoList() {
       //获取短视频列表
@@ -124,6 +127,7 @@ export default {
             list[i].isPause = false;
           }
           this.videosList = list;
+          this.isLoading = false;
           this.loading = false;
           this.finished = true;
         }
@@ -169,10 +173,9 @@ export default {
     },
     onRefresh() { //下拉刷新
       setTimeout(() => {
-        this.$toast("刷新成功");
-        this.isLoading = false;
+        // this.isLoading = false;
+        this.fetchVideoList();
       }, 500);
-       //下拉重新获取数据
     },
     // shortLike(item, val) { //短视频点赞
     //   let objVideo = this.videosList[val];
@@ -212,6 +215,20 @@ export default {
             this.$toast(res.data.msg);
           }
         });
+    },
+    attentionBtn(item,index){ //点击关注按钮
+         let url = "user/followUser";
+         let data = {
+              uid:item.uid
+          }
+          this.$https.post(url,data).then(res => {
+              if(res.data.code === 200){
+                this.videosList[index].is_follow = !this.videosList[index].is_follow;
+                this.$toast(res.data.data); 
+             }else{
+               this.$toast(res.data.msg);
+             }
+         })
     },
     onSearch() {
       console.log("点击搜索按钮" + this.search_text);
@@ -350,7 +367,7 @@ video {
       align-items: center;
       justify-content: space-between;
       background: #ffffff;
-      padding: 0 10px;
+      padding:5px 10px;
       border-bottom:1px solid rgba(0,0,0,0.1);
       .video_info_left {
         flex: 1;
@@ -360,7 +377,7 @@ video {
         .video_info_img {
           width: 40px;
           height: 40px;
-          margin-right: 5px;
+          margin-right:15px;
           overflow: hidden;
           img {
             border-radius: 50%;
@@ -370,7 +387,7 @@ video {
           height:18px;
           line-height:19px;
           letter-spacing:2px;
-          padding:0;
+          padding:2px;
           
         }
       }

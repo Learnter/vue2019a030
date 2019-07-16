@@ -10,8 +10,10 @@
               <p>拍摄</p>
           </div>
           <div class="upload_way">
-              <img src="@/assets/uploadImg/2019_a030_58.png">
-              <p>上传</p>
+            <van-uploader :after-read="afterRead" accept="video/*">
+               <img src="@/assets/uploadImg/2019_a030_58.png">
+               <p>上传</p>
+            </van-uploader>
           </div>
           <div class="upload_way">
               <img src="@/assets/uploadImg/2019_a030_57.png">
@@ -72,11 +74,31 @@ export default {
     };
   },
   methods: {
+    afterRead(file){ //上传视频
+      //  console.log(file.file);
+
+       let fileFormData = new FormData();
+       fileFormData.append('video',file.file);
+       fileFormData.append('name','video');
+
+       let url = "uploadVideo/file";
+       this.$https.post(url,fileFormData,'multipart/form-data').then(res => {
+          if(res.data.code === 200 && res.data.data.length != 0){
+
+            let video = {
+              realy_url:res.data.data.src,
+              video_url:res.data.data.show_src
+            }
+
+            this.$router.push({path:'/video/parseVideo',query:{video:JSON.stringify(video)}})
+          }
+       })
+    },
     onClickRight() { //点击下一步
       if(this.address.trim().length !== 0 && /(http|https):\/\/([\w.]+\/?)\S*/.test(this.address)) {
         let url = "uploadVideo/url";
         let data = {
-          url: this.address
+          url:this.address
         };
         this.$https.post(url,data).then(res => {
           // console.log(res);

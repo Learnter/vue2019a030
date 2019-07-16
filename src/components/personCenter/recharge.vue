@@ -73,17 +73,22 @@ export default {
       nav_route_path: "/personCenter/assetDetails", //导航栏右侧路由地址
       con_actived: 0,//兑换方案索引
       rechargeCofig:[],//充值配置方案
-      user_asset:{} //用户资产
+      // user_asset:{} //用户资产
     };
   },
   created(){
-    this.user_asset = JSON.parse(sessionStorage.getItem("user_asset"));
+    // this.user_asset = JSON.parse(sessionStorage.getItem("user_asset"));
     this.fetchRecharge();
   },
-  mounted() {
+  mounted(){
     this.$refs.recharge.addEventListener("scroll", this.pageScroll, false); //监听页面滚动
   },
-  methods: {
+  computed:{
+    user_asset(){ //vuex 拉取用户资产
+      return this.$store.state.user_asset;
+    }
+  },
+  methods:{
     fetchRecharge() {
       let url = "recharge/getRechargeConfig";
       this.$https.get(url).then(res => {

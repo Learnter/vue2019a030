@@ -86,9 +86,14 @@ export default new Router({
       component: resolve => require(["@/components/personCenter/fans"],resolve)
     },
     {
-      path:"/personCenter/attentions",//我的粉丝
+      path:"/personCenter/attentions",//我的关注
       name:"attentions",
       component: resolve => require(["@/components/personCenter/attentions"],resolve)
+    },
+    {
+      path:"/personCenter/videoDetails",//我的视频
+      name:"videoDetails",
+      component: resolve => require(["@/components/personCenter/videoDetails"],resolve)
     },
     {
       path:"/personCenter/news",//新闻中心

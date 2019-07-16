@@ -41,7 +41,7 @@ function checkCode (res) {
 }
 
 export default {
-  post (url, data) {
+  post (url,data,fileType) {
     //判断是否已经登录...
     let token;
     sessionStorage.getItem("user")? token = JSON.parse(sessionStorage.getItem("user")).token : token = '';
@@ -53,7 +53,7 @@ export default {
       data: data,
       timeout: 10000,
       headers: {
-        'content-type':'application/json',
+        'content-type':fileType ? fileType : 'application/json',
         'token':token
       }
     }).then(

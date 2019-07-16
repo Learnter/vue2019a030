@@ -22,7 +22,6 @@ import 'vant/lib/index.css';
 Vue.use(Vant)
 
 
-
 //图片懒加载插件
 import VueLazyLoad from 'vue-lazyload'
 Vue.use(VueLazyLoad)

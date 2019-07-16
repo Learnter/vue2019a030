@@ -13,7 +13,6 @@
       autoplay
       loop
       preload="auto"
-      :poster="video.poster"
       :src="video.video_url"
       x-webkit-airplay="allow"
       x5-video-orientation="portrait"
@@ -50,11 +49,12 @@ export default {
     return {
       playOrPause:true,//播放或暂停
       video_title: "", //视频标题
-      video: {} //视频对象
+      video:{} //视频对象
     };
   },
   created() {
     this.video = JSON.parse(this.$route.query.video);
+    console.log(this.video);
   },
   computed: {
     videoType() {
@@ -82,8 +82,8 @@ export default {
       }
       let data = {
         title: this.video_title,
-        video_url: this.video.video_url,
-        poster: this.video.poster
+        video_url: this.video.video_url
+        // poster: this.video.poster
       };
 
       this.$https.post(url, data).then(res => {
