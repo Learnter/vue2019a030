@@ -30,6 +30,7 @@
               :playOrPause="playOrPause"
               x-webkit-airplay="allow"
               x5-video-orientation="portrait"
+              loop
               @click="pauseVideo"
               @ended="onPlayerEnded($event)"
             ></video>
@@ -57,7 +58,7 @@
 
           <!-- 右侧点赞、分享功能 -->
           <div class="tools_right">
-            <div class="tools_r_li" @click="photoBtn(vItem,vIndex)">
+            <div class="tools_r_li" @click="photoBtn(vItem.user_id)">
               <img :src="vItem.avatar" />
             </div>
             <div class="tools_r_li" @click.stop="changeFollow(vItem,vIndex)">
@@ -99,13 +100,7 @@
             <p>使用积分送礼物最高暴击10倍邮票</p>
             <div>
               <ul class="mask_bottom_gifts">
-                <li
-                  class="mask_gift_item"
-                  :class="gItem.id == sel_gift_id ?'selActive':''"
-                  v-for="(gItem,gIndex) in giftList"
-                  :key="gIndex"
-                  @click.stop="sel_gift_id = gItem.id"
-                >
+                <li class="mask_gift_item" :class="gItem.id == sel_gift_id ?'selActive':''" v-for="(gItem,gIndex) in giftList" :key="gIndex" @click.stop="sel_gift_id = gItem.id">
                   <div class="mask_gift_img">
                     <img :src="gItem.picture" />
                   </div>
@@ -212,8 +207,8 @@ export default {
     //   this.tabIndex = index;
     // },
     //查看视频资料
-    photoBtn(){
-      console.log("点击头像");
+    photoBtn(id){
+     this.$router.push({path:"/personCenter/videoDetails",query:{user_id:id}});
     },
     //点赞
     changeFollow(item,index) {
@@ -223,23 +218,28 @@ export default {
      }else{
 
        if(!objVideo.is_praise){
-       let url = "video/praiseVideo";
-       let data = {
-         id:item.id
-       }
-       this.$https.post(url,data).then(res => {
-          if(res.data.code === 200){
-             objVideo.is_praise = true;
-             objVideo.praise_num++;
-             this.likeNum--;
-             this.$toast("今天还剩下"+this.likeNum+"点赞");
-          }else{
-            this.$toast(res.data.msg);
+          let url = "video/praiseVideo";
+          let data = {
+            id:item.id
           }
-       })
-       
+          this.$https.post(url,data).then(res => {
+              if(res.data.code === 200){
+                objVideo.is_praise = true;
+                objVideo.praise_num++;
+                this.likeNum--;
+                this.$toast("今天还剩下"+this.likeNum+"点赞");
+              }else{
+                this.$toast({
+                  position:"bottom",
+                  message:res.data.msg
+                });
+              }
+          })   
      }else{
-       this.$toast("今天已点赞");
+       this.$toast({
+         position:"bottom",
+         message:"今天已点赞"
+       });
      }
 
      }

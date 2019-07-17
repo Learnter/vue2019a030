@@ -114,7 +114,7 @@ export default {
           box-sizing:border-box;
           background:linear-gradient(120deg,#FFDAB9,#D5AB8D );
           border-radius:10px;
-          padding:10px 30px;
+          padding:15px 30px;
           color:#ffffff;
           ul{
               display:flex;

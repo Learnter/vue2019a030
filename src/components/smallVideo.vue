@@ -1,57 +1,58 @@
 <template>
-  <div class="page">
+  <div class="smallVideo">
     <div class="switchBox">
       <div class="navBtn uni-flex">
-        <p
-          class="nav_item"
-          :class="actived == index ? 'actived' :''"
-          v-for="(item,index) in navList"
-          :key="index"
-          @click="toggleNav(item)"
-          v-text="item.title"
-        ></p>
+        <p class="nav_item" :class="actived == index ? 'actived' :''" v-for="(item,index) in navList" :key="index"  @click="toggleNav(item)" v-text="item.title"></p>
       </div>
     </div>
-    <van-list class="main_content" v-model="loading" :finished="finished" finished-text="没有更多了"  @load="onLoad">
-      <div class="main_ul">
-        <van-cell class="main_item" v-for="(item,index) in videoList" :key="index">
-          <img  v-lazy="item.poster" alt="加载失败" />
+    <div class="main_content">
+        <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="刷新成功">
+            <van-list v-model="loading" :finished="finished" finished-text="没有更多了"  @load="onLoad">
+              <div class="main_ul">
+                <van-cell class="main_item" v-for="(item,index) in videoList" :key="index">
+                  <img  v-lazy="item.poster" alt="加载失败" />
 
-          <!-- 视频信息栏 -->
-          <div class="min_item_info uni-flex">
-            <div class="min_item_info_left">
-              <div class="user_img">
-                <img src="@/assets/tabImg/2019_a030_1.png" />
+                  <!-- 视频信息栏 -->
+                  <div class="min_item_info uni-flex">
+                    <div class="min_item_info_left">
+                      <div class="user_img">
+                        <img src="@/assets/tabImg/2019_a030_1.png" />
+                      </div>
+                      <p>{{item.title}}</p>
+                    </div>
+                    <div class="min_item_info_right">
+                      <van-icon
+                        :class="item.is_collect == true ? 'van_icon':''"
+                        name="like"
+                        @click.stop="likeBtn(index,item)"
+                      />
+                      <p>{{item.collect_num}}</p>
+                    </div>
+                  </div>
+
+                  <!--播放按钮-->
+                  <van-icon name="play-circle" class="play" @click.stop="playVideo(index)" />
+
+                  <!-- 视频时长 -->
+                  <van-tag round class="duration">{{item.video_duration|timeFormat()}}</van-tag>
+
+                </van-cell>
               </div>
-              <p>{{item.title}}</p>
-            </div>
-            <div class="min_item_info_right">
-              <van-icon
-                :class="item.is_collect == true ? 'van_icon':''"
-                name="like"
-                @click.stop="likeBtn(index,item)"
-              />
-              <p>{{item.collect_num}}</p>
-            </div>
-          </div>
-
-           <!--播放按钮-->
-           <van-icon name="play-circle" class="play" @click.stop="playVideo(index)" />
-
-        </van-cell>
-      </div>
-    </van-list>
+            </van-list>
+      </van-pull-refresh>
+    </div>  
   </div>
 </template>
 
 <script>
 export default {
-  name: "samllVideo",
+  name: "smallVideo",
   data() {
     return {
       isCollect: "", //是否已收藏
       loading: false,
       finished: false,
+      isLoading:false,
       actived: 0,
       navList: [
         { id: 0, title: "热门" },
@@ -61,9 +62,6 @@ export default {
       videoList: [] //视频列表
     };
   },
-  created() {
-    // this.fetchVideos();
-  },
   methods: {
     //获取视频列表
     fetchVideos() {
@@ -71,7 +69,8 @@ export default {
       this.$https.get(url).then(res => {
         if (res.data.code === 200 && res.data.data) {
           this.videoList = res.data.data;
-          // console.log( this.videoList);
+          // console.log(this.videoList);
+          this.isLoading = false;
           this.loading = false;
           this.finished = true;
         }
@@ -109,55 +108,64 @@ export default {
           }
         });
     },
-    onLoad(){
+    onLoad(){ //上拉加载
       this.fetchVideos();
+    },
+    onRefresh() { //下拉刷新
+      setTimeout(() => {
+        this.fetchVideos();
+      }, 500);
     }
-  },
-  components:{}
+  }
 };
 </script>
 
 <style lang="scss" scoped>
-/*点击播放隐藏视频信息栏,时间栏*/
-.videoStart {
-  visibility: hidden;
-}
+// /*点击播放隐藏视频信息栏,时间栏*/
+// .videoStart {
+//   visibility: hidden;
+// }
 
-/*视频播放完、暂停显示信息栏跟时间栏*/
-.videoEnd {
-  visibility: visible;
-}
+// /*视频播放完、暂停显示信息栏跟时间栏*/
+// .videoEnd {
+//   visibility: visible;
+// }
 
-.video-js {
-  width: 100% !important;
-  height: 100% !important;
-}
+// .video-js {
+//   width: 100% !important;
+//   height: 100% !important;
+// }
 
-.vjs-big-play-button {
-  height: 40px !important;
-  width: 40px !important;
-  line-height: 40px !important;
-  text-align: center;
-  background: rgba(0, 0, 0, 0.8) !important;
-  border-radius: 50% !important;
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -60%);
-}
+// .vjs-big-play-button {
+//   height: 40px !important;
+//   width: 40px !important;
+//   line-height: 40px !important;
+//   text-align: center;
+//   background: rgba(0, 0, 0, 0.8) !important;
+//   border-radius: 50% !important;
+//   top: 50% !important;
+//   left: 50% !important;
+//   transform: translate(-50%, -60%);
+// }
 
-.videoStyle {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: fill;
+// .videoStyle {
+//   width: 100% !important;
+//   height: 100% !important;
+//   object-fit: fill;
+// }
+
+.smallVideo{
+  position: absolute;
+  top:0;
+  left:0;
+  width:100%;
+  bottom:60px;
 }
 
 .switchBox {
-  position: fixed;
-  top: 0;
   width: 100%;
   height: 44px;
   padding-bottom: 10px;
-  z-index:999;
   background: linear-gradient(to right, #b40cff, #793dff);
 }
 
@@ -189,7 +197,13 @@ export default {
 }
 
 .main_content {
-  padding: 62px 10px 70px;
+  position: absolute;
+  top:54px;
+  left:0;
+  width:100%;
+  bottom:0;
+  box-sizing:border-box;
+  padding-left:3%;
   background: white;
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
@@ -199,10 +213,11 @@ export default {
     justify-content: space-between;
     .main_item {
       position: relative;
-      width: 49%;
-      height: 240px;
-      margin-bottom: 8px;
-      border-radius: 5px;
+      width:47%;
+      height:240px;
+      margin-right:3%;
+      margin-top:10px;
+      border-radius:5px;
       border:1px solid rgba(0, 0, 0, 0.1);
     }
 
@@ -214,6 +229,14 @@ export default {
         transform:translate(-50%);
         border-radius: 50%;
         color: rgba(0,0,0,0.5);
+      }
+
+     .duration{
+        position: absolute;
+        right:5px;
+        top:5px;
+        background:rgba(0,0,0,0.5) !important;
+        padding:2px 10px;
       }
 
     .min_item_info {

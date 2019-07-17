@@ -1,13 +1,15 @@
 <template>
   <section class="release">
 
-    <van-nav-bar  title="输入链接"  right-text="下一步" left-arrow  @click-left="$router.go(-1)" @click-right="onClickRight"/>
+    <van-nav-bar  title="输入链接"  left-arrow  @click-left="$router.go(-1)"/>
     <div class="release_main">
 
       <div class="upload">
           <div class="upload_way">
-              <img src="@/assets/uploadImg/2019_a030_59.png">
-              <p>拍摄</p>
+             <van-uploader :after-read="afterRead" accept="video/*" capture="camera">
+                <img src="@/assets/uploadImg/2019_a030_59.png">
+                <p>拍摄</p>
+             </van-uploader>
           </div>
           <div class="upload_way">
             <van-uploader :after-read="afterRead" accept="video/*">
@@ -15,7 +17,7 @@
                <p>上传</p>
             </van-uploader>
           </div>
-          <div class="upload_way">
+          <div class="upload_way" @click="onClickRight">
               <img src="@/assets/uploadImg/2019_a030_57.png">
               <p>站外链接</p>
           </div>
@@ -25,7 +27,7 @@
         <input
           v-model="address"
           type="text"
-          placeholder="长按粘贴外站播放页链接"
+          placeholder="长按粘贴外站链接,再点击站外按钮解析"
           autofocus
         />
       </div>
@@ -94,7 +96,7 @@ export default {
           }
        })
     },
-    onClickRight() { //点击下一步
+    onClickRight() { //点击站外链接
       if(this.address.trim().length !== 0 && /(http|https):\/\/([\w.]+\/?)\S*/.test(this.address)) {
         let url = "uploadVideo/url";
         let data = {
@@ -169,6 +171,19 @@ export default {
   bottom: 0;
   z-index: 999;
   background: #312f3a;
+  .van-nav-bar {
+    height: 54px;
+    line-height: 54px;
+    background: #000000;
+    .van-nav-bar__title {
+      font-size: 18px;
+      color: #ffffff;
+    }
+    .van-icon {
+      font-size: 24px;
+      color: white;
+    }
+  }
   .release_main {
     position: absolute;
     top: 54px;

@@ -49,20 +49,25 @@ export default {
     return {
       playOrPause:true,//播放或暂停
       video_title: "", //视频标题
-      video:{} //视频对象
+      video:{}, //视频对象
+      videoTime:0 //视频时长
     };
   },
-  created() {
+  created(){
     this.video = JSON.parse(this.$route.query.video);
-    console.log(this.video);
+    this.videoDuration(); 
   },
   computed: {
-    videoType() {
-      //获取上全的视频类型
+    videoType() { //获取上传的视频类型
       return this.$store.state.uploadType;
     }
   },
   methods: {
+     videoDuration(){ //获取视频时长 
+        setTimeout(() => {
+          this.videoTime = Math.floor(document.querySelectorAll("video")[0].duration);
+        }, 500);
+    },
     publishVideo() {
       if (this.video_title.trim().length === 0) {
         //标题非空判断
@@ -78,12 +83,17 @@ export default {
         url = "video/addShortVideo";
       } else {
         this.$toast("不清楚视频类型,请重新发布");
-        return false;
+        setTimeout(() => {
+            this.$store.commit("change_page","/me");
+            this.$router.push("/me");
+          }, 1000);
+        return;
       }
       let data = {
         title: this.video_title,
-        video_url: this.video.video_url
+        video_url: this.video.video_url,
         // poster: this.video.poster
+        video_duration:this.videoTime
       };
 
       this.$https.post(url, data).then(res => {
@@ -93,8 +103,11 @@ export default {
             message: "视频上传成功!"
           });
           setTimeout(() => {
+            this.$store.commit("change_page","/me");
             this.$router.push("/me");
           }, 2000);
+        }else{
+          this.$toast(res.data.msg);
         }
       });
     },

@@ -82,6 +82,6 @@ button{
 /*vantUI框架样式*/
 .van-list__finished-text{
  line-height:24px;
- margin:0 auto;
+ margin:10px auto;
 }
 </style>

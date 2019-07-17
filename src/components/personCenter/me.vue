@@ -14,16 +14,16 @@
         <div class="user_content">
           <div class="userInfo uni-flex">
             <div class="user_img">
-              <img :src="user_info.head" />
+              <img :src="oneselfInfo.head" />
             </div>
             <div class="user_detail">
               <div class="user_name uni-flex">
-                <p>{{user_info.nickname}}</p>
+                <p>{{oneselfInfo.nickname}}</p>
                 <div class="user_tag">
                   <img src="@/assets/tabImg/2019_a030_20.png" />
                 </div>
               </div>
-              <p class="user_account">ID:{{user_info.account}}</p>
+              <p class="user_account">ID:{{oneselfInfo.account}}</p>
             </div>
           </div>
 
@@ -167,14 +167,18 @@
     name:"personCenter",
     data(){
       return {
-          user_info:{},//用户信息
+          // oneself_info:{},//自身账号信息
           statisticsData:{}, //统计数据
           accountData:{} //账号资产信息
       };
     },
     created() {
-      this.user_info = JSON.parse(sessionStorage.getItem("user")).userInfo; //获取用户信息
       this.fetchAccountMoney();
+    },
+    computed:{
+      oneselfInfo(){ //获取自身账号信息
+        return JSON.parse(sessionStorage.getItem("user")).userInfo;
+      }
     },
     activated(){
       this.getStatistics();

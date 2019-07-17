@@ -6,8 +6,8 @@
 
     <van-dropdown-menu class="search_short">
       <van-dropdown-item v-model="categoryInit" :options="categoryList" title="分类" @change="categorySort" />
-      <van-dropdown-item v-model="dateInit" :options="dateList" title="日期" @change="dateSort" />
-      <van-dropdown-item v-model="sortInit" :options="sortList" title="排序" @change="sortWay" />
+      <!-- <van-dropdown-item v-model="dateInit" :options="dateList" title="日期" @change="dateSort" /> -->
+      <van-dropdown-item v-model="sortInit" :options="sortList" title="日期" @change="sortWay" />
     </van-dropdown-menu>
 
     <div class="asset_main">
@@ -44,15 +44,15 @@
         dateInit: "", //日期初始值
         sortInit: "", //排序初始值
         categoryList: [], //分类列表
-        dateList: [
-          { text: "一星期", value: "week" },
-          { text: "一个月", value: "month" },
-          { text: "3个月", value: "threeMonth" },
-          { text: "一年", value: "year" }
-        ], //时间列表
+        // dateList: [
+        //   { text: "一星期", value: "week" },
+        //   { text: "一个月", value: "month" },
+        //   { text: "3个月", value: "threeMonth" },
+        //   { text: "一年", value: "year" }
+        // ], //时间列表
         sortList: [
-          { text: "正序", value: "asc" },
-          { text: "倒序", value: "desc" }
+          { text: "日期正序", value: "asc" },
+          { text: "日期倒序", value: "desc" }
         ], //排序列表
         requrstConfig: {
           //请求配置参数
@@ -125,7 +125,7 @@
         this.requrstConfig.page++;
         let url = "money/getMoneyLogList";
         this.$https.get(url, this.requrstConfig).then(res => {
-          if (res.data.code === 200 && res.data.data) {
+          if (res.data.code === 200 && res.data.data.length > 0) {
             let newData = res.data.data;
             newData.forEach((item) => {
               this.assetList.push(item); //新增数据

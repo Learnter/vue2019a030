@@ -334,7 +334,7 @@ video {
     top: 54px;
     left: 0;
     width: 100%;
-    bottom: 64px;
+    bottom: 60px;
     box-sizing:border-box;
     padding: 0 5px;
     overflow: scroll;

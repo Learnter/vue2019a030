@@ -11,12 +11,12 @@
         :offset="100"
         >
         <van-cell  v-for="(item,index) in fansList" :key="index"> 
-            <div class="fans_left">
+            <div class="fans_left" @click="fansDetail(item.user_id)">
                 <img :src="item.avatar" alt="">
                 <span>{{item.username}}</span>
             </div>
             <van-button round v-if="!item.is_follow" class="attention" @click="attentionBtn(item,index)">关注</van-button>
-            <van-button round v-if="item.is_follow" class="attention" @click="attentionBtn(item,index)">取消</van-button>
+            <van-button round v-if="item.is_follow" class="cancelAttention" @click="attentionBtn(item,index)">取消关注</van-button>
         </van-cell>
       </van-list>
     </div>
@@ -44,9 +44,10 @@ export default {
     fetchData() {
       let url = "user/getFansList";
       this.$https.get(url, this.fansConfig).then(res => {
-        //   console.log(res);
+          console.log(res);
         if (res.data.code === 200 && res.data.data.length > 0) {
           this.fansList = res.data.data;
+          console.log(this.fansList);
           this.fansConfig.page++;
           this.loading = false;
         } else {
@@ -55,7 +56,7 @@ export default {
         }
       });
     },
-    attentionBtn(item,index){   
+    attentionBtn(item,index){ //点击关注按钮
        let url = "user/followUser";
        let data = {
            uid:item.user_id
@@ -63,12 +64,18 @@ export default {
        this.$https.post(url,data).then(res => {
           if(res.data.code === 200){
             this.fansList[index].is_follow ? this.fansList[index].is_follow = false : this.fansList[index].is_follow = true;
-            this.$toast(res.data.data); 
+            this.$toast({
+               position:"bottom",
+               message:res.data.data
+            });  
           }
        })
     },
     onLoad() {
       this.fetchData();
+    },
+    fansDetail(id){ //跳转视频页面
+      this.$router.push({path:"/personCenter/videoDetails",query:{user_id:id}});
     }
   }
 };
@@ -131,15 +138,22 @@ export default {
       }
     }
     .attention{
-        width:70px;
         height:25px;
         line-height:25px;
-        font-size:15px;
+        font-size:13px;
         border:none;
         background: linear-gradient(to right, #f94620, #fba102);
         color:white;
         letter-spacing:2px;
     }
-  }
+    .cancelAttention{
+           height:25px;
+           line-height:25px;
+           font-size:13px;
+           color:white;
+           background:transparent;
+           letter-spacing:2px;
+       }
+   }
 }
 </style>
