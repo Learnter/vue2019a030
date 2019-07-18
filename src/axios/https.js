@@ -44,7 +44,7 @@ export default {
   post (url,data,fileType) {
     //判断是否已经登录...
     let token;
-    sessionStorage.getItem("user")? token = JSON.parse(sessionStorage.getItem("user")).token : token = '';
+    localStorage.getItem("user")? token = JSON.parse(localStorage.getItem("user")).token : token = '';
 
     return axios({
       method: 'post',
@@ -69,7 +69,7 @@ export default {
   get (url, params) {
      //判断是否已经登录...
     let token;
-    sessionStorage.getItem("user")? token = JSON.parse(sessionStorage.getItem("user")).token : token = '';
+    localStorage.getItem("user")? token = JSON.parse(localStorage.getItem("user")).token : token = '';
     return axios({
       method: 'get',
       baseURL: 'http://2019a030api.jiafuw.com/v1',

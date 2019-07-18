@@ -57,7 +57,8 @@ export default {
   },
   methods:{
     beforLogin(){ //判断以前是否有登陆
-      let token = localStorage.getItem("token");
+      let token = JSON.parse(localStorage.getItem("user")).token;
+      // console.log(token);
       if(token){
         this.$router.push("/smallVideo");
       }
@@ -78,10 +79,11 @@ export default {
 
         if (res.data.code == 200 && res.data.data) {
 
-            localStorage.setItem("token",res.data.data.token); //将登陆token信息存储到localStorage
+            localStorage.setItem("user",JSON.stringify(res.data.data)); //将登陆token信息存储到localStorage
             
-            let userConfig = JSON.stringify(res.data.data);
-            sessionStorage.setItem("user",userConfig);
+            console.log(res.data.data);
+            // let userConfig = JSON.stringify(res.data.data);
+            // sessionStorage.setItem("user",userConfig);
 
             this.$toast("登录成功");
 
@@ -90,7 +92,7 @@ export default {
             }, 1000);
         }else{
             this.$toast(res.data.msg);
-            localStorage.removeItem("token"); //移除本地token
+            localStorage.removeItem("user"); //移除本地token
             return false;
           }
       });

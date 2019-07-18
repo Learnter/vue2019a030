@@ -79,14 +79,14 @@ new Vue({
 
 
 router.beforeEach((to, from, next) => { //全局路由守卫
-   let token = localStorage.getItem("token");
+   let token = JSON.parse(localStorage.getItem("user")).token;
   //如果有token的话说明你已经登录,让你正常登录
   if (token) {
     next();
   } else {
     //如果没有登录你访问的不是login就让你强制跳转到login页面
     if (to.path !== "/login") {
-      next({ path: "/login" });
+      next({path:"/login"});
     } else {
       next();
     }

@@ -14,7 +14,7 @@
         <div class="user_content">
           <div class="userInfo uni-flex">
             <div class="user_img">
-              <img :src="oneselfInfo.head" />
+              <img :src="oneselfInfo.avatar" />
             </div>
             <div class="user_detail">
               <div class="user_name uni-flex">
@@ -23,7 +23,7 @@
                   <img src="@/assets/tabImg/2019_a030_20.png" />
                 </div>
               </div>
-              <p class="user_account">ID:{{oneselfInfo.account}}</p>
+              <p class="user_account">ID:{{oneselfInfo.user_id}}</p>
             </div>
           </div>
 
@@ -97,7 +97,6 @@
             <p>64565</p>
           </div>
         </div>
-
         <div class="user_integral uni-flex">
           <div class="uni_watch_item" v-if="accountData['2']" @click="$router.push({path:'/personCenter/assetDetails',query:{mid:2}})">
             <p>{{accountData['2']['wallet_name']}}</p>
@@ -169,15 +168,18 @@
       return {
           // oneself_info:{},//自身账号信息
           statisticsData:{}, //统计数据
-          accountData:{} //账号资产信息
+          // accountData:{} //账号资产信息
       };
     },
-    created() {
-      this.fetchAccountMoney();
-    },
+    // created() {
+    //   // this.fetchAccountMoney();
+    // },
     computed:{
       oneselfInfo(){ //获取自身账号信息
-        return JSON.parse(sessionStorage.getItem("user")).userInfo;
+        return JSON.parse(localStorage.getItem("user")).userInfo;
+      },
+      accountData(){ //获取账号资产信息
+        return this.$store.state.user_asset;
       }
     },
     activated(){
@@ -188,21 +190,21 @@
         let url = "user/getStatistics"; 
         this.$https.get(url).then(res => {
           if(res.data.code === 200 && res.data.data){
+            //  console.log(res.data.data);
              this.statisticsData = res.data.data;
           }
         })
       },
-      fetchAccountMoney(){ //获取账号资产
-          let url = 'money/getUserWalletAmount';
-          this.$https.get(url).then(res => {
-            // console.log(res);
-            if( res.data.code === 200 && res.data.data){
-                this.accountData = res.data.data;
-                // sessionStorage.setItem("user_asset",JSON.stringify(res.data.data)); //将用户资产存储到sessionStorage中
-                this.$store.commit("change_user_asset",res.data.data); //将用户资产存储到vuex中
-             }
-          })
-      },
+      // fetchAccountMoney(){ //获取账号资产
+      //     let url = 'money/getUserWalletAmount';
+      //     this.$https.get(url).then(res => {
+      //       // console.log(res);
+      //       if( res.data.code === 200 && res.data.data){
+      //           this.accountData = res.data.data;
+      //           this.$store.commit("change_user_asset",res.data.data); //将用户资产存储到vuex中
+      //        }
+      //     })
+      // },
       setUp() { //设置按钮
        this.$toast("接口尚未完善");
       },
@@ -239,8 +241,7 @@
           title:"重要提示",
           message: '您确定要退出吗'
         }).then(()=>{
-            sessionStorage.removeItem('user');//移除缓存信息
-            localStorage.removeItem("token"); //移除永久缓存信息
+            localStorage.removeItem("user"); //移除永久缓存信息
             this.$router.push('/login'); //跳转到登录页面
         }).catch(()=>{
            return ;

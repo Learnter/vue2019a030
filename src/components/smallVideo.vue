@@ -62,14 +62,27 @@ export default {
       videoList: [] //视频列表
     };
   },
+   created(){
+      this.fetchAccountMoney();
+  },
   methods: {
+     fetchAccountMoney(){ //获取会员账号资产
+          let url = 'money/getUserWalletAmount';
+          this.$https.get(url).then(res => {
+            // console.log(res);
+            if( res.data.code === 200 && res.data.data){
+                // this.accountData = res.data.data;
+                this.$store.commit("change_user_asset",res.data.data); //将用户资产存储到vuex中
+             }
+          })
+      },
     //获取视频列表
     fetchVideos() {
       let url = "video/smallVideoList";
       this.$https.get(url).then(res => {
         if (res.data.code === 200 && res.data.data) {
           this.videoList = res.data.data;
-          console.log(this.videoList);
+          // console.log(this.videoList);
           this.isLoading = false;
           this.loading = false;
           this.finished = true;
@@ -121,38 +134,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// /*点击播放隐藏视频信息栏,时间栏*/
-// .videoStart {
-//   visibility: hidden;
-// }
-
-// /*视频播放完、暂停显示信息栏跟时间栏*/
-// .videoEnd {
-//   visibility: visible;
-// }
-
-// .video-js {
-//   width: 100% !important;
-//   height: 100% !important;
-// }
-
-// .vjs-big-play-button {
-//   height: 40px !important;
-//   width: 40px !important;
-//   line-height: 40px !important;
-//   text-align: center;
-//   background: rgba(0, 0, 0, 0.8) !important;
-//   border-radius: 50% !important;
-//   top: 50% !important;
-//   left: 50% !important;
-//   transform: translate(-50%, -60%);
-// }
-
-// .videoStyle {
-//   width: 100% !important;
-//   height: 100% !important;
-//   object-fit: fill;
-// }
 
 .smallVideo{
   position: absolute;

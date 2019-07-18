@@ -58,7 +58,7 @@ export default {
   },
   computed:{
       oneselfId(){ //返回账户本身ID   
-        return JSON.parse(sessionStorage.getItem("user")).userInfo.user_id;
+        return JSON.parse(localStorage.getItem("user")).userInfo.user_id;
       }
   },
   methods: {
