@@ -35,19 +35,14 @@
               @ended="onPlayerEnded($event)"
             ></video>
 
-            <div v-if="isVideoShow||iconPlayShow" class="playOrPause">
+            <!-- <div v-if="iconPlayShow" class="playOrPause" @click="pauseVideo"> -->
               <!-- 封面 -->
               <!-- <img v-show="isVideoShow" class="play" @click="playvideo" :src="item.cover" /> -->
-              <van-icon name="play-circle" v-show="isVideoShow" class="play" @click="playvideo" />
+              <!-- <van-icon name="play-circle" v-show="isVideoShow" class="play" @click="playvideo" /> -->
               <!-- 播放暂停按钮 -->
               <!-- <img v-show="iconPlayShow" class="icon_play" @click="playvideo" src="/video/icon_play.png" /> -->
-              <van-icon
-                name="pause-circle"
-                v-show="iconPlayShow"
-                class="icon_play"
-                @click="pauseVideo"
-              />
-            </div>
+              <!-- <van-icon name="pause-circle" class="icon_play"/>
+            </div> -->
           </div>
 
           <!-- 顶部邮票功能 -->
@@ -104,7 +99,7 @@
                   <div class="mask_gift_img">
                     <img :src="gItem.picture" />
                   </div>
-                  <p>{{gItem.account}}{{gItem.name}}</p>
+                  <p>{{gItem.amount*1}}积分</p>
                 </li>
               </ul>
             </div>
@@ -112,10 +107,10 @@
               请选择数量:&nbsp;<van-stepper v-model="sel_gift_number" integer min="1"/>
             </div>
             <div class="mask_bottom_column">
-              <p>
-                可用积分&nbsp;100
-                <van-button round type="primary" size="mini" class="rechargeBtn">充值</van-button>
-              </p>
+              <div class="mask_bottom_left">
+                 <p>可用积分&nbsp;{{integral}}</p>
+                <van-button round type="primary" size="small" class="rechargeBtn" @click.stop="$router.push('/personCenter/recharge')">充值</van-button>
+              </div>
               <van-button round size="small" class="presentBtn" @click.stop="presentBtn(vItem.id)">赠送</van-button>
             </div>
           </div>
@@ -152,6 +147,7 @@
   </div>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: "videoChild",
   data() {
@@ -163,7 +159,7 @@ export default {
       sel_gift_number:1,//选择礼物数量
       selActive:0,
       current: 0, //当前视频索引
-      isVideoShow: true,
+      // isVideoShow: true,
       playOrPause: true, //播放或暂停
       video: null,
       iconPlayShow: false,
@@ -179,13 +175,23 @@ export default {
     this.current =  parseInt(this.$route.query.vIndex); //获取传过来的视频索引;
     this.fetchVideos();
   },
+  mounted(){
+     
+  },
+  computed:{
+    ...mapGetters(["integral"])
+  },
   methods: {
     fetchVideos() { //获取数据
       let url = "video/smallVideoList"; //获取视频列表
       this.$https.get(url).then(res => {
-        if (res.data.code === 200 && res.data.data) {
+        if (res.data.code === 200 && res.data.data){
           this.videoList = res.data.data;
-        }
+          // console.log(this.videoList);
+           this.$nextTick(()=>{
+               document.querySelectorAll("video")[this.current].play(); //一进来就播放
+           })
+         }
       });
 
       let likeUrl = "user/userTodayLavePraiseNum"; //获取点赞数
@@ -197,7 +203,8 @@ export default {
 
       let giftUrl = "video/giftList";  //获取礼物列表
       this.$https.get(giftUrl).then(res => {
-        if(res.data.code === 200 && res.data.data) {
+        if(res.data.code === 200 && res.data.data){
+          // console.log(res.data.data);
           this.giftList = res.data.data;
         }
       });
@@ -241,9 +248,7 @@ export default {
          message:"今天已点赞"
        });
      }
-
      }
-
     },
     //展示分享弹窗
     changeShare() {
@@ -254,50 +259,48 @@ export default {
       this.showShareBox = false;
     },
     //滑动改变播放的视频
-    onChange(index) {
+    onChange(index){
       //改变的时候 暂停当前播放的视频
       let video = document.querySelectorAll("video")[this.current];
       video.pause();
       this.playOrPause = false;
       this.current = index;
       // console.log("滑动改变视频");
-      if (this.isiOS) {
+      // if (this.isiOS) {
         //ios切换直接自动播放下一个
-        this.isVideoShow = false;
+        // this.isVideoShow = false;
         this.pauseVideo();
-      } else {
-        //安卓播放时重置显示封面。图标等
-        this.isVideoShow = true;
-        this.iconPlayShow = true;
-      }
+      // } else {
+      //   //安卓播放时重置显示封面。图标等
+      //   this.isVideoShow = true;
+      //   this.iconPlayShow = true;
+      // }
     },
-    playvideo(event) {
+    // playvideo(event) {
+    //   let video = document.querySelectorAll("video")[this.current];
+    //   console.log("播放当前视频索引" + this.current);
+    //   this.isVideoShow = false;
+    //   this.iconPlayShow = false;
+    //   video.play();
+    //   window.onresize = function() {
+    //     video.style.width = window.innerWidth + "px";
+    //     video.style.height = window.innerHeight + "px";
+    //   };
+    // },
+    pauseVideo() { //暂停\播放
       let video = document.querySelectorAll("video")[this.current];
-      console.log("播放当前视频索引" + this.current);
-      this.isVideoShow = false;
-      this.iconPlayShow = false;
-      video.play();
-      window.onresize = function() {
-        video.style.width = window.innerWidth + "px";
-        video.style.height = window.innerHeight + "px";
-      };
-    },
-    pauseVideo() {
-      //暂停\播放
-      let video = document.querySelectorAll("video")[this.current];
-      if (this.playOrPause) {
-        video.pause();
-        this.iconPlayShow = true;
-        this.isVideoShow = false;
-      } else {
+      // if (this.playOrPause) {
+      //   video.pause();
+      //   // this.iconPlayShow = true;
+      // } else {
         video.play();
-        this.iconPlayShow = false;
-      }
-      this.playOrPause = !this.playOrPause;
+        // this.iconPlayShow = false;
+      // }
+      // this.playOrPause = !this.playOrPause;
     },
     onPlayerEnded(player) {
       //视频结束
-      this.isVideoShow = true;
+      // this.isVideoShow = true;
     },
     //复制当前链接
     copyUrl() {
@@ -345,7 +348,10 @@ export default {
 </script>
 <style lang="scss" scoped>
 .selActive{
-    border:1px solid yellow;
+    transition: color .5s ease,border-radius 1s ease;
+    color:yellow;
+    border:1px solid rgba(255,255,0,0.5);
+    border-radius:10px;
 }
 .clear {
   clear: both;
@@ -557,17 +563,14 @@ video {
     color: #ffffff;
     .mask_bottom_gifts{
         display:-webkit-box;
-        margin:10px 0;
         overflow-x:scroll;
         .mask_gift_item{
-         width:100px;
-         padding:5px;
+         margin-top:8px;
          box-sizing:border-box;
          text-align:center;
          .mask_gift_img{
-            width:100%;
-            height:100px;
-            margin:0 auto 10px;
+           width:100px;
+           height:100px;
          }
 
         }
@@ -576,13 +579,17 @@ video {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      p {
-        flex: 1;
+      .mask_bottom_left{
+        flex:1;
+        display:flex;
+        align-items:center;
         .rechargeBtn {
-          margin-left: 10px;
+          margin-left:10px;
+          font-size:12px;
+          height:24px;
+          line-height:24px;
         }
       }
-
       .presentBtn {
         background: linear-gradient(to right, #f94620, #fba102);
         color: #ffffff;

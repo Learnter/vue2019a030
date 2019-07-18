@@ -154,7 +154,7 @@ export default {
   }
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .hidden_payment_icon {
   display: none;
 }

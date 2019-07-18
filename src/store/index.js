@@ -64,6 +64,11 @@ const store = new Vuex.Store({
 			state.user_asset = obj;
 		}
 	},
+	getters:{
+		integral(state){ //用户积分
+			return state.user_asset['4'].money * 1
+		}
+	},
 	actions:{
 		
 	}

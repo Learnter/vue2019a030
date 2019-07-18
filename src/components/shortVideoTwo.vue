@@ -219,7 +219,7 @@ export default {
     attentionBtn(item,index){ //点击关注按钮
          let url = "user/followUser";
          let data = {
-              uid:item.uid
+              uid:item.user_id
           }
           this.$https.post(url,data).then(res => {
               if(res.data.code === 200){

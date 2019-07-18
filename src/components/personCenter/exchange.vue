@@ -10,7 +10,7 @@
                 <div>
                     <ul>
                         <li>
-                            <h3>可用邮票</h3>
+                            <h3>可用{{stamp_info.walletName}}</h3>
                             <p>{{stamp_info.balance}}</p>
                         </li>
                         <li>
@@ -29,7 +29,7 @@
                     </van-cell-group>
                     <van-button square type="primary" class="exchangeBtn" size="mini" @click="exchangeBtn">兑换金额</van-button>
                 </div>
-                <p>兑换比率:10000邮币=20元</p>
+                <p>兑换比率:10000{{stamp_info.walletName}}=20元</p>
             </div>
         </div>
         <div class="exchange_list">
@@ -64,6 +64,7 @@ export default {
             let url = "money/getStampExchangeInfo";
             this.$https.get(url).then( res => {
                 if(res.data.code === 200 &&  res.data.data){
+                    console.log(res.data.data);
                     this.stamp_info = res.data.data;
                 }
             })

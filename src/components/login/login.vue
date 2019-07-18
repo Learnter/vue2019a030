@@ -57,41 +57,40 @@ export default {
   },
   methods:{
     beforLogin(){ //判断以前是否有登陆
-      let localUser = JSON.parse(localStorage.getItem("userInfo"));
-      if(localUser){
-        this.user = localUser
-        this.$toast("自动登陆中...")
-        setTimeout(()=>{
-            this.toLogin();//自动登陆
-        },1000)
+      let token = localStorage.getItem("token");
+      if(token){
+        this.$router.push("/smallVideo");
       }
     },
     toLogin(){ //登录
      
       // /* 账号/密码非空判断*/
-      // if (!(/^1[34578]\d{9}$/).test(account) ) {
+      // if (!(/^1[34578]\d{9}$/).test(user.account) ) {
       //   this.$toast("手机号码不存在!");
       //   return false;
-      // } else if (!(/^[a-zA-Z0-9]{6,}$/).test(password)) {/* 密码规则最少需要6位数*/
+      // } else if (!(/^[a-zA-Z0-9]{6,}$/).test(user.password)) {/* 密码规则最少需要6位数*/
       //   this.$toast("密码输入有误!");
       //   return false;
       // }
 
       let url = "user/login";  
       this.$https.post(url, this.user).then(res => {
+
         if (res.data.code == 200 && res.data.data) {
-            if(!localStorage.getItem("userInfo")){
-                localStorage.setItem("userInfo",JSON.stringify(this.user)); //将登陆信息存储到localStorage
-            }
+
+            localStorage.setItem("token",res.data.data.token); //将登陆token信息存储到localStorage
+            
             let userConfig = JSON.stringify(res.data.data);
             sessionStorage.setItem("user",userConfig);
+
             this.$toast("登录成功");
+
             setTimeout(() => {
               this.$router.push("/smallVideo");
             }, 1000);
         }else{
             this.$toast(res.data.msg);
-            localStorage.removeItem("userInfo"); //报错移除缓存信息,重新输入账号、密码登录;
+            localStorage.removeItem("token"); //移除本地token
             return false;
           }
       });

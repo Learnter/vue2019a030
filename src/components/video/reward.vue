@@ -24,7 +24,7 @@
         <ul class="mask_bottom_gifts">
           <li class="mask_gift_item" :class="index == selActive?'selActive':''" v-for="(item,index) in 6" :key="index" @click="toggleGift(item,index)">
             <div class="mask_gift_img">
-              <img src="../../assets/tabImg/2019_a030_25.png" />
+              <img src="@/assets/tabImg/2019_a030_25.png" />
             </div>
             <p>100积分</p>
           </li>

@@ -5,7 +5,7 @@
 
       <div class="userTop">
 
-        <img src="@/assets/tabImg/2019_a030_18.png" />
+        <img src="@/assets/tabImg/2019_a030_64.png" />
 
         <div class="setup" @click="setUp">
           <img src="@/assets/tabImg/2019_a030_21.png" />
@@ -240,7 +240,7 @@
           message: '您确定要退出吗'
         }).then(()=>{
             sessionStorage.removeItem('user');//移除缓存信息
-            localStorage.removeItem("userInfo"); //移除永久缓存信息
+            localStorage.removeItem("token"); //移除永久缓存信息
             this.$router.push('/login'); //跳转到登录页面
         }).catch(()=>{
            return ;

@@ -9,14 +9,14 @@
         <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="刷新成功">
             <van-list v-model="loading" :finished="finished" finished-text="没有更多了"  @load="onLoad">
               <div class="main_ul">
-                <van-cell class="main_item" v-for="(item,index) in videoList" :key="index">
+                <van-cell class="main_item" v-for="(item,index) in videoList" :key="index" @click.stop="playVideo(index)">
                   <img  v-lazy="item.poster" alt="加载失败" />
 
                   <!-- 视频信息栏 -->
                   <div class="min_item_info uni-flex">
                     <div class="min_item_info_left">
                       <div class="user_img">
-                        <img src="@/assets/tabImg/2019_a030_1.png" />
+                        <img :src="item.avatar"/>
                       </div>
                       <p>{{item.title}}</p>
                     </div>
@@ -31,7 +31,7 @@
                   </div>
 
                   <!--播放按钮-->
-                  <van-icon name="play-circle" class="play" @click.stop="playVideo(index)" />
+                  <!-- <van-icon name="play-circle" class="play" @click.stop="playVideo(index)" /> -->
 
                   <!-- 视频时长 -->
                   <van-tag round class="duration">{{item.video_duration|timeFormat()}}</van-tag>
@@ -69,7 +69,7 @@ export default {
       this.$https.get(url).then(res => {
         if (res.data.code === 200 && res.data.data) {
           this.videoList = res.data.data;
-          // console.log(this.videoList);
+          console.log(this.videoList);
           this.isLoading = false;
           this.loading = false;
           this.finished = true;
@@ -221,15 +221,15 @@ export default {
       border:1px solid rgba(0, 0, 0, 0.1);
     }
 
-      .play {
-        font-size:40px;
-        position: absolute;
-        top:50%;
-        left:50%;
-        transform:translate(-50%);
-        border-radius: 50%;
-        color: rgba(0,0,0,0.5);
-      }
+      // .play {
+      //   font-size:40px;
+      //   position: absolute;
+      //   top:50%;
+      //   left:50%;
+      //   transform:translate(-50%);
+      //   border-radius: 50%;
+      //   color: rgba(0,0,0,0.5);
+      // }
 
      .duration{
         position: absolute;

@@ -6,40 +6,40 @@
     <div class="digital_main">
       <ul>
         <li style="background:#B522FD">
-             <h3>全国邮币</h3>
+             <h3>全国邮币生产数量</h3>
              <p>{{assetList.nationalPostalCurrency}}</p>
         </li>
         <li style="background:#B522FD">
-             <h3>邮币持仓量</h3>
+             <h3>我的邮币总资产</h3>
+             <p>{{assetList.personalNationalPostalCurrency}}</p>
+        </li>
+        <li>
+             <h3>邮币持仓数量</h3>
              <p>{{assetList.postCurrencyPosition}}</p>
+        </li>
+        <li>
+             <h3>邮币流通数量</h3>
+             <p>{{assetList.personalPostCurrencyPosition}}</p>
         </li>
         <li>
              <h3>昨日回收邮币</h3>
              <p>{{assetList.recycledPostageCurrencyYesterday}}</p>
         </li>
         <li>
+             <h3>昨日转出邮币</h3>
+             <p>{{assetList.transferringThePostalCurrencyYesterday}}</p>
+        </li>
+        <li>
              <h3>今日生产邮币</h3>
              <p>{{assetList.producePostalCurrencyToday}}</p>
-        </li>
-        <li>
-             <h3>万份邮币回馈</h3>
-             <p>{{assetList.millionFeedback}}</p>
-        </li>
-        <li>
-             <h3>我的邮币总资产</h3>
-             <p>{{assetList.personalNationalPostalCurrency}}</p>
-        </li>
-        <li>
-             <h3>邮币流通资产</h3>
-             <p>{{assetList.personalPostCurrencyPosition}}</p>
         </li>
         <li>
              <h3>今日存入邮币</h3>
              <p>{{assetList.depositMoneyToday}}</p>
         </li>
         <li>
-             <h3>昨日转出邮币</h3>
-             <p>{{assetList.transferringThePostalCurrencyYesterday}}</p>
+             <h3>万份邮币每日回馈</h3>
+             <p>{{assetList.millionFeedback}}</p>
         </li>
         <li>
              <h3>总共回馈收益</h3>

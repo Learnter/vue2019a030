@@ -18,7 +18,7 @@
     </div>
     <div class="video_main">
         <div class="video_tab">
-            <p v-for="(item,index) in navList" :key="index" @click="coverTab(item.type)">{{item.title}}</p>
+            <p v-for="(item,index) in navList" :class="videoType == item.type ? 'active':''" :key="index" @click="coverTab(item.type)">{{item.title}}</p>
         </div>
         <div class="videos_box">
             <van-list  v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">  
@@ -89,6 +89,7 @@ export default {
             // console.log(res.data.data.length);
             if(res.data.code === 200 && res.data.data.length > 0){
                 this.videoList = res.data.data;
+                console.log(this.videoList);
                 this.requestConfig.page++;
                 this.loading = false;
             }else{
@@ -219,10 +220,15 @@ export default {
            height:100%;
            line-height:45px;
            text-align:center;
-           color:#ffffff;
-           font-size:18px;
+           color:#696969;
+           font-size:16px;
            letter-spacing:2px;
        } 
+       .active{
+         font-size:18px;
+         color:#ffffff;
+         transition:font-weight .5s ease,color 1s ease-in-out;
+       }
     }
     
        .videos_box{
