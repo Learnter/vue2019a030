@@ -55,6 +55,12 @@ export default {
 video,img{
   width:100%;
   height:100%;
+  image-rendering: -moz-crisp-edges; /* Firefox */
+  image-rendering: -o-crisp-edges; /* Opera */
+  image-rendering: -webkit-optimize-contrast; /* Webkit (non-standard naming) */
+  image-rendering: crisp-edges;    
+  -ms-interpolation-mode: nearest-neighbor; /* IE (non-standard property) */
+
 }
 
 button{

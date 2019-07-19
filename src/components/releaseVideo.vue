@@ -40,7 +40,7 @@
       </div>
       <div class="outStation">
         <h3>支持外站</h3>
-        <div>
+        <div v-if="uploadType=='uploadSmallVideo'">
           <ul class="outStation_items">
             <li>
               <div class="outStation_icon">
@@ -62,23 +62,49 @@
             </li>
           </ul>
         </div>
+        <div v-if="uploadType=='uploadShortVideo'">
+          <ul class="outStation_items">
+            <li>
+              <div class="outStation_icon">
+                <img src="@/assets/uploadImg/2019_a030_65.png" alt="加载失败" />
+              </div>
+              <p>百度视频</p>
+            </li>
+            <li>
+              <div class="outStation_icon">
+                <img src="@/assets/uploadImg/2019_a030_66.png" alt="加载失败" />
+              </div>
+              <p>爱奇艺</p>
+            </li>
+            <li>
+              <div class="outStation_icon">
+                <img src="@/assets/uploadImg/2019_a030_67.png" alt="加载失败" />
+              </div>
+              <p>腾讯视频</p>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
 </template>
 <script>
+import { mapState } from 'vuex';
 export default {
   name: "release",
   data() {
     return {
-      uploadType:"",//上传视频类型
+      // uploadType:"",//上传视频类型
       address:"",//外链接地址
     };
+  },
+  computed:{
+    ...mapState(['uploadType'])
   },
   methods: {
     afterRead(file){ //上传视频
       //  console.log(file.file);
-
+      
        let fileFormData = new FormData();
        fileFormData.append('video',file.file);
        fileFormData.append('name','video');
@@ -260,8 +286,8 @@ export default {
           align-items: center;
           margin-bottom: 15px;
           .outStation_icon {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             margin-bottom: 15px;
             border-radius: 50%;
           }

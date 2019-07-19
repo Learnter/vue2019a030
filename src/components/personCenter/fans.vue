@@ -15,6 +15,7 @@
                 <img :src="item.avatar" alt="">
                 <span>{{item.username}}</span>
             </div>
+
             <van-button round v-if="!item.is_follow" class="attention" @click="attentionBtn(item,index)">关注</van-button>
             <van-button round v-if="item.is_follow" class="cancelAttention" @click="attentionBtn(item,index)">取消关注</van-button>
         </van-cell>
@@ -44,10 +45,10 @@ export default {
     fetchData() {
       let url = "user/getFansList";
       this.$https.get(url, this.fansConfig).then(res => {
-          console.log(res);
+          // console.log(res);
         if (res.data.code === 200 && res.data.data.length > 0) {
           this.fansList = res.data.data;
-          console.log(this.fansList);
+          // console.log(this.fansList);
           this.fansConfig.page++;
           this.loading = false;
         } else {
@@ -81,6 +82,8 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+
+
 .fans {
   position: fixed;
   left: 0;
@@ -147,12 +150,12 @@ export default {
         letter-spacing:2px;
     }
     .cancelAttention{
-           height:25px;
-           line-height:25px;
-           font-size:13px;
-           color:white;
-           background:transparent;
-           letter-spacing:2px;
+      height:25px;
+      line-height:25px;
+      font-size:13px;
+      color:white;
+      background:transparent;
+      letter-spacing:2px;
        }
    }
 }

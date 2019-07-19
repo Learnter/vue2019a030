@@ -33,6 +33,11 @@ export default new Router({
        }
     },
     {
+      path:"/live",//直播
+      name:"live",
+      component: resolve => require(["@/components/common/systemMask"],resolve)
+    },
+    {
       path:"/me", // 个人中心
       name:"Me",
       component: resolve => require(["@/components/personCenter/me"],resolve),

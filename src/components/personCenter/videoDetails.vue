@@ -1,6 +1,6 @@
 <template>
   <section class="videoDetails">
-    <van-nav-bar title="视频页面" left-arrow @click-left="$router.go(-1)"></van-nav-bar>
+    <van-nav-bar :title="returnTitle" left-arrow @click-left="$router.go(-1)"></van-nav-bar>
     <div class="video_user">
       <div class="user_photo">
         <img :src="user_info.avatar"/>
@@ -18,27 +18,32 @@
     </div>
     <div class="video_main">
         <div class="video_tab">
-            <p v-for="(item,index) in navList" :class="videoType == item.type ? 'active':''" :key="index" @click="coverTab(item.type)">{{item.title}}</p>
+            <p v-for="(item,index) in navList" :class="currentTabComponent == item.type ? 'active':''" :key="index" @click="coverTab(item.type)">{{item.title}}</p>
         </div>
         <div class="videos_box">
             <van-list  v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">  
-                <div class="multiple_video">
+                <!-- <div class="multiple_video">
                     <div class="single_video" v-for="(item,index) in videoList" :key="index">
                         <img v-lazy="item.poster" alt="">
                         <van-tag round class="duration">{{item.video_duration|timeFormat()}}</van-tag>
                     </div>
-                </div>
+                </div> -->
+                <keep-alive>
+                     <component v-bind:is="currentTabComponent" :video-list="videoList" :uid="user_info.user_id"></component>
+                </keep-alive>
             </van-list>
         </div> 
     </div>
   </section>
 </template>
 <script>
+import personSmall from "@/components/common/personSmall";
+import personShort from "@/components/common/personShort";
 export default {
   name: "videoDetails",
   data() {
     return {
-        navList:[{id:1,title:"小视频",type:"small"},{id:2,title:"短视频",type:"short"}],
+        navList:[{id:1,title:"小视频",type:"personSmall"},{id:2,title:"短视频",type:"personShort"}],
         loading: false,
         finished: false,
         requestConfig:{ //请求配置
@@ -47,9 +52,9 @@ export default {
         },
         videoType:"small",//视频类型
         videoList:[],//视频列表
-        user_id:'',//用户的id
-        user_info:{},//用户信息
-        
+        user_id:'',//视频页面传入的会员的id
+        user_info:{},//用户信息  
+        currentTabComponent:'personSmall'
     };
   },
   created(){  
@@ -59,7 +64,16 @@ export default {
   computed:{
       oneselfId(){ //返回账户本身ID   
         return JSON.parse(localStorage.getItem("user")).userInfo.user_id;
-      }
+      },
+      returnTitle(){ //返回栏标题
+         let title 
+         if(this.user_info.user_id != this.oneselfId){  //判断是否进入的是自己的视频页面
+           title = this.user_info.username + "的作品";
+         }else{  
+           title = "我的作品"
+         }
+         return title;
+      } 
   },
   methods: {
     fetchUserInfo(){ //获取用户信息
@@ -77,7 +91,7 @@ export default {
     fetchVideo(){ //获取视频列表
 
         let url 
-        if(this.videoType == "small"){ //判断请求的视频类型
+        if(this.currentTabComponent == "personSmall"){ //判断请求的视频类型
             url = "video/smallVideoList";
         }else{
             url = "video/shortVideoList";
@@ -89,7 +103,7 @@ export default {
             // console.log(res.data.data.length);
             if(res.data.code === 200 && res.data.data.length > 0){
                 this.videoList = res.data.data;
-                console.log(this.videoList);
+                // console.log(this.videoList);
                 this.requestConfig.page++;
                 this.loading = false;
             }else{
@@ -99,7 +113,11 @@ export default {
         })
      },
      coverTab(type){ //切换导航
-         this.videoType = type;
+         if(type == "personSmall"){
+          this.currentTabComponent = 'personSmall';
+         }else{
+           this.currentTabComponent = 'personShort';
+         }
          this.requestConfig.page = 1;
          this.fetchVideo();
      },
@@ -126,10 +144,14 @@ export default {
           }
        })
      }
+  },
+  components:{
+    personSmall,
+    personShort
   }
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .videoDetails {
   position: fixed;
   left: 0;
@@ -239,29 +261,28 @@ export default {
         width:100%;
         box-sizing:border-box;
         bottom:0px;
-        padding: 10px 0 10px 3%;
-        .multiple_video{
-            display:flex;
-            flex-wrap:wrap;
-        }
-        .single_video{
-            position: relative;
-            box-sizing:border-box;
-            width:47%;
-            height:220px;
-            margin-right:3%;
-            margin-bottom:10px;
-            border-radius:10px;
-            overflow:hidden;
-            background:#191B28;
-            .duration{
-              position: absolute;
-              right:5px;
-              top:5px;
-              background:rgba(0,0,0,0.5) !important;
-              padding:2px 10px;
-            }
-        }
+    //     .multiple_video{
+    //         display:flex;
+    //         flex-wrap:wrap;
+    //     }
+    //     .single_video{
+    //         position: relative;
+    //         box-sizing:border-box;
+    //         width:47%;
+    //         height:220px;
+    //         margin-right:3%;
+    //         margin-bottom:10px;
+    //         border-radius:10px;
+    //         overflow:hidden;
+    //         background:#191B28;
+    //         .duration{
+    //           position: absolute;
+    //           right:5px;
+    //           top:5px;
+    //           background:rgba(0,0,0,0.5) !important;
+    //           padding:2px 10px;
+    //         }
+    //     }
     }
   }
 }

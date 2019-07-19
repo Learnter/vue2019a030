@@ -11,7 +11,7 @@
     </van-dropdown-menu>
 
     <div class="asset_main">
-      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad" :immediate-check='false' :offset=30>
+      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad" :immediate-check='false' :offset=10>
         <div class="asset_list">
           <ul>
             <li class="asset_details_li" v-for="(item,index) in assetList" :key="index">
@@ -21,7 +21,7 @@
               <div class="asset_details_right">
                 <div>
                   <span>{{item.note}}</span>
-                  <span :style="item.money < 0  ? 'color:#9AD3E3' : 'color:#FF6868'">{{item.money > 0 ? '+'+item.money : item.money}}</span>
+                  <span :style="item.money < 0  ? 'color:#9AD3E3' : 'color:#FF6868'">{{item.money > 0 ? '+'+item.money*1 : item.money*1}}{{item.wallet_name}}</span>
                 </div>
                 <p>{{item.edit_time}}</p>
               </div>
@@ -70,10 +70,6 @@
       };
     },
     created() {
-      if(this.$route.query.mid){
-        this.requrstConfig.mid = this.$route.query.mid;
-      }
-      console.log(this.requrstConfig);
       this.fetchAssetData();
       this.fetchCategory();
     },
@@ -135,7 +131,7 @@
             this.loading = false;
             this.finished = true; //没数据后,设置为true
           }
-          console.log(this.assetList);
+          // console.log(this.assetList);
         });
       }
     },

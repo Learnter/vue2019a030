@@ -81,7 +81,7 @@ export default {
 
             localStorage.setItem("user",JSON.stringify(res.data.data)); //将登陆token信息存储到localStorage
             
-            console.log(res.data.data);
+            // console.log(res.data.data);
             // let userConfig = JSON.stringify(res.data.data);
             // sessionStorage.setItem("user",userConfig);
 

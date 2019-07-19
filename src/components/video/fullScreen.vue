@@ -53,7 +53,7 @@
 
           <!-- 右侧点赞、分享功能 -->
           <div class="tools_right">
-            <div class="tools_r_li" @click="photoBtn(vItem.user_id)">
+            <div class="tools_r_li" @click="photoBtn(vItem.user_id,vItem.username)">
               <img :src="vItem.avatar" />
             </div>
             <div class="tools_r_li" @click.stop="changeFollow(vItem,vIndex)">
@@ -116,6 +116,10 @@
           </div>
         </van-swipe-item>
       </van-swipe>
+
+      <!-- 顶部返回栏 -->
+      <van-nav-bar left-arrow @click-left="$router.go(-1)"/>
+
       <!--底部操作栏-->
       <div class="container_bottom">
         <!-- <div class="bottom_tab" :class="tabIndex==0?'tab_active':''" @click="changeTab(0)">
@@ -159,7 +163,7 @@ export default {
       sel_gift_number:1,//选择礼物数量
       selActive:0,
       current: 0, //当前视频索引
-      // isVideoShow: true,
+      isVideoShow: true,
       playOrPause: true, //播放或暂停
       video: null,
       iconPlayShow: false,
@@ -168,15 +172,19 @@ export default {
       tabIndex: 0,
       showShareBox: false,
       videoList: [], //视频列表
-      giftList: [] //礼物列表
+      giftList: [], //礼物列表
+      videoConfig:{ //视频请求配置参数
+        page:1,
+        row:10,
+        uid:''
+      }
     };
   },
   created(){
     this.current =  parseInt(this.$route.query.vIndex); //获取传过来的视频索引;
+    this.videoConfig.uid = this.$route.query.uid; //获取传过来的会员id;
+    console.log(this.videoConfig.uid);
     this.fetchVideos();
-  },
-  mounted(){
-     
   },
   computed:{
     ...mapGetters(["integral"])
@@ -184,10 +192,10 @@ export default {
   methods: {
     fetchVideos() { //获取数据
       let url = "video/smallVideoList"; //获取视频列表
-      this.$https.get(url).then(res => {
+      this.$https.get(url,this.videoConfig).then(res => {
         if (res.data.code === 200 && res.data.data){
           this.videoList = res.data.data;
-          // console.log(this.videoList);
+          console.log(this.videoList);
            this.$nextTick(()=>{
                document.querySelectorAll("video")[this.current].play(); //一进来就播放
            })
@@ -214,8 +222,8 @@ export default {
     //   this.tabIndex = index;
     // },
     //查看视频资料
-    photoBtn(id){
-     this.$router.push({path:"/personCenter/videoDetails",query:{user_id:id}});
+    photoBtn(id,name){
+     this.$router.push({path:"/personCenter/videoDetails",query:{user_id:id,user_name:name}});
     },
     //点赞
     changeFollow(item,index) {
@@ -266,15 +274,15 @@ export default {
       this.playOrPause = false;
       this.current = index;
       // console.log("滑动改变视频");
-      // if (this.isiOS) {
+      if (this.isiOS) {
         //ios切换直接自动播放下一个
-        // this.isVideoShow = false;
+        this.isVideoShow = false;
         this.pauseVideo();
-      // } else {
-      //   //安卓播放时重置显示封面。图标等
-      //   this.isVideoShow = true;
-      //   this.iconPlayShow = true;
-      // }
+      } else {
+        //安卓播放时重置显示封面。图标等
+        this.isVideoShow = true;
+        this.iconPlayShow = true;
+      }
     },
     // playvideo(event) {
     //   let video = document.querySelectorAll("video")[this.current];
@@ -393,6 +401,18 @@ export default {
   left: 0;
   top: 0;
   overflow: hidden;
+}
+
+.van-nav-bar{
+  position: absolute;
+  left:0;
+  top:0;
+  width:100%;
+  background:transparent;
+  .van-icon{
+    color:#ffffff;
+    font-size:30px;
+  }
 }
 
 video {

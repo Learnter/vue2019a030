@@ -59,7 +59,7 @@ export default {
         { id: 1, title: "关注" },
         { id: 2, title: "附近" }
       ],
-      videoList: [] //视频列表
+      videoList: []//视频列表
     };
   },
    created(){

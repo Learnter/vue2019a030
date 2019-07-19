@@ -8,7 +8,7 @@
         <img src="@/assets/tabImg/2019_a030_64.png" />
 
         <div class="setup" @click="setUp">
-          <img src="@/assets/tabImg/2019_a030_21.png" />
+           <van-icon name="setting-o" />
         </div>
 
         <div class="user_content">
@@ -54,59 +54,64 @@
       <div class="user_assets">
         <div class="user_operation uni-flex">
           <div class="user_operation_item uni_watch_item" @click="recharge">
-            <div class="user_icon operation_icon">
-              <img src="@/assets/tabImg/2019_a030_22.png" />
+            <div class=" operation_icon" style="color:#0ECDFF">
+              <!-- <img src="@/assets/tabImg/2019_a030_22.png" /> -->
+              <van-icon name="cash-back-record"/>
             </div>
             <p>充值</p>
           </div>
           <div class="user_operation_item uni_watch_item" @click="deposit">
-            <div class="user_icon operation_icon">
-              <img src="@/assets/tabImg/2019_a030_23.png" />
+            <div class="operation_icon" style="color:#0ECDFF">
+              <!-- <img src="@/assets/tabImg/2019_a030_23.png" /> -->
+              <van-icon name="pending-payment"/>
             </div>
             <p>提现</p>
           </div>
           <div class="user_operation_item uni_watch_item" @click="numberAssets">
-            <div class="user_icon operation_icon">
-              <img src="@/assets/tabImg/2019_a030_24.png" />
+            <div class="operation_icon">
+              <!-- <img src="@/assets/tabImg/2019_a030_24.png" /> -->
+               <van-icon name="gem-o"/>
             </div>
             <p>数字资产</p>
           </div>
           <div class="user_operation_item uni_watch_item" @click="convert">
-            <div class="user_icon operation_icon">
-              <img src="@/assets/tabImg/2019_a030_25.png" />
+            <div class="operation_icon">
+              <!-- <img src="@/assets/tabImg/2019_a030_25.png" /> -->
+              <van-icon name="point-gift-o"/>
             </div>
             <p>邮票兑换</p>
           </div>
         </div>
 
+        <!-- @click="$router.push({path:'/personCenter/assetDetails',query:{mid:1}})" -->
         <div class="user_money uni-flex">
-          <div class="uni_watch_item" v-if="accountData['1']" @click="$router.push({path:'/personCenter/assetDetails',query:{mid:1}})">
+          <div class="uni_watch_item" v-if="accountData['1']"> 
             <p>{{accountData['1']['wallet_name']}}</p>
             <p>{{accountData['1']['money']}}</p>
           </div>
-          <div class="uni_watch_item" @click="$router.push({path:'/personCenter/assetDetails',query:{mid:1}})">
+          <div class="uni_watch_item">
             <p>今日回馈</p>
             <p>66678789</p>
           </div>
-          <div class="uni_watch_item" @click="$router.push({path:'/personCenter/assetDetails',query:{mid:1}})">
+          <div class="uni_watch_item">
             <p>佣金</p>
             <p>66152165</p>
           </div>
-          <div class="uni_watch_item" @click="$router.push({path:'/personCenter/assetDetails',query:{mid:1}})">
+          <div class="uni_watch_item">
             <p>总收入</p>
             <p>64565</p>
           </div>
         </div>
         <div class="user_integral uni-flex">
-          <div class="uni_watch_item" v-if="accountData['2']" @click="$router.push({path:'/personCenter/assetDetails',query:{mid:2}})">
+          <div class="uni_watch_item" v-if="accountData['2']">
             <p>{{accountData['2']['wallet_name']}}</p>
             <p>{{accountData['2']['money']}}</p>
           </div>
-          <div class="uni_watch_item" v-if="accountData['3']" @click="$router.push({path:'/personCenter/assetDetails',query:{mid:3}})">
+          <div class="uni_watch_item" v-if="accountData['3']">
             <p>{{accountData['3']['wallet_name']}}</p>
             <p>{{accountData['3']['money']}}</p>
           </div>
-          <div class="uni_watch_item" v-if="accountData['4']" @click="$router.push({path:'/personCenter/assetDetails',query:{mid:4}})">
+          <div class="uni_watch_item" v-if="accountData['4']">
             <p>{{accountData['4']['wallet_name']}}</p>
             <p>{{accountData['4']['money']}}</p>
           </div>
@@ -115,44 +120,50 @@
 
       <div class="user_config">
         <div class="user_config_item uni-flex">
-          <div class="user_icon config_icon">
-            <img src="@/assets/tabImg/2019_a030_26.png" />
+          <div class="user_icon ">
+            <van-icon name="chat-o" />
           </div>
           <p>消息</p>
         </div>
+        <div class="user_config_item uni-flex" @click="$router.push('/personCenter/assetDetails')">
+          <div class="user_icon ">
+            <van-icon name="balance-o" />
+          </div>
+          <p>钱包明细</p>
+        </div>
         <div class="user_config_item uni-flex">
-          <div class="user_icon config_icon">
-            <img src="@/assets/tabImg/2019_a030_27.png" />
+          <div class="user_icon ">
+            <van-icon name="manager-o" />
           </div>
           <p>主播认证</p>
         </div>
         <div class="user_config_item uni-flex" @click="$router.push('/personCenter/team')">
-          <div class="user_icon config_icon">
-            <img src="@/assets/tabImg/2019_a030_28.png" />
+          <div class="user_icon ">
+            <van-icon name="medel-o" />
           </div>
           <p>我的团队</p>
         </div>
         <div class="user_config_item uni-flex" @click="inviteFriends">
-          <div class="user_icon config_icon">
-            <img src="@/assets/tabImg/2019_a030_29.png" />
+          <div class="user_icon ">
+            <van-icon name="friends-o" />
           </div>
           <p>邀请好友</p>
         </div>
         <div class="user_config_item uni-flex">
-          <div class="user_icon config_icon">
-            <img src="@/assets/tabImg/2019_a030_30.png" />
+          <div class="user_icon ">
+            <van-icon name="question-o" />
           </div>
           <p>玩法攻略</p>
         </div>
         <div class="user_config_item uni-flex" @click='updateVersion'>
-          <div class="user_icon config_icon">
-            <img src="@/assets/tabImg/2019_a030_31.png" />
+          <div class="user_icon">
+            <van-icon name="upgrade" />
           </div>
           <p>版本更新</p>
         </div>
         <div class="user_config_item uni-flex" @click='exit'>
-          <div class="user_icon config_icon">
-            <img src="@/assets/tabImg/2019_a030_32.png" />
+          <div class="user_icon">
+            <van-icon name="qr" />
           </div>
           <p>退出</p>
         </div>
@@ -171,9 +182,9 @@
           // accountData:{} //账号资产信息
       };
     },
-    // created() {
-    //   // this.fetchAccountMoney();
-    // },
+    created() {
+      this.getStatistics();
+    },
     computed:{
       oneselfInfo(){ //获取自身账号信息
         return JSON.parse(localStorage.getItem("user")).userInfo;
@@ -182,15 +193,14 @@
         return this.$store.state.user_asset;
       }
     },
-    activated(){
-      this.getStatistics();
-    },
+    // activated(){
+    //   this.getStatistics();
+    // },
     methods: { 
       getStatistics(){ //获取统计信息
         let url = "user/getStatistics"; 
         this.$https.get(url).then(res => {
           if(res.data.code === 200 && res.data.data){
-            //  console.log(res.data.data);
              this.statisticsData = res.data.data;
           }
         })
@@ -206,7 +216,7 @@
       //     })
       // },
       setUp() { //设置按钮
-       this.$toast("接口尚未完善");
+       this.$toast("功能尚未开启");
       },
       recharge() { //充值
         this.$router.push("/personCenter/recharge");
@@ -222,10 +232,10 @@
       },
       inviteFriends() { //邀请好友
         // this.$router.push("/personCenter/share");
-        this.$toast("接口尚未完善");
+        this.$toast("功能尚未开启");
       },
       updateVersion(){ //更新版本
-        this.$toast("接口尚未完善");
+        this.$toast("已经是最新版本");
       },
       fansBtn(){ //粉丝列表
          this.$router.push("/personCenter/fans");
@@ -262,8 +272,8 @@
   }
 
   .user_icon {
-    width: 24px;
-    height: 24px;
+    font-size:25px;
+    margin-right:5px;
   }
 
   .userTop {
@@ -280,6 +290,7 @@
     right: 13px;
     width: 20px;
     height: 23px;
+    font-size:25px;
   }
 
   .user_content {
@@ -363,7 +374,9 @@
   }
 
   .operation_icon {
-    margin-bottom: 8px;
+    font-size:30px;
+    color:#FABD03;
+    line-height:1.2;
   }
 
   .user_money {
@@ -389,7 +402,4 @@
     padding: 10px 0;
   }
 
-  .config_icon {
-    margin-right: 5px;
-  }
 </style>

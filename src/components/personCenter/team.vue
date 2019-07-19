@@ -69,7 +69,7 @@ export default {
   },
  created(){
    //获取用户的id;
-   this.teamConfig.user_id = JSON.parse(sessionStorage.getItem("user")).userInfo.user_id;
+   this.teamConfig.user_id = JSON.parse(localStorage.getItem("user")).userInfo.user_id;
    this.fetchTeamInfo();
  },
   methods:{
