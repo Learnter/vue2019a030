@@ -177,12 +177,10 @@
     name:"personCenter",
     data(){
       return {
-          // oneself_info:{},//自身账号信息
-          statisticsData:{}, //统计数据
-          // accountData:{} //账号资产信息
+        statisticsData:{}, //统计数据
       };
     },
-    created() {
+    activated(){
       this.getStatistics();
     },
     computed:{
@@ -193,9 +191,6 @@
         return this.$store.state.user_asset;
       }
     },
-    // activated(){
-    //   this.getStatistics();
-    // },
     methods: { 
       getStatistics(){ //获取统计信息
         let url = "user/getStatistics"; 

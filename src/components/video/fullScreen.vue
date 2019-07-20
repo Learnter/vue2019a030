@@ -182,34 +182,33 @@ export default {
   },
   created(){
     this.current =  parseInt(this.$route.query.vIndex); //获取传过来的视频索引;
-    this.videoConfig.uid = this.$route.query.uid; //获取传过来的会员id;
-    console.log(this.videoConfig.uid);
-    this.fetchVideos();
+    this.videoList = JSON.parse(this.$route.query.list); //获取视频列表
+    this.videoConfig.page = parseInt(this.$route.query.page); 
+
+    // console.log(this.videoConfig,this.videoList);
+    this.videoConfig.uid = this.$route.query.uid; //获取作品页面传入的会员id;
+    this.fetchLikes();
+
+  },
+  mounted(){
+      this.$nextTick(()=>{
+           document.querySelectorAll("video")[this.current].play(); //一进来就播放
+         })
   },
   computed:{
     ...mapGetters(["integral"])
   },
   methods: {
-    fetchVideos() { //获取数据
-      let url = "video/smallVideoList"; //获取视频列表
-      this.$https.get(url,this.videoConfig).then(res => {
-        if (res.data.code === 200 && res.data.data){
-          this.videoList = res.data.data;
-          console.log(this.videoList);
-           this.$nextTick(()=>{
-               document.querySelectorAll("video")[this.current].play(); //一进来就播放
-           })
-         }
-      });
-
-      let likeUrl = "user/userTodayLavePraiseNum"; //获取点赞数
+    fetchLikes() { //获取点赞数
+      let likeUrl = "user/userTodayLavePraiseNum"; 
       this.$https.get(likeUrl).then(res => {
          if(res.data.code === 200){
             this.likeNum = res.data.data;
          } 
-      })
-
-      let giftUrl = "video/giftList";  //获取礼物列表
+      }) 
+    },
+    fetchGifts(){ //获取礼物列表
+      let giftUrl = "video/giftList";  
       this.$https.get(giftUrl).then(res => {
         if(res.data.code === 200 && res.data.data){
           // console.log(res.data.data);
@@ -268,6 +267,7 @@ export default {
     },
     //滑动改变播放的视频
     onChange(index){
+      this.isPlayEnd(index);
       //改变的时候 暂停当前播放的视频
       let video = document.querySelectorAll("video")[this.current];
       video.pause();
@@ -283,6 +283,20 @@ export default {
         this.isVideoShow = true;
         this.iconPlayShow = true;
       }
+    },
+    isPlayEnd(index){ //是否列表播放到最后
+    
+       let len = this.videoList.length; //视频列表长度
+
+       if((len-1) === index){  //滑动到最后追加数据
+          let url = "video/smallVideoList";
+          this.$https.get(url,this.videoConfig).then(res => {
+            if(res.data.code === 200 && res.data.data.length > 0){
+                 this.videoList = this.videoList.concat(res.data.data);
+                 this.videoConfig.page++;
+             }
+          });
+       }
     },
     // playvideo(event) {
     //   let video = document.querySelectorAll("video")[this.current];
@@ -325,6 +339,7 @@ export default {
     //礼物按钮
     giftBtn() {
       this.isPresent = true;
+      this.fetchGifts();
     },
     //切换礼物
     toggleGift(id){
@@ -582,6 +597,7 @@ video {
     text-align: left;
     color: #ffffff;
     .mask_bottom_gifts{
+        min-height:123px;
         display:-webkit-box;
         overflow-x:scroll;
         .mask_gift_item{
@@ -631,20 +647,12 @@ video {
   .closeBtn{
     font-size:25px;
     position: absolute;
-    z-index:1003;
+    z-index:1005;
     right:5px;
     top:5px;
     color:gray;
   }
 
-// .container_bottom {
-//   position: fixed;
-//   bottom: 0;
-//   width: 100%;
-//   background: rgba(0, 0, 0, 0.2);
-//   height: 60px;
-//   border-top: 1px solid rgba(255, 255, 255, 0.7);
-// }
 
 .production_top {
   display: inline-block;

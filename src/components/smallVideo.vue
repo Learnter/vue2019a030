@@ -59,6 +59,11 @@ export default {
         { id: 1, title: "关注" },
         { id: 2, title: "附近" }
       ],
+       videoConfig:{ //视频请求配置参数
+        page:1,
+        row:10,
+        uid:''
+      },
       videoList: []//视频列表
     };
   },
@@ -77,16 +82,20 @@ export default {
           })
       },
     //获取视频列表
-    fetchVideos() {
+    fetchVideos(){
       let url = "video/smallVideoList";
-      this.$https.get(url).then(res => {
-        if (res.data.code === 200 && res.data.data) {
-          this.videoList = res.data.data;
+      this.$https.get(url,this.videoConfig).then(res => {
+        //  console.log(res);
+        if (res.data.code === 200 && res.data.data.length > 0){
           // console.log(this.videoList);
-          this.isLoading = false;
+          this.videoList = this.videoList.concat(res.data.data);
+          this.videoConfig.page++;
           this.loading = false;
-          this.finished = true;
+        }else{
+            this.loading = false;
+            this.finished = true;
         }
+        this.isLoading = false;
       });
     },
     //切换导航栏
@@ -95,14 +104,12 @@ export default {
     },
     //点击图片跳转视频详情
     playVideo(val) {
-      this.$router.push({
-        path: "video/fullScreen",
-        query:{vIndex:val}
-      });
+      let videoArray = JSON.stringify(this.videoList); //视频列表数组
+      let videoPage = this.videoConfig.page;//视频列表页数
+      this.$router.push({path:"video/fullScreen",query:{vIndex:val,list:videoArray,page:videoPage}});
     },
     //收藏按钮
     likeBtn(index,item) {
-
         let url = "video/collectVideo";
         let data = { id:item.id };
         this.$https.post(url,data).then(res => {

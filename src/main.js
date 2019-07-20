@@ -86,12 +86,12 @@ router.beforeEach((to, from, next) => { //全局路由守卫
     next();
   } else {
     //如果没有登录你访问的不是login就让你强制跳转到login页面
-    if (to.path !== "/login") {
-      next({path:"/login"});
-    } else {
+    if(to.path == "/register" || to.path == "/protocol" ||to.path == "/login"){
       next();
+    }else if(to.path !== "/login"){
+      next({path:"/login"});
     }
-  }
+   }
 })
 
 

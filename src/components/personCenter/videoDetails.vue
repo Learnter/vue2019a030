@@ -21,17 +21,9 @@
             <p v-for="(item,index) in navList" :class="currentTabComponent == item.type ? 'active':''" :key="index" @click="coverTab(item.type)">{{item.title}}</p>
         </div>
         <div class="videos_box">
-            <van-list  v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">  
-                <!-- <div class="multiple_video">
-                    <div class="single_video" v-for="(item,index) in videoList" :key="index">
-                        <img v-lazy="item.poster" alt="">
-                        <van-tag round class="duration">{{item.video_duration|timeFormat()}}</van-tag>
-                    </div>
-                </div> -->
-                <keep-alive>
-                     <component v-bind:is="currentTabComponent" :video-list="videoList" :uid="user_info.user_id"></component>
-                </keep-alive>
-            </van-list>
+            <keep-alive>
+                  <component v-bind:is="currentTabComponent" :uid="user_info.user_id"></component>
+            </keep-alive>
         </div> 
     </div>
   </section>
@@ -44,12 +36,6 @@ export default {
   data() {
     return {
         navList:[{id:1,title:"小视频",type:"personSmall"},{id:2,title:"短视频",type:"personShort"}],
-        loading: false,
-        finished: false,
-        requestConfig:{ //请求配置
-            page:1,
-            row:10
-        },
         videoType:"small",//视频类型
         videoList:[],//视频列表
         user_id:'',//视频页面传入的会员的id
@@ -88,42 +74,15 @@ export default {
          }
       })
     },
-    fetchVideo(){ //获取视频列表
 
-        let url 
-        if(this.currentTabComponent == "personSmall"){ //判断请求的视频类型
-            url = "video/smallVideoList";
-        }else{
-            url = "video/shortVideoList";
-        }
-       
-        this.requestConfig.uid = this.user_id;
-      
-        this.$https.get(url, this.requestConfig).then(res => {
-            // console.log(res.data.data.length);
-            if(res.data.code === 200 && res.data.data.length > 0){
-                this.videoList = res.data.data;
-                // console.log(this.videoList);
-                this.requestConfig.page++;
-                this.loading = false;
-            }else{
-                this.loading = false;
-                this.finished = true;
-            }
-        })
-     },
      coverTab(type){ //切换导航
          if(type == "personSmall"){
           this.currentTabComponent = 'personSmall';
          }else{
            this.currentTabComponent = 'personShort';
          }
-         this.requestConfig.page = 1;
-         this.fetchVideo();
      },
-     onLoad(){ //上拉首次加载
-         this.fetchVideo();
-     },
+
      attentionBtn(){ //点击关注按钮
       let url = "user/followUser";
        let data = {

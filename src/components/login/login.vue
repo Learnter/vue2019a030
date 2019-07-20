@@ -57,9 +57,9 @@ export default {
   },
   methods:{
     beforLogin(){ //判断以前是否有登陆
-      let token = JSON.parse(localStorage.getItem("user")).token;
+      let user = JSON.parse(localStorage.getItem("user"));
       // console.log(token);
-      if(token){
+      if(user && user.token){
         this.$router.push("/smallVideo");
       }
     },

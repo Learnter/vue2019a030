@@ -68,12 +68,6 @@
       </van-swipe> -->
 
 
-
-
-
-
-
-
     <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="刷新成功">
         <van-list
           v-model="loading"
