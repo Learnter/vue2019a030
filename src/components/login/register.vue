@@ -54,7 +54,11 @@ export default {
     };
   },
   created(){
-    this.time = JSON.parse(sessionStorage.getItem("config")).send_sms_time_out; //获取倒计时间；
+    this.fetchConfig();
+  },
+  mounted(){
+    //  this.time = JSON.parse(sessionStorage.getItem("config")).send_sms_time_out; //获取倒计时间；
+     this.user.reg_code =  this.getQueryVariable("reg_code"); //获取用户邀请码
   },
   computed: {
     verifyInfo() {//获取用户验证码信息
@@ -65,9 +69,26 @@ export default {
     }
   },
   methods: {
+     fetchConfig(){ //获取平台全局配置
+      let url = "config/getInfo";
+      this.$https.get(url).then( res => {
+        if( res && res.data && res.data.data){
+           this.time = res.data.data.send_sms_time_out;
+         }
+      })
+     },
+    getQueryVariable (variable){ //获取路由后邀请码参数
+        var query = window.location.hash;
+        // console.log(query);
+        if(query.indexOf(variable) != -1){
+          var vars = query.split("=");
+          return vars[1];
+        }
+      return '';
+      },
     toRegister() {//注册账号
       if(!(/^[a-zA-Z0-9]{6}$/).test(this.user.reg_code)){
-          this.$toast("推荐码有误!");
+          this.$toast("请输入正确的推荐码!");
           return false;
         }else if(!/^1[34578]\d{9}$/.test(this.user.account)) {
           this.$toast("请输入正确的手机号!");

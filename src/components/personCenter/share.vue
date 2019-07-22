@@ -8,7 +8,7 @@
                 <div class="share_bgImg">  
                     <div class="share_border">
                          <div class="share_QR">
-                            <img :src="$store.state.userInfo.reg_code" alt="二维码">
+                            <img :src="qrUrl" alt="二维码">
                          </div>
                     </div>
 
@@ -20,10 +20,10 @@
                 </div>
                 <div class="recommend">
                     <div class="recommend_img">
-                         <img :src="$store.state.userInfo.head" alt="头像"/>
+                         <img :src="userConfig.head" alt="头像"/>
                     </div>
                     <div class="recommend_message">
-                        <p class="recommend_name">{{this.$store.state.userInfo.nickname}}</p>
+                        <p class="recommend_name">{{userConfig.nickname}}</p>
                         <p>邀请您加入[狐邮视频]</p>
                     </div>
                 </div>
@@ -33,7 +33,49 @@
 </template>
 <script>
 export default {
-    
+    name:"share",
+    data(){
+        return{
+            qrUrl:''//二维码链接地址
+        }
+    },
+    created(){
+       this.fetchQrCode();
+    },
+    computed:{
+        userConfig(){
+            return JSON.parse(localStorage.getItem("user")).userInfo;
+        }
+    },
+    methods:{
+        fetchQrCode(){
+
+           let url = "tools/qrCode";
+
+           let originUrl = location.origin+"/#/register?reg_code="+this.userConfig.reg_code; //扫描二维码跳转地址 +this.userConfig.reg_code
+
+           let base64Url = this.base64EncodeUnicode(originUrl); //将地址转化为base64编码格式
+
+           let data = {
+              value:base64Url
+            }
+
+            this.$https.get(url,data).then(res => {
+                 if(res.status === 200){
+                     this.qrUrl = res.request.responseURL;
+                 }
+            })
+        },
+         base64EncodeUnicode(str){ //base64编码转化 字符串转base64编码
+   
+          return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+
+          return String.fromCharCode('0x' + p1);
+
+       }));
+
+    }
+    } 
 }
 </script>
 <style lang="scss">

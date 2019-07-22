@@ -46,6 +46,11 @@ export default new Router({
       }
     },
     {
+      path:"/personCenter/editPersonInfo", // 编辑个人中心
+      name:"EditPersonInfo",
+      component: resolve => require(["@/components/personCenter/editPersonInfo"],resolve),
+    },
+    {
       path:"/personCenter/recharge", //充值
       name:"Recharge",
       component: resolve => require(["@/components/personCenter/recharge"],resolve)

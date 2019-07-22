@@ -90,7 +90,7 @@ router.beforeEach((to, from, next) => { //全局路由守卫
       next();
     }else if(to.path !== "/login"){
       next({path:"/login"});
-    }
+     }
    }
 })
 

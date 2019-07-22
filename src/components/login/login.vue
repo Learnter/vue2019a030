@@ -33,8 +33,7 @@
           class="regestBtn"
           style="color:#007A"
           size="mini"
-          @click="$router.push('/register')"
-        >立即注册</van-button>
+          @click="$router.push('/register')">立即注册</van-button>
         <div class="delimiter"></div>
         <van-button class="regestBtn" type="info" size="mini" @click="getVerifyCode">手机验证码登录</van-button>
       </div>
@@ -58,7 +57,6 @@ export default {
   methods:{
     beforLogin(){ //判断以前是否有登陆
       let user = JSON.parse(localStorage.getItem("user"));
-      // console.log(token);
       if(user && user.token){
         this.$router.push("/smallVideo");
       }
@@ -79,21 +77,18 @@ export default {
 
         if (res.data.code == 200 && res.data.data) {
 
+            this.$toast("登录成功");
             localStorage.setItem("user",JSON.stringify(res.data.data)); //将登陆token信息存储到localStorage
             
             // console.log(res.data.data);
             // let userConfig = JSON.stringify(res.data.data);
             // sessionStorage.setItem("user",userConfig);
-
-            this.$toast("登录成功");
-
             setTimeout(() => {
               this.$router.push("/smallVideo");
-            }, 1000);
+            }, 2000);
         }else{
             this.$toast(res.data.msg);
             localStorage.removeItem("user"); //移除本地token
-            return false;
           }
       });
     },

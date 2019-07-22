@@ -1,7 +1,7 @@
 <template>
     <div class="returnNav">
         <div class="returnImg" @click="goBack">
-            <img src="../../assets/tabImg/2019_a030_41.png" alt="返回按钮">
+            <img src="@/assets/tabImg/2019_a030_41.png" alt="返回按钮">
         </div>
         <h2>
             <slot name="middle"></slot>

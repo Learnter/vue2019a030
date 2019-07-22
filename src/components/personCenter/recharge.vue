@@ -131,9 +131,9 @@ export default {
 
            let originUrl = location.origin+"/#/me"; //获取支付成功跳转的地址
 
-          var base64Url = this.base64EncodeUnicode(originUrl); //将地址转化为base64编码格式
+           var base64Url = this.base64EncodeUnicode(originUrl); //将地址转化为base64编码格式
 
-          let payUrl = res.data.data.pay_url+"?return_url="+base64Url; //支付的链接地址,成功的回调页面url
+           let payUrl = res.data.data.pay_url+"?return_url="+base64Url; //支付的链接地址,成功的回调页面url
 
            window.open(payUrl,"_self"); //打开支付窗口
         }

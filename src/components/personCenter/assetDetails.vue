@@ -54,7 +54,7 @@
           { text: "日期正序", value: "asc" },
           { text: "日期倒序", value: "desc" }
         ], //排序列表
-        requrstConfig: {
+        requrstConfig:{
           //请求配置参数
           mid:"",
           type: "",
@@ -66,31 +66,31 @@
           page: 1,
           rows: 10
         },
-        assetList: [] //钱包列表
+        assetList:[] //钱包列表
       };
     },
-    created() {
+    created(){
       this.fetchAssetData();
       this.fetchCategory();
     },
     methods: {
-      fetchAssetData() {
+      fetchAssetData(){
         //获取钱包列表
         let url = "money/getMoneyLogList";
         this.$https.get(url, this.requrstConfig).then(res => {
           // console.log(res);
           if (res.data.code === 200 && res.data.data) {
             this.assetList = res.data.data;
-            if (this.assetList.length > 0) {
+            if(this.assetList.length > 0){
               this.loading = false;
-            } else {
+            }else{
               this.loading = false;
               this.finished = true;
             }
           }
         });
       },
-      fetchCategory() {
+      fetchCategory(){
         //获取排序分类数据
         let url = "money/getMoneyLogType";
         this.$https.get(url).then(res => {
@@ -99,25 +99,25 @@
           }
         });
       },
-      categorySort(e) {
+      categorySort(e){
         //排序分类
         this.categoryInit = e;
         this.requrstConfig.type = e;
         this.requrstConfig.page = 1; //重新获取首页数据
         this.fetchAssetData();
       },
-      sortWay(e) {
+      sortWay(e){
         //排序方式
         this.sortInit = e;
         this.requrstConfig.sort = e; //获取排序方式
         this.requrstConfig.page = 1; //重新获取首页数据
         this.fetchAssetData();
       },
-      dateSort(e) {
+      dateSort(e){
         //日期排序
         this.$toast("日期排序还没完善...");
       },
-      onLoad() { //滚动加载
+      onLoad(){ //滚动加载
         this.requrstConfig.page++;
         let url = "money/getMoneyLogList";
         this.$https.get(url, this.requrstConfig).then(res => {

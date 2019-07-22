@@ -17,7 +17,7 @@
                <p>上传</p>
             </van-uploader>
           </div>
-          <div class="upload_way" @click="onClickRight">
+          <div class="upload_way">
               <img src="@/assets/uploadImg/2019_a030_57.png">
               <p>站外链接</p>
           </div>
@@ -27,7 +27,7 @@
         <input
           v-model="address"
           type="text"
-          placeholder="长按粘贴外站链接,再点击站外按钮解析"
+          placeholder="长按粘贴外站链接,再点击下一步"
           autofocus
         />
       </div>
@@ -85,6 +85,7 @@
           </ul>
         </div>
       </div>
+        <van-button class="nextStep" size="small" @click="onClickRight">下一步</van-button>
     </div>
   </section>
 </template>
@@ -106,11 +107,12 @@ export default {
       //  console.log(file.file);
       
        let fileFormData = new FormData();
-       fileFormData.append('video',file.file);
-       fileFormData.append('name','video');
+           fileFormData.append('video',file.file);
+           fileFormData.append('name','video');
 
        let url = "uploadVideo/file";
        this.$https.post(url,fileFormData,'multipart/form-data').then(res => {
+
           if(res.data.code === 200 && res.data.data.length != 0){
 
             let video = {
@@ -213,10 +215,19 @@ export default {
   .release_main {
     position: absolute;
     top: 54px;
-    width: 100%;
-    bottom: 0;
-    box-sizing: border-box;
-    padding: 0 10px;
+    width:100%;
+    bottom:0;
+    box-sizing:border-box;
+    padding:0 10px;
+    overflow-y:scroll;
+    .nextStep{
+      background:#FE6440;
+      border:none;
+      font-size:20px;
+      color:#ffffff;
+      letter-spacing:2px;
+      border-radius:5px;
+    }
     .upload{
       display:flex;
       justify-content:space-around;
@@ -271,9 +282,10 @@ export default {
       text-align: center;
       color: #e8eaed;
       letter-spacing:2px;
+      padding-bottom:30px;
       h3 {
         margin-bottom:15px;
-        font-size:15px;
+        font-size:18px;
       }
       .outStation_items {
         display: flex;

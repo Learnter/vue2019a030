@@ -64,7 +64,7 @@ export default {
             let url = "money/getStampExchangeInfo";
             this.$https.get(url).then( res => {
                 if(res.data.code === 200 &&  res.data.data){
-                    console.log(res.data.data);
+                    // console.log(res.data.data);
                     this.stamp_info = res.data.data;
                 }
             })

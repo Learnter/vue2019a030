@@ -13,7 +13,7 @@
 
         <div class="user_content">
           <div class="userInfo uni-flex">
-            <div class="user_img">
+            <div class="user_img" @click="$router.push('/personCenter/editPersonInfo')">
               <img :src="oneselfInfo.avatar" />
             </div>
             <div class="user_detail">
@@ -226,8 +226,8 @@
         this.$router.push("/personCenter/exchange");
       },
       inviteFriends() { //邀请好友
-        // this.$router.push("/personCenter/share");
-        this.$toast("功能尚未开启");
+        this.$router.push("/personCenter/share");
+        // this.$toast("功能尚未开启");
       },
       updateVersion(){ //更新版本
         this.$toast("已经是最新版本");

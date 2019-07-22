@@ -192,42 +192,33 @@ export default {
       finished: false,
       isLoading: false,
       videosList: [],
-      playerOptions: {
-          muted: true,
-          language: 'en',
-          playbackRates: [0.7, 1.0, 1.5, 2.0],
-          sources: [{
-            type: "video/mp4",
-            src: "https://cdn.theguardian.tv/webM/2015/07/20/150716YesMen_synd_768k_vp8.webm"
-          }],
-          poster: "/static/images/author.jpg",
-       },
-       shortVideoConfig:{ //短视频请求配置
+      shortVideoConfig:{ //短视频请求配置
          page:1,
          row:10,
          uid:''
         }
      }
   },
-  created(){
-    this.fetchVideoList();
-  },
   methods: {
     fetchVideoList() {
       //获取短视频列表
       let url = "video/shortVideoList";
       this.$https.get(url,this.shortVideoConfig).then(res => {
-        if (res.data.code === 200 && res.data.data) {
+        // console.log(res);
+        if (res.data.code === 200 && res.data.data && res.data.data.length > 0) {
           let list = res.data.data;
           for (let i = 0; i < list.length; i++){
             list[i].isPlay = true;
             list[i].isPause = false;
           }
-          this.videosList = list;
-          this.isLoading = false;
+          this.videosList = this.videosList.concat(list);
+          this.shortVideoConfig.page++;
+          this.loading = false;
+        }else{
           this.loading = false;
           this.finished = true;
         }
+        this.isLoading = false; 
       });
     },
     playVideo(index) { //点击播放按钮
