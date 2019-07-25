@@ -14,6 +14,7 @@ import 'video.js/dist/video-js.css'
 Vue.use(VueVideoPlayer);
 
 
+import "./assets/iconFont/iconfont.css"; //引入阿里字体库
 
 
 //使用vantUI框架

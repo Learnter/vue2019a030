@@ -52,7 +52,7 @@ export default {
 
            let url = "tools/qrCode";
 
-           let originUrl = location.origin+"/#/register?reg_code="+this.userConfig.reg_code; //扫描二维码跳转地址 +this.userConfig.reg_code
+           let originUrl = location.origin+"/#/register?reg_code="+this.userConfig.account; //扫描二维码跳转地址 +this.userConfig.reg_code
 
            let base64Url = this.base64EncodeUnicode(originUrl); //将地址转化为base64编码格式
 

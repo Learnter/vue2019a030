@@ -58,19 +58,15 @@
             </div>
             <div class="tools_r_li" @click.stop="changeFollow(vItem,vIndex)">
               <van-tag type="danger">{{likeNum}}</van-tag>
-              <van-icon
-                name="youzan-shield"
-                class="iconfont icon-shoucang icon_right"
-                :class="vItem.is_praise?'follow_active':''"
-              />
+              <van-icon class="iconfont icon-iconfontforward icon_right" class-prefix='icon' name='like' :class="vItem.is_praise?'follow_active':''" />
               <div class="tools_r_num">{{vItem.praise_num}}</div>
             </div>
             <div class="tools_r_li" @click.stop="changeShare">
-              <van-icon name="chat" class="iconfont icon-iconfontforward icon_right" />
+              <van-icon class-prefix='icon' name='icon_pinglun' class="iconfont icon-iconfontforward icon_right"/>
               <div class="tools_r_num">{{vItem.collect_num}}</div>
             </div>
             <div class="tools_r_li" @click.stop="changeShare">
-              <van-icon name="weapp-nav" class="iconfont icon-iconfontforward icon_right" />
+              <van-icon name="zhuanfa" class-prefix='icon' class="iconfont icon-iconfontforward icon_right" />
               <div class="tools_r_num">{{vItem.collect_num}}</div>
             </div>
           </div>
@@ -81,7 +77,8 @@
               <div class="production_des">{{vItem.title}}</div>
             </div>
             <div class="mask_user_gift" @click.stop="giftBtn">
-              <img src="@/assets/tabImg/2019_a030_48.png" />
+              <!-- <img src="@/assets/tabImg/2019_a030_48.png" /> -->
+               <van-icon name="gift" class-prefix='icon' class="iconfont icon-iconfontforward icon-gift" />
             </div>
           </div>
 
@@ -92,7 +89,7 @@
               class="closeBtn"
               @click.stop="isPresent = false"
             />
-            <p>使用积分送礼物最高暴击10倍邮票</p>
+            <p>使用积分送礼物&nbsp;奖励12%邮票</p>
             <div>
               <ul class="mask_bottom_gifts">
                 <li class="mask_gift_item" :class="gItem.id == sel_gift_id ?'selActive':''" v-for="(gItem,gIndex) in giftList" :key="gIndex" @click.stop="sel_gift_id = gItem.id">
@@ -119,26 +116,18 @@
 
       <!-- 顶部返回栏 -->
       <van-nav-bar left-arrow @click-left="$router.go(-1)"/>
-
-      <!--底部操作栏-->
-      <div class="container_bottom">
-        <!-- <div class="bottom_tab" :class="tabIndex==0?'tab_active':''" @click="changeTab(0)">
-          <span class="bottom_tab_span">首页</span>
-        </div>
-        <div class="bottom_tab" :class="tabIndex==1?'tab_active':''" @click="changeTab(1)">
-          <span class="bottom_tab_span">我的</span>
-        </div>-->
-      </div>
       <!--分享弹框-->
       <!-- <div class="share_hover" v-show="showShareBox"></div> -->
       <div class="share_box" :class="showShareBox?'share_active':''">
         <div class="share_tips">分享到</div>
         <ul class="share_ul">
           <li class="share_li pengyouquan_li">
-            <i class="iconfont icon-pengyouquan pengyouquan"></i>
+            <!-- <i class="iconfont icon-pengyouquan pengyouquan"></i> -->
+              <van-icon name="pengyouquan" class-prefix='icon' class="iconfont pengyouquan icon-iconfontforward icon_right" />
           </li>
           <li class="share_li">
-            <i class="iconfont icon-weixin weixin"></i>
+            <!-- <i class="iconfont icon-weixin weixin"></i> -->
+             <van-icon name="weixin" class-prefix='icon' class="iconfont weixin icon-iconfontforward icon_right" />
           </li>
           <li class="share_li" @click="copyUrl">
             <i class="iconfont icon-lianjie lianjie"></i>
@@ -185,15 +174,16 @@ export default {
     this.videoList = JSON.parse(this.$route.query.list); //获取视频列表
     this.videoConfig.page = parseInt(this.$route.query.page); 
 
-    // console.log(this.videoConfig,this.videoList);
     this.videoConfig.uid = this.$route.query.uid; //获取作品页面传入的会员id;
     this.fetchLikes();
 
+    this.fetchGifts();//获取礼物列表;
+
   },
   mounted(){
-      this.$nextTick(()=>{
-           document.querySelectorAll("video")[this.current].play(); //一进来就播放
-         })
+    this.$nextTick(()=>{
+          document.querySelectorAll("video")[this.current].play(); //一进来就播放
+      })
   },
   computed:{
     ...mapGetters(["integral"])
@@ -228,7 +218,11 @@ export default {
     changeFollow(item,index) {
      let objVideo = this.videoList[index];
      if( this.likeNum < 0){
-       this.$toast("今天点赞数已用完");
+       this.$notify({
+                    message:"今天点赞数已用完",
+                    className:"notifyClass",
+                    duration:3000
+                   });
      }else{
 
        if(!objVideo.is_praise){
@@ -238,28 +232,40 @@ export default {
           }
           this.$https.post(url,data).then(res => {
               if(res.data.code === 200){
-                objVideo.is_praise = true;
-                objVideo.praise_num++;
+               this.videoList[index].is_praise = true;
+               this.videoList[index].praise_num++;
                 this.likeNum--;
-                this.$toast("今天还剩下"+this.likeNum+"点赞");
+                // this.$toast("今天还剩下"+this.likeNum+"点赞");
+                this.$notify({
+                       message:"今天还剩下"+this.likeNum+"点赞",
+                       className:"notifyClass",
+                       duration: 2000,
+                       background:"#07C160"
+                   });
               }else{
-                this.$toast({
-                  position:"bottom",
-                  message:res.data.msg
-                });
+                 this.$notify({
+                       message:res.data.msg,
+                       className:"notifyClass",
+                       duration: 3000,
+                  });
               }
           })   
      }else{
-       this.$toast({
-         position:"bottom",
-         message:"今天已点赞"
-       });
-     }
-     }
+      //  this.$toast({
+      //    position:"bottom",
+      //    message:"今天已点赞"
+      //  });
+       this.$notify({
+              message:res.data.msg,
+              className:"notifyClass",
+              duration: 3000,
+             });
+          }
+       }
     },
     //展示分享弹窗
     changeShare() {
-      this.showShareBox = true;
+      // this.showShareBox = true;
     },
     //取消分享
     cancelShare() {
@@ -339,7 +345,7 @@ export default {
     //礼物按钮
     giftBtn() {
       this.isPresent = true;
-      this.fetchGifts();
+      // this.fetchGifts();
     },
     //切换礼物
     toggleGift(id){
@@ -542,7 +548,7 @@ video {
 
 .icon_right {
   margin-bottom: 5px;
-  font-size: 35px;
+  font-size: 30px;
   display: block;
   text-shadow: 0px 0px 10px #9d9d9d;
   /*transition: .5s;*/
@@ -565,6 +571,10 @@ video {
   .mask_user_gift {
     width: 50px;
     height: 50px;
+    line-height:50px;
+    border-radius:50%;
+    background:#FB7D0D;
+    text-align:center;
   }
 }
 
@@ -743,6 +753,7 @@ video {
   width: 100%;
   z-index: 1002;
   background: #fff;
+  // backgrourgb(24, 16, 16)000;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   transition: 0.5s;
@@ -777,13 +788,18 @@ video {
   text-align: center;
 }
 
-.pengyouquan {
-  color: #47d000;
+.icon-gift{
+  font-size:30px;
+  color:#FF0000;
 }
 
-.pengyouquan_li {
-  animation: rotating 8s linear infinite;
+.pengyouquan {
+  color: #00BC0D;
 }
+
+// .pengyouquan_li {
+//   animation: rotating 8s linear infinite;
+// }
 
 @keyframes rotating {
   from {
@@ -796,7 +812,7 @@ video {
 }
 
 .weixin {
-  color: #20ca2e;
+  color: #00BC0D;
 }
 
 .lianjie {

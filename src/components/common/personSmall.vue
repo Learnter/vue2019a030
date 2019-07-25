@@ -30,8 +30,9 @@ export default {
             let url = "video/smallVideoList";
             this.requestConfig.uid = this.uid;
 
+            console.log(this.uid);
             this.$https.get(url,this.requestConfig).then(res => {
-                // console.log(res.data.data.length);
+                console.log(res.data.data.length);
                 if(res.data.code === 200 && res.data.data.length > 0){
 
                     this.videoList =  this.videoList.concat(res.data.data);
@@ -68,7 +69,7 @@ export default {
             position: relative;
             box-sizing:border-box;
             width:47%;
-            height:220px;
+            height:270px;
             margin-right:3%;
             margin-bottom:10px;
             border-radius:10px;

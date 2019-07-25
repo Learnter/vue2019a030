@@ -23,10 +23,10 @@
           >{{verifyCode}}</van-button>
         </van-field>
       </van-cell-group>
-      <div class="read_prototype">
+      <!-- <div class="read_prototype">
         <van-checkbox v-model="checked">阅读并同意</van-checkbox>
         <van-button slot="button" size="small" class="register_pro" @click="$router.push('/protocol')">[注册协议]</van-button>
-      </div>
+      </div> -->
       <van-button
         class="registerBtn"
         icon="https://img.yzcdn.cn/vant/logo.png"
@@ -173,19 +173,19 @@ export default {
         border-radius: 5px;
       }
     }
-    .read_prototype {
-      display: flex;
-      .van-checkbox__label {
-        color: blue;
-        font-weight: 700;
-      }
-      .register_pro {
-        background: transparent;
-        border: none;
-        font-size: 16px;
-        font-weight: bold;
-      }
-    }
+    // .read_prototype {
+    //   display: flex;
+    //   .van-checkbox__label {
+    //     color: blue;
+    //     font-weight: 700;
+    //   }
+    //   .register_pro {
+    //     background: transparent;
+    //     border: none;
+    //     font-size: 16px;
+    //     font-weight: bold;
+    //   }
+    // }
     .registerBtn {
       margin: 15px 0;
       font-size: 18px;

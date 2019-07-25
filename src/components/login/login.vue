@@ -77,7 +77,10 @@ export default {
 
         if (res.data.code == 200 && res.data.data) {
 
-            this.$toast("登录成功");
+            this.$toast({
+              message:"登录成功",
+              duration:1000
+              });
             localStorage.setItem("user",JSON.stringify(res.data.data)); //将登陆token信息存储到localStorage
             
             // console.log(res.data.data);
@@ -127,6 +130,11 @@ export default {
         color: white;
         margin-bottom: 10px;
         border-radius: 5px;
+        .van-field__control{
+          &::-webkit-input-placeholder{
+            color:#ae8ee8;
+          }
+        }
       }
     }
     .loginBtn {

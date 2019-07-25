@@ -29,7 +29,7 @@
                     </van-cell-group>
                     <van-button square type="primary" class="exchangeBtn" size="mini" @click="exchangeBtn">兑换金额</van-button>
                 </div>
-                <p>兑换比率:10000{{stamp_info.walletName}}=20元</p>
+                <p>兑换比率:12000{{stamp_info.walletName}}=60元</p>
             </div>
         </div>
         <div class="exchange_list">
@@ -71,7 +71,11 @@ export default {
         },
         exchangeBtn(){
             if(!this.stamp_num){
-                this.$toast("请输入兑换金额");
+                this.$notify({
+                       message:"请输入兑换金额",
+                       className:"notifyClass",
+                       duration:3000
+                     });
                 return false;
             }
             let url = "money/stampExchange";
@@ -80,10 +84,18 @@ export default {
             }
             this.$https.post(url,data).then( res => {
                  if(res.data.code === 200 ){
-                     this.$toast("邮票对换成功");
+                   this.$notify({
+                       message:"邮票对换成功",
+                       className:"notifyClass",
+                       duration:2000
+                     });
                      this.fetchStamp(); //重新获取邮票信息
                  }else{
-                     this.$toast(res.data.msg);
+                     this.$notify({
+                       message:res.data.msg,
+                       className:"notifyClass",
+                       duration:3000
+                     });
                  }
             })
         }

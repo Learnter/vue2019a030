@@ -69,13 +69,7 @@
 
 
     <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="刷新成功">
-        <van-list
-          v-model="loading"
-          :finished="finished"
-          finished-text="没有更多了"
-          @load="onLoad"
-          :offset="100"
-        >
+        <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad" :offset="100">
           <ul>
             <li class="video_item" v-for="(vItem,vIndex) in videosList" :key="vIndex">
               <div class="video_content">
@@ -127,12 +121,7 @@
 
 
                   <div class="playOrPause" v-if="vItem.isPlay||vItem.isPause">
-                    <van-icon
-                      name="play-circle"
-                      v-show="vItem.isPlay"
-                      class="play"
-                      @click="playVideo(vIndex)"
-                    />
+                    <van-icon name="play-circle" v-show="vItem.isPlay" class="play" @click="playVideo(vIndex)"/>
 
                    <van-icon
                       name="pause-circle"
@@ -145,11 +134,11 @@
               </div>
               <div class="video_info">
                 <div class="video_info_left">
-                  <div class="video_info_img">
+                  <div class="video_info_img"  @click="photoBtn(vItem.user_id,vItem.username)">
                     <img :src="vItem.avatar" alt />
                   </div>
                   <div v-if="vItem.uid !== 0">
-                       <van-tag color="#f2826a" v-if="!vItem.is_follow" class="video_info_title" @click="attentionBtn(vItem,vIndex)">+关注</van-tag>
+                       <van-tag color="#f2826a" v-if="!vItem.is_follow" class="video_info_title" @click="attentionBtn(vItem,vIndex)">关注</van-tag>
                        <van-tag color="#F00" v-else class="video_info_title" @click="attentionBtn(vItem,vIndex)">已关注</van-tag>
                   </div>
                 </div>
@@ -165,11 +154,42 @@
                   <van-icon name="chat-o" :info="vItem.collect_num" />
                   <van-icon name="ellipsis" /> -->
 
-
-                  <p>{{vItem.collect_num}}</p>
-                  <van-icon :class="vItem.is_collect == true ? 'follow_active':''"  name="like" @click.stop="likeBtn(vItem,vIndex)"/>
+                  <van-icon class="iconfont" class-prefix='icon' name='dashang' @click.stop="vItem.isReward = true"/>
+                  <div class="icons_right">
+                    <span class="collect_num">{{vItem.collect_num}}</span>
+                    <van-icon :class="vItem.is_collect == true ? 'follow_active':''"  name="like" @click.stop="likeBtn(vItem,vIndex)"/>
+                  </div>
                 </div>
               </div>
+               <!-- 底部礼物列表 -->
+          <div class="mask_bottom" v-if="vItem.isReward">
+             <van-icon
+              name="close"
+              class="closeBtn"
+              @click.stop="vItem.isReward = false"
+            />
+            <p>使用积分送礼物&nbsp;奖励12%邮票</p>
+            <div>
+              <ul class="mask_bottom_gifts">
+                <li class="mask_gift_item" :class="gItem.id == sel_gift_id ?'selActive':''" v-for="(gItem,gIndex) in giftList" :key="gIndex" @click.stop="sel_gift_id = gItem.id">
+                  <div class="mask_gift_img">
+                    <img :src="gItem.picture" />
+                  </div>
+                  <p>{{gItem.amount*1}}积分</p>
+                </li>
+              </ul>
+            </div>
+            <div class="gift_queryBox">
+              请选择数量:&nbsp;<van-stepper v-model="sel_gift_number" integer min="1"/>
+            </div>
+            <div class="mask_bottom_column">
+              <div class="mask_bottom_left">
+                 <p >可用积分&nbsp;{{integral}}</p>
+                <van-button round type="primary" size="small" class="rechargeBtn" @click.stop="$router.push('/personCenter/recharge')">充值</van-button>
+              </div>
+              <van-button round size="small" class="presentBtn" @click.stop="presentBtn(vItem)">赠送</van-button>
+            </div>
+          </div>
             </li>
           </ul>
         </van-list>
@@ -178,11 +198,16 @@
   </section>
 </template>
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: "shortVideoTwo",
   data() {
     let u = navigator.userAgent;
     return {
+      isPresent:false,//是否赠送礼物
+      giftList:[],//礼物列表
+      sel_gift_id:'',//选择礼物的id
+      sel_gift_number:1,//选择礼物数量
       current: 0, //当前播放视频索引
       playOrPause: true,
       isAndroid: u.indexOf("Android") > -1 || u.indexOf("Adr") > -1, // android终端
@@ -199,7 +224,22 @@ export default {
         }
      }
   },
+  created(){
+    this.fetchGifts();
+  },
+  computed:{
+    ...mapGetters(["integral"])
+  },
   methods: {
+     fetchGifts(){ //获取礼物列表
+      let giftUrl = "video/giftList";  
+      this.$https.get(giftUrl).then(res => {
+        if(res.data.code === 200 && res.data.data){
+          // console.log(res.data.data);
+          this.giftList = res.data.data;
+        }
+      });
+    },
     fetchVideoList() {
       //获取短视频列表
       let url = "video/shortVideoList";
@@ -210,6 +250,7 @@ export default {
           for (let i = 0; i < list.length; i++){
             list[i].isPlay = true;
             list[i].isPause = false;
+            list[i].isReward = false;
           }
           this.videosList = this.videosList.concat(list);
           this.shortVideoConfig.page++;
@@ -258,6 +299,10 @@ export default {
     },
     onPlayerEnded(player) { //视频结束
       this.videosList[this.current].isPlay = true; //显示播放按钮
+    },
+     //查看视频资料
+    photoBtn(id,name){
+     this.$router.push({path:"/personCenter/videoDetails",query:{user_id:id,user_name:name}});
     },
     onRefresh() { //下拉刷新
       setTimeout(() => {
@@ -317,6 +362,29 @@ export default {
                this.$toast(res.data.msg);
              }
          })
+    },
+    //赠送礼物
+    presentBtn(obj,val){
+
+      if(!this.sel_gift_id){
+        this.$toast('请选择礼物');
+        return;
+      }
+      let url = "video/sendAGift";
+      let data = {
+        video_id:obj.id,
+        gift_id:this.sel_gift_id,
+        num:this.sel_gift_number
+      }
+      this.$https.post(url,data).then(res => {
+          if(res.data.code == 200 ){
+            this.$toast("礼物赠送成功");
+          }else{
+            this.$toast(res.data.msg);
+          }
+         obj.isReward = false;
+         this.sel_gift_number = 1;
+      })
     },
     onSearch() {
       console.log("点击搜索按钮" + this.search_text);
@@ -435,6 +503,7 @@ video {
 
    .video_item{
      margin-bottom:10px;
+     position: relative;
    }
 
     .video_content {
@@ -489,10 +558,19 @@ video {
         width: 30%;
         display: flex;
         align-items: center;
+        justify-content:space-between;
         font-size: 20px;
         color:gray;
-        P{
-          margin-right:10px;
+        .icon-dashang{
+          font-size:30px;
+          color:#1478DF;
+        }
+        .icons_right{
+            display: flex;
+            align-items: center;
+        }
+        .collect_num{
+          margin-right:5px;
           font-size:16px;
           color:black;
         }
@@ -504,5 +582,81 @@ video {
     }
   }
 }
+
+// 礼物列表
+.mask_bottom {
+    z-index:1002;
+    position: absolute;
+    bottom:0px;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    box-sizing: border-box;
+    padding:10px;
+    border-radius: 10px 10px 0 0;
+    text-align: left;
+    color: #ffffff;
+    .selActive{
+      transition: color .5s ease,border-radius 1s ease;
+      color:yellow;
+      border:1px solid rgba(255,255,0,0.5);
+      border-radius:10px;
+     }
+     .closeBtn{
+        font-size:25px;
+        position: absolute;
+        z-index:1005;
+        right:5px;
+        top:5px;
+        color:gray;
+      }
+     .gift_queryBox{
+        display:flex;
+        align-items:center;
+        margin:10px 0;
+        font-size:16px;
+     } 
+    .mask_bottom_gifts{
+        min-height:123px;
+        display:-webkit-box;
+        overflow-x:scroll;
+        .mask_gift_item{
+         margin-top:8px;
+         box-sizing:border-box;
+         text-align:center;
+         .mask_gift_img{
+           width:100px;
+           height:100px;
+         }
+
+        }
+    }
+    .mask_bottom_column {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .mask_bottom_left{
+        flex:1;
+        display:flex;
+        align-items:center;
+        .rechargeBtn {
+          margin-left:10px;
+          font-size:12px;
+          height:24px;
+          line-height:24px;
+        }
+      }
+      .presentBtn {
+        background: linear-gradient(to right, #f94620, #fba102);
+        color: #ffffff;
+        font-size: 14px;
+        border: none;
+        height:24px;
+        line-height:24px;
+      }
+    }
+  }
+
+
 </style>
 

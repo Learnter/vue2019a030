@@ -90,4 +90,10 @@ button{
  line-height:24px;
  margin:10px auto;
 }
+
+/* 顶部消息通知栏 */
+.notifyClass{ 
+    border-radius:8px 8px 0 0;
+  }
+
 </style>

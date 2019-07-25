@@ -60,13 +60,16 @@ const store = new Vuex.Store({
 		change_uploadType(state,type){ //改变视频类型,区分为小视频、短视频
 		   state.uploadType = type;
 		},
-		change_user_asset(state,obj){ //改变用户资产
+		change_user_asset(state,obj){ //设置用户资产
 			state.user_asset = obj;
+		},
+		withDraw(state,values){ //用户提现
+		   state.user_asset['1'].money -= values;
 		}
 	},
 	getters:{
 		integral(state){ //用户积分
-			return state.user_asset['4'].money * 1
+			return state.user_asset['4'].money * 1 
 		}
 	},
 	actions:{

@@ -54,7 +54,7 @@ export default {
       returnTitle(){ //返回栏标题
          let title 
          if(this.user_info.user_id != this.oneselfId){  //判断是否进入的是自己的视频页面
-           title = this.user_info.username + "的作品";
+           title = this.user_info.nickname + "的作品";
          }else{  
            title = "我的作品"
          }

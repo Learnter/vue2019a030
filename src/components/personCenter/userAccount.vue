@@ -23,8 +23,8 @@
               <p>选择下方余额提现:</p>
               <div class="withdrawal_list">
                   <ul>
-                      <li v-for="(item,index) in 6" :key="index" :class="index == sel_withdrawal_money ? 'withActived':''" @click="withdrawal_money_Tab(index)">
-                          <span>100元</span>
+                      <li v-for="(item,index) in withDrawList" :key="index" :class="index == sel_withdrawal_money ? 'withActived':''" @click="withdrawal_money_Tab(index)">
+                          <span>{{item.amount}}元</span>
                       </li>
                   </ul>
               </div>
@@ -35,25 +35,31 @@
                   <p>4.每笔提现收取10%手续费</p>
               </div>
           </div>
-
           <div class="withdrawal_way">
-              <p>选择到账方式:</p>
+              <h2>填写支付宝信息</h2>
+              <van-cell-group>
+                <van-field  v-model="alipayUsername" label-width="60px" label="姓名" placeholder="请输入您的真实姓名"/> 
+                <van-field v-model="alipayAccount" label-width="60px"  label="账号" placeholder="请输入您的支付宝账号"/>
+              </van-cell-group>
               <div class="withdrawal_way_list">
                   <ul>
                       <li v-for="(item,index) in withdrawal_way_list" :key="index" @click="withdrawal_way_Tab(index)">
                           <div class="withdrawal_Img">
                               <img :src="item.src" alt="支付方式">
                           </div>
-                          <span>微信支付</span>
+                          <span>{{item.title}}</span>
                           <div :class="index == sel_withdrawal_way_index ? 'withdrawal_icon' : 'hidden_withdrawal_icon'">
                               <img src="@/assets/tabImg/2019_a030_36.png" alt="">
                           </div>
                       </li>
                   </ul>
               </div>
+              <div class="arriveMoney">
+                    实际到账金额:&nbsp;<span>&yen;{{arrive_money}}元</span>
+              </div>  
           </div>
           <div class="withdrawalBtn">
-              <button>确认提现</button>
+              <button @click="comfirmWithdraw">确认提现</button>
           </div>
         </div>
     </section>
@@ -66,33 +72,33 @@ export default {
         return{
             sel_withdrawal_money:0, //提现的金额索引
             sel_withdrawal_way_index:0, //提现方式索引
-            withdrawal_way_list:[{id:0,src:require('@/assets/tabImg/2019_a030_33.png'),title:'微信支付'},{id:1,src:require('@/assets/tabImg/2019_a030_34.png'),title:'支付宝支付'}]
+            withdrawal_way_list:[{id:0,src:require('@/assets/tabImg/2019_a030_34.png'),title:'支付宝支付',type:'alipay'}],
+            withDrawList:[],//金额列表 
+            alipayAccount:'',//支付宝账号
+            alipayUsername:'',//支付宝收款人
         }
     },
-    mounted(){
-        this.$refs.userAccount.addEventListener("scroll",this.pageScroll,false); //监听页面滚动
+    created(){
+        this.fetchWithdrawConfig();
     },
     computed:{
-        user_money(){
-            return this.$store.state.user_asset["1"].money; //用户资产
+        user_money(){ //用户资产
+            return Math.floor(this.$store.state.user_asset["1"].money); 
+        },
+        arrive_money(){ //实际到账金额
+            if(this.withDrawList[this.sel_withdrawal_money]){
+                return this.withDrawList[this.sel_withdrawal_money].amount * 0.9;
+            }
         }
     },
     methods:{
-        pageScroll(e){ //页面滚动
-
-            let scrollTop = e.target.scrollTop; //获取滚动高度
-
-            let returnNav = this.$refs.returnNav; //获取返回栏DOM对象
-
-            // console.log(returnNav);
-
-            if(scrollTop >= 50){
-            
-                returnNav.$el.style.background = "linear-gradient(to right,#B40CFF,#FE39A5,#793DFF)"; //设置背景渐变
-
-            }else{
-                returnNav.$el.style.background = "transparent"; //设置为透明颜色
-            }
+        fetchWithdrawConfig(){ //提现配置列表
+            let url = "withdraw/getWithdrawConfig";
+            this.$https.get(url).then( res => {
+                if(res.data.code === 200 && res.data.data.length > 0){
+                    this.withDrawList = res.data.data;
+                }
+            })
         },
         withdrawal_money_Tab(index){ //提现金额切换
             this.sel_withdrawal_money = index;
@@ -100,16 +106,64 @@ export default {
          withdrawal_way_Tab(index){ //提现方式切换
             this.sel_withdrawal_way_index = index;
         },
+        comfirmWithdraw(){ //确认提现
 
+           if(this.alipayAccount.trim().length == 0 || this.alipayUsername.trim().length == 0){
+               this.$notify({
+                       message:"姓名/账号不能为空",
+                       className:"notifyClass",
+                       duration: 3000
+                   });
+                   return;
+           }else if( !/^(?:\w+\.?)*\w+@(?:\w+\.)+\w+|\d{9,11}$/.test(this.alipayAccount)){
+               this.$notify({
+                       message:"请输入正确的支付宝账号",
+                       className:"notifyClass",
+                       duration: 3000,
+
+                   });
+                   return;
+           }
+
+           let withDrawId = this.withDrawList[this.sel_withdrawal_money].id; //提款金额id
+           let withDrawMoney = this.withDrawList[this.sel_withdrawal_money].amount; //提款金额 
+           let widthDrawType = this.withdrawal_way_list[this.sel_withdrawal_way_index].type; //提款类型
+
+
+           let url = "withdraw/submitWithdrawal";
+           let data = {
+               id:withDrawId,
+               receipt_type:widthDrawType,
+               receipt_account:this.alipayAccount,
+               receipt_username:this.alipayUsername
+           }
+           this.$https.post(url,data).then(res => {
+            //    console.log(res);
+               if(res.data.code === 200){
+                   this.$store.commit('withDraw',withDrawMoney);
+                   this.$notify({
+                       message:'提款成功',
+                       duration: 2000,
+                       background:"#07C160",
+                       className:"notifyClass"
+                   });
+               }else{
+                   this.$notify({
+                       message:res.data.msg,
+                       duration: 3000,
+                       className:"notifyClass"
+                   });
+               }
+           });
+        }
     },
     components:{
         returnNav
     }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 
-   
    .hidden_withdrawal_icon{
        display:none;
    }
@@ -173,9 +227,18 @@ export default {
         }
     }
 
+    .arriveMoney{
+        font-size:20px;
+        font-weight:600;
+        span{
+            color:red;
+            font-size:18px;
+        }
+    }
+
     .account_main{
         box-sizing:border-box;
-        padding:0 12px;
+        padding:0 12px 20px;
         color:black;
         text-align:left;
         font-size:16px;
@@ -200,9 +263,10 @@ export default {
                 .withActived{
                     box-shadow: 2px 2px 5px #5F5F5F;
                     background:linear-gradient(120deg,#F9E3EF,white,#F9E3EF);
-                }
+                }  
             }
         }
+        
         .widthdrawal_tips{
             font-size:14px;
             p{
@@ -216,7 +280,7 @@ export default {
          ul{
                 display:flex;
                 flex-wrap:wrap;
-                justify-content:space-between;
+                // justify-content:space-between;
                 margin:15px 0;
                 li{
                     position: relative;
@@ -250,7 +314,7 @@ export default {
         button{
         text-align: center;
         font-size: 16px;
-        padding:8px 0;
+        padding:10px 0;
         width:60%;
         border-radius: 30px;
         background:linear-gradient(to right,#CD32CF,#EC35B3);
@@ -259,5 +323,31 @@ export default {
         }
     }
  }
-
+ 
+   /deep/ .van-cell-group {
+    margin-top:10px;
+    background: transparent;
+    .van-cell {
+        padding:10px;
+        color: black;
+        border-radius: 5px;
+        border-bottom:1px solid rgba(0,0,0,0.1);
+        margin-bottom:8px;
+        .van-radio-group{
+            display:flex;
+            align-items:center;
+        }
+        .van-field__control{
+            color:#000000;
+            &::-webkit-input-placeholder{
+                color:#ae8ee8;
+            //    color:#5F5F5F;
+            }
+        }
+        .van-cell__title{
+           font-size:16px;
+           color:#000000;
+        }
+      }
+    }
 </style>

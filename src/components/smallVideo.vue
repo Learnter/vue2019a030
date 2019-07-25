@@ -74,10 +74,11 @@ export default {
      fetchAccountMoney(){ //获取会员账号资产
           let url = 'money/getUserWalletAmount';
           this.$https.get(url).then(res => {
-            // console.log(res);
+            console.log(res);
             if( res.data.code === 200 && res.data.data){
                 // this.accountData = res.data.data;
                 this.$store.commit("change_user_asset",res.data.data); //将用户资产存储到vuex中
+                // console.log(res.data.data);
              }
           })
       },
@@ -202,7 +203,7 @@ export default {
     .main_item {
       position: relative;
       width:47%;
-      height:240px;
+      height:280px;
       margin-right:3%;
       margin-top:10px;
       border-radius:5px;
@@ -255,6 +256,8 @@ export default {
       .user_img {
         width: 20px;
         height: 20px;
+        border-radius:50%;
+        overflow: hidden;
       }
     }
 

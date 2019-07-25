@@ -51,6 +51,11 @@ export default new Router({
       component: resolve => require(["@/components/personCenter/editPersonInfo"],resolve),
     },
     {
+      path:"/personCenter/gameGuide", //玩法攻略
+      name:"GameGuide",
+      component: resolve => require(["@/components/personCenter/gameGuide"],resolve),
+    },
+    {
       path:"/personCenter/recharge", //充值
       name:"Recharge",
       component: resolve => require(["@/components/personCenter/recharge"],resolve)

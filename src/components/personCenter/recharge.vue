@@ -7,20 +7,20 @@
 
     <div class="recharge_main">
       <div class="recharge_account">
-        <div>
+        <div v-if="user_asset['2']">
           <h3>{{user_asset['2'].wallet_name}}</h3>
           <p>{{user_asset['2'].money}}</p>
         </div>
-        <div>
+        <div v-if="user_asset['4']">
           <h3>{{user_asset['4'].wallet_name}}</h3>
           <p>{{user_asset['4'].money}}</p>
         </div>
       </div>
 
       <div class="payment_way">
-        <p>
+        <p class="payment_way_title">
           充值方式&nbsp;:&nbsp;
-          <span style="color:#00AAEE;font-weight:700">{{reacharge_way_title}}</span>
+          <span>{{reacharge_way_title}}</span>
         </p>
         <div class="payment_way_list">
           <ul>
@@ -77,7 +77,6 @@ export default {
     };
   },
   created(){
-    // this.user_asset = JSON.parse(sessionStorage.getItem("user_asset"));
     this.fetchRecharge();
   },
   mounted(){
@@ -199,6 +198,13 @@ export default {
 
 .payment_way {
   text-align: left;
+  .payment_way_title{
+    font-size:16px;
+    font-weight:700;
+    span{
+     color:#00AAEE;
+    }
+  }
   .payment_way_list {
     ul {
       display: flex;
