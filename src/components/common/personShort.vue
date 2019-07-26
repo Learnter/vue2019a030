@@ -7,10 +7,12 @@
                     <video class="video_box"  width="100%" height="100%" webkit-playsinline="true" x5-playsinline x5-video-player-type="h5" playsinline preload="auto"
                         :poster="vItem.poster"
                         :src="vItem.video_url"
-                        :playOrPause="playOrPause"
                         x-webkit-airplay="allow"
                         x5-video-orientation="landscape"
-                        @click="pauseVideo(vIndex)"
+                        style="display:inline;object-fit:fill"
+                        controls
+                        controlslist="nodownload noremoteplayback"
+                        @play="playVideo(vIndex)"
                         @ended="onPlayerEnded($event)"                  
                     ></video>
 
@@ -18,11 +20,11 @@
                     <van-tag round class="duration">{{vItem.video_duration|timeFormat()}}</van-tag>
 
 
-                    <div class="playOrPause" v-if="vItem.isPlay||vItem.isPause">
+                    <!-- <div class="playOrPause" v-if="vItem.isPlay||vItem.isPause">
                         <van-icon name="play-circle" v-show="vItem.isPlay" class="play" @click="playVideo(vIndex)"/>
 
-                    <van-icon name="pause-circle" v-show="vItem.isPause" class="icon_play" @click="pauseVideo(vIndex)"/>
-                    </div>
+                         <van-icon name="pause-circle" v-show="vItem.isPause" class="icon_play" @click="pauseVideo(vIndex)"/>
+                    </div> -->
                 </div>
             </div>
        </van-list> 
@@ -77,23 +79,23 @@ export default {
     
         this.otherVideoPause(index);
         
-        this.newVideoList[this.current].isPlay = false; //隐藏播放按钮
+        // this.newVideoList[this.current].isPlay = false; //隐藏播放按钮
 
         video.play();
         },
-        pauseVideo(index) { //暂停\播放
-            this.current = index;
-            let video = document.querySelectorAll("video")[this.current];
-            if (this.playOrPause) {
-                video.pause();
-                this.newVideoList[this.current].isPause = true; //显示暂停按钮
-            } else {
-                this.otherVideoPause(index);
-                video.play();
-                this.newVideoList[this.current].isPause = false; //隐藏暂停按钮
-            }
-            this.playOrPause = !this.playOrPause;
-        },
+        // pauseVideo(index) { //暂停\播放
+        //     this.current = index;
+        //     let video = document.querySelectorAll("video")[this.current];
+        //     if (this.playOrPause) {
+        //         video.pause();
+        //         this.newVideoList[this.current].isPause = true; //显示暂停按钮
+        //     } else {
+        //         this.otherVideoPause(index);
+        //         video.play();
+        //         this.newVideoList[this.current].isPause = false; //隐藏暂停按钮
+        //     }
+        //     this.playOrPause = !this.playOrPause;
+        // },
         otherVideoPause(index){ //暂停其他视频播放
             let allVideo = document.querySelectorAll("video");
             for(let i = 0; i < allVideo.length ;i++){
@@ -105,7 +107,7 @@ export default {
             }
         },
      onPlayerEnded(player) { //视频结束
-        this.newVideoList[this.current].isPlay = true; //显示播放按钮
+        // this.newVideoList[this.current].isPlay = true; //显示播放按钮
         },
      onLoad(){ //上拉首次加载
          this.fetchVideo();
@@ -123,7 +125,7 @@ export default {
         .single_video{
             position:relative;
             width:100%;
-            height:200px;
+            height:400px;
             margin-bottom:10px;
             border-radius:10px;
             overflow:hidden;

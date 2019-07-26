@@ -31,18 +31,12 @@
               x-webkit-airplay="allow"
               x5-video-orientation="portrait"
               loop
+              controls
+              networkState
+              controlsList='nofullscreen nodownload' 
               @click="pauseVideo"
               @ended="onPlayerEnded($event)"
             ></video>
-
-            <!-- <div v-if="iconPlayShow" class="playOrPause" @click="pauseVideo"> -->
-              <!-- 封面 -->
-              <!-- <img v-show="isVideoShow" class="play" @click="playvideo" :src="item.cover" /> -->
-              <!-- <van-icon name="play-circle" v-show="isVideoShow" class="play" @click="playvideo" /> -->
-              <!-- 播放暂停按钮 -->
-              <!-- <img v-show="iconPlayShow" class="icon_play" @click="playvideo" src="/video/icon_play.png" /> -->
-              <!-- <van-icon name="pause-circle" class="icon_play"/>
-            </div> -->
           </div>
 
           <!-- 顶部邮票功能 -->
@@ -54,7 +48,10 @@
           <!-- 右侧点赞、分享功能 -->
           <div class="tools_right">
             <div class="tools_r_li" @click="photoBtn(vItem.user_id,vItem.username)">
-              <img :src="vItem.avatar" />
+              <div class="tools_user_avatar">
+                  <img :src="vItem.avatar" />
+              </div>
+              
             </div>
             <div class="tools_r_li" @click.stop="changeFollow(vItem,vIndex)">
               <van-tag type="danger">{{likeNum}}</van-tag>
@@ -116,17 +113,17 @@
 
       <!-- 顶部返回栏 -->
       <van-nav-bar left-arrow @click-left="$router.go(-1)"/>
+
+
       <!--分享弹框-->
       <!-- <div class="share_hover" v-show="showShareBox"></div> -->
       <div class="share_box" :class="showShareBox?'share_active':''">
         <div class="share_tips">分享到</div>
         <ul class="share_ul">
           <li class="share_li pengyouquan_li">
-            <!-- <i class="iconfont icon-pengyouquan pengyouquan"></i> -->
               <van-icon name="pengyouquan" class-prefix='icon' class="iconfont pengyouquan icon-iconfontforward icon_right" />
           </li>
           <li class="share_li">
-            <!-- <i class="iconfont icon-weixin weixin"></i> -->
              <van-icon name="weixin" class-prefix='icon' class="iconfont weixin icon-iconfontforward icon_right" />
           </li>
           <li class="share_li" @click="copyUrl">
@@ -251,12 +248,8 @@ export default {
               }
           })   
      }else{
-      //  this.$toast({
-      //    position:"bottom",
-      //    message:"今天已点赞"
-      //  });
        this.$notify({
-              message:res.data.msg,
+              message:"今天已点赞",
               className:"notifyClass",
               duration: 3000,
              });
@@ -280,15 +273,15 @@ export default {
       this.playOrPause = false;
       this.current = index;
       // console.log("滑动改变视频");
-      if (this.isiOS) {
+      // if (this.isiOS) {
         //ios切换直接自动播放下一个
         this.isVideoShow = false;
         this.pauseVideo();
-      } else {
-        //安卓播放时重置显示封面。图标等
-        this.isVideoShow = true;
-        this.iconPlayShow = true;
-      }
+      // } else {
+      //   //安卓播放时重置显示封面。图标等
+      //   this.isVideoShow = true;
+      //   this.iconPlayShow = true;
+      // }
     },
     isPlayEnd(index){ //是否列表播放到最后
     
@@ -450,13 +443,6 @@ video {
   .icon_play {
   font-size: 50px;
   position: absolute;
-  // top: 44%;
-  // right: 0;
-  // left: 0;
-  // bottom: auto;
-  // margin: auto;
-  // z-index: 999;
-  // height: 60px;
   left:50%;
   top:50%;
   transform:translate(-50%);
@@ -470,13 +456,6 @@ video {
   left:50%;
   top:50%;
   transform:translate(-50%);
-  // top: 44%;
-  // right: 0;
-  // left: 0;
-  // bottom: auto;
-  // margin: auto;
-  // z-index: 999;
-  // height: 60px;
   border-radius: 50%;
   color:rgba(0,0,0,0.5);
 }
@@ -534,12 +513,12 @@ video {
     height: 15px;
     line-height: 15px;
   }
-  img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+  .tools_user_avatar{
+     width: 40px;
+     height: 40px;
+     border-radius: 50%;
+     overflow: hidden;
   }
-
 }
 
 .tools_r_li:last-child {

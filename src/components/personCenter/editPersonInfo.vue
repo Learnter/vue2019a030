@@ -29,6 +29,7 @@
     </section>
 </template>
 <script>
+import {mapGetters} from "vuex";
 export default {
     name:"editInfo",
     data(){
@@ -44,7 +45,9 @@ export default {
         }
     },
     created(){
-        this.fetchUserInfo();
+        // this.fetchUserInfo();
+        this.user = this.$store.state.user_info;
+        console.log(this.user);
         this.fetchAddress();
     },
     computed:{
@@ -90,15 +93,6 @@ export default {
                }
            })
        },
-       fetchUserInfo(){ //用户基本信息
-           let url = "user/getUserInfo";
-           this.$https.get(url).then( res => {
-                //  console.log(res);
-                 if(res.data.code === 200 && Object.keys(res.data.data).length != 0){
-                     this.user = res.data.data;
-                 }
-           })
-        },
         afterRead(file){ //上传头像
 
              let fileFormData = new FormData();
@@ -107,7 +101,8 @@ export default {
              let url = "user/modifyAvatar";
              this.$https.post(url,fileFormData,'multipart/form-data').then(res => {
                   if(res.data.code === 200 && res.data.data && res.data.data.src.length > 0){
-                      this.user.avatar = res.data.data.src
+                       this.user.avatar = res.data.data.src
+                       this.$store.commit("update_user_avatar",res.data.data.src);
                        this.$notify({
                         message:'头像修改成功',
                         duration: 2000,
@@ -166,6 +161,7 @@ export default {
             }
             this.$https.post(url,data).then(res => {
                 if(res.data.code === 200){
+                 this.$store.commit("updata_user_other",this.user);
                  this.$notify({
                     message:'修改成功',
                     duration: 2000,

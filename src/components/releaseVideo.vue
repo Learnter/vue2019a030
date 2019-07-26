@@ -7,19 +7,25 @@
       <div class="upload">
           <div class="upload_way">
              <van-uploader :after-read="afterRead" accept="video/*" capture="camera">
-                <img src="@/assets/uploadImg/2019_a030_59.png">
-                <p>拍摄</p>
+              <div class="uploadIcon">
+                 <img src="@/assets/uploadImg/2019_a030_59.png">
+              </div>
+              <p>拍摄</p>
              </van-uploader>
           </div>
           <div class="upload_way">
             <van-uploader :after-read="afterRead" accept="video/*">
+             <div class="uploadIcon">
                <img src="@/assets/uploadImg/2019_a030_58.png">
-               <p>上传</p>
+             </div>
+             <p>上传</p>
             </van-uploader>
           </div>
           <div class="upload_way">
-              <img src="@/assets/uploadImg/2019_a030_57.png">
-              <p>站外链接</p>
+            <div class="uploadIcon">
+               <img src="@/assets/uploadImg/2019_a030_57.png">
+            </div>
+            <p>站外链接</p>
           </div>
       </div>
 
@@ -237,7 +243,10 @@ export default {
       .upload_way{
         color:#ffffff;
         font-size:15px;
-        img{
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        .uploadIcon{
           width:50px;
           height:50px;
           margin-bottom:10px;

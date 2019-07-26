@@ -55,35 +55,30 @@
         <div class="user_operation uni-flex">
           <div class="user_operation_item uni_watch_item" @click="recharge">
             <div class=" operation_icon" style="color:#0ECDFF">
-              <!-- <img src="@/assets/tabImg/2019_a030_22.png" /> -->
               <van-icon name="cash-back-record"/>
             </div>
             <p>充值</p>
           </div>
           <div class="user_operation_item uni_watch_item" @click="deposit">
             <div class="operation_icon" style="color:#0ECDFF">
-              <!-- <img src="@/assets/tabImg/2019_a030_23.png" /> -->
               <van-icon name="pending-payment"/>
             </div>
             <p>提现</p>
           </div>
           <div class="user_operation_item uni_watch_item" @click="numberAssets">
             <div class="operation_icon">
-              <!-- <img src="@/assets/tabImg/2019_a030_24.png" /> -->
                <van-icon name="gem-o"/>
             </div>
             <p>数字资产</p>
           </div>
           <div class="user_operation_item uni_watch_item" @click="convert">
             <div class="operation_icon">
-              <!-- <img src="@/assets/tabImg/2019_a030_25.png" /> -->
               <van-icon name="point-gift-o"/>
             </div>
             <p>邮票兑换</p>
           </div>
         </div>
 
-        <!-- @click="$router.push({path:'/personCenter/assetDetails',query:{mid:1}})" -->
         <div class="user_money uni-flex">
           <div class="uni_watch_item" v-if="accountData['1']"> 
             <p>{{accountData['1']['wallet_name']}}</p>
@@ -173,12 +168,13 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
   export default {
     name:"personCenter",
     data(){
       return {
         statisticsData:{},//统计数据
-        userInfo:{} //用户信息
+        // userInfo:{} //用户信息
       };
     },
     created(){
@@ -190,15 +186,17 @@
     computed:{
       accountData(){ //获取账号资产
         return this.$store.state.user_asset;
-      }
+      },
+      ...mapGetters(['userInfo'])
     },
     methods: { 
-      getUserInfo(){ //获取用户信息
+      getUserInfo(){ //获取用户信息存储到vuex
         let url = "user/getUserInfo";
         this.$https.get(url).then(res => {
-          if(res.data.code === 200 && res.data.data){
-            this.userInfo = res.data.data;
-          }
+          if(res.data.code === 200 && Object.keys(res.data.data).length != 0){
+                // this.userInfo = res.data.data;
+                this.$store.commit("set_user_info",res.data.data);
+           }
         })
       },
       getStatistics(){ //获取统计信息
@@ -331,7 +329,6 @@
 
   .user_name {
     align-items: center;
-    font-family: cursive;
     line-height: 1.5;
   }
 

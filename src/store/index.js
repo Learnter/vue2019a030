@@ -48,7 +48,8 @@ const store = new Vuex.Store({
 		],
 		now_page_path:"/smallVideo",
 		uploadType:"", //上传视频的类型
-		user_asset:{} //用户的资产
+		user_asset:{},//用户的资产
+		user_info:{} //用户基本信息
 	},
 	mutations:{
 		change_nav_list(state,data){ 
@@ -65,11 +66,29 @@ const store = new Vuex.Store({
 		},
 		withDraw(state,values){ //用户提现
 		   state.user_asset['1'].money -= values;
+		},
+		set_user_info(state,obj){ //设置用户信息
+			state.user_info = obj;
+		},
+		update_user_avatar(state,src){ // 更新用户头像
+			state.user_info.avatar = src;
+		},
+		updata_user_other(state,obj){ //更新用户其他信息
+			state.user_info.nickname = obj.nickname;
+			state.user_info.sex = obj.sex;
+			state.user_info.province = obj.province;
+			state.user_info.city = obj.city;
+			state.user_info.district = obj.district;
+			state.user_info.signature = obj.signature;
+
 		}
 	},
 	getters:{
 		integral(state){ //用户积分
 			return state.user_asset['4'].money * 1 
+		},
+		userInfo(state){ //用户基本信息
+		   return state.user_info;
 		}
 	},
 	actions:{

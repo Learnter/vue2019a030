@@ -92,8 +92,8 @@ button{
 }
 
 /* 顶部消息通知栏 */
-.notifyClass{ 
+/* .notifyClass{ 
     border-radius:8px 8px 0 0;
-  }
+  } */
 
 </style>

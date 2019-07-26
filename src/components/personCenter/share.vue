@@ -20,10 +20,10 @@
                 </div>
                 <div class="recommend">
                     <div class="recommend_img">
-                         <img :src="userConfig.head" alt="头像"/>
+                         <img :src="userInfo.avatar" alt="头像"/>
                     </div>
                     <div class="recommend_message">
-                        <p class="recommend_name">{{userConfig.nickname}}</p>
+                        <p class="recommend_name">{{userInfo.nickname}}</p>
                         <p>邀请您加入[狐邮视频]</p>
                     </div>
                 </div>
@@ -32,6 +32,7 @@
     </section>
 </template>
 <script>
+import {mapGetters} from "vuex";
 export default {
     name:"share",
     data(){
@@ -43,16 +44,14 @@ export default {
        this.fetchQrCode();
     },
     computed:{
-        userConfig(){
-            return JSON.parse(localStorage.getItem("user")).userInfo;
-        }
+        ...mapGetters(['userInfo'])
     },
     methods:{
         fetchQrCode(){
 
            let url = "tools/qrCode";
 
-           let originUrl = location.origin+"/#/register?reg_code="+this.userConfig.account; //扫描二维码跳转地址 +this.userConfig.reg_code
+           let originUrl = location.origin+"/#/register?reg_code="+this.userInfo.account; //扫描二维码跳转地址 +this.userConfig.reg_code
 
            let base64Url = this.base64EncodeUnicode(originUrl); //将地址转化为base64编码格式
 

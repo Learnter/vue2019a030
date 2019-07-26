@@ -76,7 +76,7 @@
                 <div class="video_title">
                   <span>{{vItem.title}}</span>
                 </div>
-                <div class="video_container" style="width:100%;height:300px">
+                <div class="video_container" style="width:100%;height:400px">
                   <video
                     class="video_box"
                     width="100%"
@@ -91,36 +91,15 @@
                     :playOrPause="playOrPause"
                     x-webkit-airplay="allow"
                     x5-video-orientation="landscape"
+                    style="display:inline"
+                    controls
+                    controlslist="nodownload"
+                    @play="playVideo(vIndex)"
                     @click="pauseVideo(vIndex)"
                     @ended="onPlayerEnded($event)"
                   ></video>
 
-
-                  <!-- <video-player  class="video-player-box"
-                          ref="videoPlayer"
-                          :options="playerOptions"
-                          :playsinline="true"
-          
-                          @play="onPlayerPlay($event)"
-                          @pause="onPlayerPause($event)"
-                          @ended="onPlayerEnded($event)"
-                          @waiting="onPlayerWaiting($event)"
-                          @playing="onPlayerPlaying($event)"
-                          @loadeddata="onPlayerLoadeddata($event)"
-                          @timeupdate="onPlayerTimeupdate($event)"
-                          @canplay="onPlayerCanplay($event)"
-                          @canplaythrough="onPlayerCanplaythrough($event)"
-          
-                          @statechanged="playerStateChanged($event)"
-                          @ready="playerReadied">
-                   </video-player> -->
-
-
-
-
-
-
-                  <div class="playOrPause" v-if="vItem.isPlay||vItem.isPause">
+                  <!-- <div class="playOrPause" v-if="vItem.isPlay||vItem.isPause">
                     <van-icon name="play-circle" v-show="vItem.isPlay" class="play" @click="playVideo(vIndex)"/>
 
                    <van-icon
@@ -129,7 +108,7 @@
                       class="icon_play"
                       @click="pauseVideo(vIndex)"
                     />
-                  </div>
+                  </div> -->
                 </div>
               </div>
               <div class="video_info">
@@ -137,9 +116,12 @@
                   <div class="video_info_img"  @click="photoBtn(vItem.user_id,vItem.username)">
                     <img :src="vItem.avatar" alt />
                   </div>
-                  <div v-if="vItem.uid !== 0">
-                       <van-tag color="#f2826a" v-if="!vItem.is_follow" class="video_info_title" @click="attentionBtn(vItem,vIndex)">关注</van-tag>
-                       <van-tag color="#F00" v-else class="video_info_title" @click="attentionBtn(vItem,vIndex)">已关注</van-tag>
+                  <div class="video_info_watch">
+                       <div v-if="vItem.uid !== 0">
+                          <van-tag color="#f2826a" v-if="!vItem.is_follow" class="video_info_title" @click="attentionBtn(vItem,vIndex)">关注</van-tag>
+                          <van-tag color="#F00" v-else class="video_info_title" @click="attentionBtn(vItem,vIndex)">已关注</van-tag>
+                       </div>
+                       <p>@<span style="color:#ae8ee8">{{vItem.username}}</span></p>
                   </div>
                 </div>
                 <div class="video_info_icons">
@@ -202,7 +184,7 @@ import { mapGetters } from 'vuex'
 export default {
   name: "shortVideoTwo",
   data() {
-    let u = navigator.userAgent;
+    // let u = navigator.userAgent;
     return {
       isPresent:false,//是否赠送礼物
       giftList:[],//礼物列表
@@ -210,8 +192,8 @@ export default {
       sel_gift_number:1,//选择礼物数量
       current: 0, //当前播放视频索引
       playOrPause: true,
-      isAndroid: u.indexOf("Android") > -1 || u.indexOf("Adr") > -1, // android终端
-      isiOS: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), // ios终端
+      // isAndroid: u.indexOf("Android") > -1 || u.indexOf("Adr") > -1, // android终端
+      // isiOS: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), // ios终端
       search_text: "",
       loading: false,
       finished: false,
@@ -264,28 +246,29 @@ export default {
     },
     playVideo(index) { //点击播放按钮
 
+      console.log(index);
       this.current = index;
 
       let video = document.querySelectorAll("video")[this.current];
  
       this.otherVideoPause(index);
     
-      this.videosList[this.current].isPlay = false; //隐藏播放按钮
+      // this.videosList[this.current].isPlay = false; //隐藏播放按钮
 
       video.play();
     },
     pauseVideo(index) { //暂停\播放
-      this.current = index;
-      let video = document.querySelectorAll("video")[this.current];
-      if (this.playOrPause) {
-        video.pause();
-        this.videosList[this.current].isPause = true; //显示暂停按钮
-      } else {
-        this.otherVideoPause(index);
-        video.play();
-        this.videosList[this.current].isPause = false; //隐藏暂停按钮
-      }
-      this.playOrPause = !this.playOrPause;
+      // this.current = index;
+      // let video = document.querySelectorAll("video")[this.current];
+      // if (this.playOrPause) {
+      //   video.pause();
+      //   this.videosList[this.current].isPause = true; //显示暂停按钮
+      // } else {
+      //   this.otherVideoPause(index);
+      //   video.play();
+      //   this.videosList[this.current].isPause = false; //隐藏暂停按钮
+      // }
+      // this.playOrPause = !this.playOrPause;
     },
     otherVideoPause(index){ //暂停其他视频播放
         let allVideo = document.querySelectorAll("video");
@@ -298,7 +281,7 @@ export default {
         }
     },
     onPlayerEnded(player) { //视频结束
-      this.videosList[this.current].isPlay = true; //显示播放按钮
+      // this.videosList[this.current].isPlay = true; //显示播放按钮
     },
      //查看视频资料
     photoBtn(id,name){
@@ -336,17 +319,30 @@ export default {
         this.$https.post(url,data).then(res => {
           if (res.data.code === 200) {
             if( this.videosList[index].is_collect == true){
-              this.$toast("已取消收藏");
               this.videosList[index].collect_num--;
               this.videosList[index].is_collect = false;
+              this.$notify({
+                    message:'取消收藏',
+                    duration: 2000,
+                    className:"notifyClass",
+                    });
             }else{
-              this.$toast("已收藏");
+             this.$notify({
+                    message:'已收藏',
+                    duration: 2000,
+                    className:"notifyClass",
+                    background:"#07C160"
+                    });
               this.videosList[index].collect_num++;
               this.videosList[index].is_collect = true;
             }
           }else{
-            this.$toast(res.data.msg);
-          }
+            this.$notify({
+                    message:res.data.msg,
+                    duration: 3000,
+                    className:"notifyClass",
+                    });
+               }
         });
     },
     attentionBtn(item,index){ //点击关注按钮
@@ -357,10 +353,19 @@ export default {
           this.$https.post(url,data).then(res => {
               if(res.data.code === 200){
                 this.videosList[index].is_follow = !this.videosList[index].is_follow;
-                this.$toast(res.data.data); 
+                this.$notify({
+                    message:res.data.msg,
+                    duration: 2000,
+                    className:"notifyClass",
+                    background:"#07C160"
+                    }); 
              }else{
-               this.$toast(res.data.msg);
-             }
+               this.$notify({
+                    message:res.data.msg,
+                    duration: 3000,
+                    className:"notifyClass",
+                    });
+              }
          })
     },
     //赠送礼物
@@ -395,7 +400,7 @@ export default {
   }
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 
 .product_swiper{
   width:100%;
@@ -459,7 +464,7 @@ video {
     left: 50%;
     transform: translate(-50%);
     border-radius: 50%;
-    color: rgba(0, 0, 0, 0.4);
+    color: rgba(255,255,255,0.4);
   }
 
   .play {
@@ -469,7 +474,7 @@ video {
     left: 50%;
     transform: translate(-50%);
     border-radius: 50%;
-    color: rgba(0, 0, 0, 0.4);
+    color: rgba(255,255,255,0.4);
   }
 }
 
@@ -530,9 +535,11 @@ video {
       align-items: center;
       justify-content: space-between;
       background: #ffffff;
+      height:50px;
       padding:5px 10px;
       border-bottom:1px solid rgba(0,0,0,0.1);
       .video_info_left {
+        height:100%;
         flex: 1;
         display: flex;
         text-align: left;
@@ -542,15 +549,21 @@ video {
           height: 40px;
           margin-right:15px;
           overflow: hidden;
-          img {
-            border-radius: 50%;
+          border-radius:50%;
+        }
+        .video_info_watch{
+          height:100%;
+          text-align:left;
+          font-size:14px;
+          p{
+            padding-top:5px;
           }
         }
         .video_info_title {
           height:18px;
-          line-height:19px;
-          letter-spacing:2px;
-          padding:2px;
+          line-height:18px;
+          letter-spacing:3px;
+          padding:1px 4px;
           
         }
       }
