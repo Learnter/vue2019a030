@@ -29,7 +29,7 @@
                     </van-cell-group>
                     <van-button square type="primary" class="exchangeBtn" size="mini" @click="exchangeBtn">兑换金额</van-button>
                 </div>
-                <p>兑换比率:12000{{stamp_info.walletName}}=60元</p>
+                <p>兑换比率:{{baseNumber}}{{stamp_info.walletName}}={{exchangeRate}}元</p>
             </div>
         </div>
         <div class="exchange_list">
@@ -48,10 +48,12 @@
 </template>
 <script>
 import returnNav from "@/components/common/returnNav";
+import {mapGetters} from "vuex";
 export default {
     name:"exchange",
     data(){
         return{
+           baseNumber:12000,//邮票兑换基数
            stamp_num:'', //兑换数量
            stamp_info:{} //邮票信息
         }
@@ -59,12 +61,21 @@ export default {
     created(){
        this.fetchStamp();
     },
+    computed:{
+        ...mapGetters(['statistics']),
+        exchangeRate(){ //兑换比例
+            return this.baseNumber * this.stamp_info.exchangeRate;
+        },
+        exchangeMoney(){ //兑换的金额
+            return this.stamp_num * this.stamp_info.exchangeRate;
+        }
+    },
     methods:{
         fetchStamp(){ //获取邮票信息
             let url = "money/getStampExchangeInfo";
             this.$https.get(url).then( res => {
                 if(res.data.code === 200 &&  res.data.data){
-                    // console.log(res.data.data);
+                    console.log(res);
                     this.stamp_info = res.data.data;
                 }
             })
@@ -89,6 +100,8 @@ export default {
                        className:"notifyClass",
                        duration:2000
                      });
+                     this.$store.commit("subtractStamp",this.stamp_num); //减少邮票数量
+                     this.$store.commit("increaseBalance",this.exchangeMoney);//增加账号余额
                      this.fetchStamp(); //重新获取邮票信息
                  }else{
                      this.$notify({

@@ -153,7 +153,7 @@
             <p>使用积分送礼物&nbsp;奖励12%邮票</p>
             <div>
               <ul class="mask_bottom_gifts">
-                <li class="mask_gift_item" :class="gItem.id == sel_gift_id ?'selActive':''" v-for="(gItem,gIndex) in giftList" :key="gIndex" @click.stop="sel_gift_id = gItem.id">
+                <li class="mask_gift_item" :class="selGiftIndex == gIndex ?'selActive':''" v-for="(gItem,gIndex) in giftList" :key="gIndex" @click.stop="selGiftIndex = gIndex">
                   <div class="mask_gift_img">
                     <img :src="gItem.picture" />
                   </div>
@@ -166,7 +166,7 @@
             </div>
             <div class="mask_bottom_column">
               <div class="mask_bottom_left">
-                 <p >可用积分&nbsp;{{integral}}</p>
+                 <p >可用积分&nbsp;{{statistics.integral}}</p>
                 <van-button round type="primary" size="small" class="rechargeBtn" @click.stop="$router.push('/personCenter/recharge')">充值</van-button>
               </div>
               <van-button round size="small" class="presentBtn" @click.stop="presentBtn(vItem)">赠送</van-button>
@@ -188,7 +188,7 @@ export default {
     return {
       isPresent:false,//是否赠送礼物
       giftList:[],//礼物列表
-      sel_gift_id:'',//选择礼物的id
+      selGiftIndex:0,//选中礼物索引
       sel_gift_number:1,//选择礼物数量
       current: 0, //当前播放视频索引
       playOrPause: true,
@@ -210,7 +210,7 @@ export default {
     this.fetchGifts();
   },
   computed:{
-    ...mapGetters(["integral"])
+    ...mapGetters(["statistics"])
   },
   methods: {
      fetchGifts(){ //获取礼物列表
@@ -246,7 +246,6 @@ export default {
     },
     playVideo(index) { //点击播放按钮
 
-      console.log(index);
       this.current = index;
 
       let video = document.querySelectorAll("video")[this.current];
@@ -369,24 +368,37 @@ export default {
          })
     },
     //赠送礼物
-    presentBtn(obj,val){
+    presentBtn(obj){
 
-      if(!this.sel_gift_id){
-        this.$toast('请选择礼物');
-        return;
-      }
+      let selGift = this.giftList[this.selGiftIndex]; //选中的礼物
+      let number = this.sel_gift_number; //礼物的数量
+
       let url = "video/sendAGift";
       let data = {
         video_id:obj.id,
-        gift_id:this.sel_gift_id,
-        num:this.sel_gift_number
+        gift_id:selGift.id,
+        num:number
       }
       this.$https.post(url,data).then(res => {
+          this.$https.post(url,data).then(res => {
           if(res.data.code == 200 ){
-            this.$toast("礼物赠送成功");
+            
+            let integral  = selGift.amount * number; //赠送成功扣除积分
+            this.$store.commit("reduceIntegral",integral);
+            this.$notify({
+                  message:'礼物赠送成功',
+                  className:"notifyClass",
+                  duration: 5000,
+                  background:"#07C160"
+                });
           }else{
-            this.$toast(res.data.msg);
-          }
+           this.$notify({
+                  message:res.data.msg,
+                  className:"notifyClass",
+                  duration: 5000,
+                });
+            }
+         })
          obj.isReward = false;
          this.sel_gift_number = 1;
       })

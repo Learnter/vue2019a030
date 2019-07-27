@@ -66,6 +66,7 @@
 </template>
 <script>
 import returnNav from "@/components/common/returnNav";
+import {mapGetters} from "vuex";
 export default {
     name:"account",
     data(){
@@ -82,8 +83,9 @@ export default {
         this.fetchWithdrawConfig();
     },
     computed:{
+        ...mapGetters(['statistics']),
         user_money(){ //用户可用余额 保留2位小数点
-            return Math.floor(this.$store.state.user_asset["1"].money*100)/100; 
+            return Math.floor(this.statistics.balance*100)/100; 
         },
         arrive_money(){ //实际到账金额
             if(this.withDrawList[this.sel_withdrawal_money]){

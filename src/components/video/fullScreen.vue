@@ -34,9 +34,8 @@
               controls
               networkState
               controlsList='nofullscreen nodownload' 
-              @click="pauseVideo"
-              @ended="onPlayerEnded($event)"
             ></video>
+            <!-- @click="pauseVideo" @ended="onPlayerEnded($event)" -->
           </div>
 
           <!-- 顶部邮票功能 -->
@@ -54,7 +53,8 @@
               
             </div>
             <div class="tools_r_li" @click.stop="changeFollow(vItem,vIndex)">
-              <van-tag type="danger">{{likeNum}}</van-tag>
+              <van-tag type="danger">{{likeNum || 0}}</van-tag>
+              <!-- {{vItem.is_praise}} -->
               <van-icon class="iconfont icon-iconfontforward icon_right" class-prefix='icon' name='like' :class="vItem.is_praise?'follow_active':''" />
               <div class="tools_r_num">{{vItem.praise_num}}</div>
             </div>
@@ -89,7 +89,7 @@
             <p>使用积分送礼物&nbsp;奖励12%邮票</p>
             <div>
               <ul class="mask_bottom_gifts">
-                <li class="mask_gift_item" :class="gItem.id == sel_gift_id ?'selActive':''" v-for="(gItem,gIndex) in giftList" :key="gIndex" @click.stop="sel_gift_id = gItem.id">
+                <li class="mask_gift_item" :class="selGiftIndex == gIndex ?'selActive':''" v-for="(gItem,gIndex) in giftList" :key="gIndex" @click.stop="selGiftIndex = gIndex">
                   <div class="mask_gift_img">
                     <img :src="gItem.picture" />
                   </div>
@@ -102,10 +102,10 @@
             </div>
             <div class="mask_bottom_column">
               <div class="mask_bottom_left">
-                 <p>可用积分&nbsp;{{integral}}</p>
+                 <p>可用积分&nbsp;{{statistics.integral}}</p>
                 <van-button round type="primary" size="small" class="rechargeBtn" @click.stop="$router.push('/personCenter/recharge')">充值</van-button>
               </div>
-              <van-button round size="small" class="presentBtn" @click.stop="presentBtn(vItem.id)">赠送</van-button>
+              <van-button round size="small" class="presentBtn" @click.stop="presentBtn(vItem)">赠送</van-button>
             </div>
           </div>
         </van-swipe-item>
@@ -141,11 +141,11 @@ import { mapGetters } from 'vuex'
 export default {
   name: "videoChild",
   data() {
-    let u = navigator.userAgent;
+    // let u = navigator.userAgent;
     return {
       likeNum:'',//每日点赞数
       isPresent:false,//是否赠送礼物
-      sel_gift_id:'',//选择礼物的id
+      selGiftIndex:0,//选中礼物索引
       sel_gift_number:1,//选择礼物数量
       selActive:0,
       current: 0, //当前视频索引
@@ -153,8 +153,8 @@ export default {
       playOrPause: true, //播放或暂停
       video: null,
       iconPlayShow: false,
-      isAndroid: u.indexOf("Android") > -1 || u.indexOf("Adr") > -1, // android终端
-      isiOS: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), // ios终端
+      // isAndroid: u.indexOf("Android") > -1 || u.indexOf("Adr") > -1, // android终端
+      // isiOS: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), // ios终端
       tabIndex: 0,
       showShareBox: false,
       videoList: [], //视频列表
@@ -183,7 +183,7 @@ export default {
       })
   },
   computed:{
-    ...mapGetters(["integral"])
+    ...mapGetters(["statistics"])
   },
   methods: {
     fetchLikes() { //获取点赞数
@@ -198,7 +198,7 @@ export default {
       let giftUrl = "video/giftList";  
       this.$https.get(giftUrl).then(res => {
         if(res.data.code === 200 && res.data.data){
-          // console.log(res.data.data);
+          console.log(res.data.data);
           this.giftList = res.data.data;
         }
       });
@@ -218,21 +218,18 @@ export default {
        this.$notify({
                     message:"今天点赞数已用完",
                     className:"notifyClass",
-                    duration:3000
+                    duration:5000
                    });
      }else{
 
        if(!objVideo.is_praise){
           let url = "video/praiseVideo";
-          let data = {
-            id:item.id
-          }
+          let data = { id:item.id }
           this.$https.post(url,data).then(res => {
               if(res.data.code === 200){
                this.videoList[index].is_praise = true;
                this.videoList[index].praise_num++;
-                this.likeNum--;
-                // this.$toast("今天还剩下"+this.likeNum+"点赞");
+               this.likeNum--;
                 this.$notify({
                        message:"今天还剩下"+this.likeNum+"点赞",
                        className:"notifyClass",
@@ -243,7 +240,7 @@ export default {
                  this.$notify({
                        message:res.data.msg,
                        className:"notifyClass",
-                       duration: 3000,
+                       duration: 5000,
                   });
               }
           })   
@@ -251,18 +248,10 @@ export default {
        this.$notify({
               message:"今天已点赞",
               className:"notifyClass",
-              duration: 3000,
+              duration: 5000,
              });
           }
        }
-    },
-    //展示分享弹窗
-    changeShare() {
-      // this.showShareBox = true;
-    },
-    //取消分享
-    cancelShare() {
-      this.showShareBox = false;
     },
     //滑动改变播放的视频
     onChange(index){
@@ -275,7 +264,7 @@ export default {
       // console.log("滑动改变视频");
       // if (this.isiOS) {
         //ios切换直接自动播放下一个
-        this.isVideoShow = false;
+        // this.isVideoShow = false;
         this.pauseVideo();
       // } else {
       //   //安卓播放时重置显示封面。图标等
@@ -319,10 +308,10 @@ export default {
       // }
       // this.playOrPause = !this.playOrPause;
     },
-    onPlayerEnded(player) {
-      //视频结束
-      // this.isVideoShow = true;
-    },
+    // onPlayerEnded(player) {
+    //   //视频结束
+    //   // this.isVideoShow = true;
+    // },
     //复制当前链接
     copyUrl() {
       let httpUrl = window.location.href;
@@ -335,6 +324,14 @@ export default {
       oInput.style.display = "none";
       alert("链接复制成功");
     },
+     //展示分享弹窗
+    changeShare() {
+      // this.showShareBox = true;
+    },
+    //取消分享
+    cancelShare() {
+      this.showShareBox = false;
+    },
     //礼物按钮
     giftBtn() {
       this.isPresent = true;
@@ -345,27 +342,38 @@ export default {
       
     },
     //赠送礼物
-    presentBtn(ID,val){
+    presentBtn(obj){
 
-      if(!this.sel_gift_id){
-        this.$toast('请选择礼物');
-        return;
-      }
+      let selGift = this.giftList[this.selGiftIndex]; //选中的礼物
+      let number = this.sel_gift_number; //礼物的数量
+
       let url = "video/sendAGift";
       let data = {
-        video_id:ID,
-        gift_id:this.sel_gift_id,
-        num:this.sel_gift_number
+        video_id:obj.id,
+        gift_id:selGift.id,
+        num:number
       }
       this.$https.post(url,data).then(res => {
           if(res.data.code == 200 ){
-            this.$toast("礼物赠送成功");
+            
+            let integral  = selGift.amount * number; //赠送成功扣除积分
+            this.$store.commit("reduceIntegral",integral);
+            this.$notify({
+                  message:'礼物赠送成功',
+                  className:"notifyClass",
+                  duration: 5000,
+                  background:"#07C160"
+                });
           }else{
-            this.$toast(res.data.msg);
-          }
-      })
-    }
-  }
+           this.$notify({
+                  message:res.data.msg,
+                  className:"notifyClass",
+                  duration: 5000,
+                });
+            }
+         })
+      }
+   }
 };
 </script>
 <style lang="scss" scoped>
@@ -689,7 +697,7 @@ video {
 
 .follow_active {
   color: #f44;
-  animation: showHeart 0.5s ease-in-out 0s;
+  animation: showHeart 1.5s linear;
 }
 
 /*animation-name：用来调用@keyframes定义好的动画，与@keyframes定义的动画名称一致*/
@@ -705,18 +713,26 @@ video {
   }
 
   25% {
-    color: #fff;
-    transform: scale(0);
+    color: #f44;
+    // transform: scale(0);
+    transform:scale(0.7) translateY(-80px);
   }
 
-  80% {
+  50%{
+    color:#fff;
+      transform:scale(0.5) translateY(-150px);
+  }
+
+  70% {
     color: #f44;
-    transform: scale(1.2);
+    // transform: scale(1.2);
+    transform:scale(0.7) translateY(-80px);
   }
 
   100% {
     color: #f44;
     transform: scale(1);
+    // transform:scale(0.2) translateY(-200px);
   }
 }
 

@@ -57,7 +57,6 @@ export default {
     this.fetchConfig();
   },
   mounted(){
-    //  this.time = JSON.parse(sessionStorage.getItem("config")).send_sms_time_out; //获取倒计时间；
      this.user.reg_code =  this.getQueryVariable("reg_code"); //获取用户邀请码
   },
   computed: {
@@ -87,7 +86,7 @@ export default {
       return '';
       },
     toRegister() {//注册账号
-      if(!(/^[a-zA-Z0-9]{6}$/).test(this.user.reg_code)){
+      if(!(/^[a-zA-Z0-9]{3,}$/).test(this.user.reg_code)){
           this.$toast("请输入正确的推荐码!");
           return false;
         }else if(!/^1[34578]\d{9}$/.test(this.user.account)) {
@@ -96,7 +95,7 @@ export default {
        }else if(!(/^[a-zA-Z0-9]{6,}$/).test(this.user.password)){
           this.$toast("密码输入有误!"); 
           return false;
-       }else if(!(/^[0-9]{4}$/).test(this.user.reg_code)){
+       }else if(!(/^[0-9]{4}$/).test(this.user.verify_code)){
           this.$toast("验证码输入有误!");
           return false;
        }else if(!this.checked){
@@ -104,7 +103,9 @@ export default {
        }
 
       let url = "user/reg";
+      console.log(this.user);
       this.$https.post(url, this.user).then(res => {
+        console.log(res);
         if (res && res.data) {
           let data = res.data;
           if (data.code === 200) {
@@ -114,7 +115,6 @@ export default {
             }, 1000);
           } else {
             this.$toast(data.msg);
-            return false;
           }
         }
       });

@@ -43,6 +43,7 @@
   </section>
 </template>
 <script>
+import {mapGetters} from "vuex";
 export default {
   name: "parseVideo",
   data() {
@@ -71,9 +72,13 @@ export default {
     publishVideo() {
       if (this.video_title.trim().length === 0) {
         //标题非空判断
-        this.$toast("请输入视频标题");
-        return false;
-      }
+        this.$notify({
+                message:"请输入视频标题",
+                duration:5000,
+                className:"notifyClass"
+                });
+          return ;
+       }
 
       let url;
       if (this.videoType == "uploadSmallVideo") {
@@ -82,7 +87,11 @@ export default {
       } else if (this.videoType == "uploadShortVideo") {
         url = "video/addShortVideo";
       } else {
-        this.$toast("不清楚视频类型,请重新发布");
+        this.$notify({
+                message:"不清楚视频类型,请重新发布",
+                duration:5000,
+                className:"notifyClass"
+              });
         setTimeout(() => {
             this.$store.commit("change_page","/me");
             this.$router.push("/me");
@@ -97,19 +106,26 @@ export default {
       };
 
       this.$https.post(url, data).then(res => {
-        console.log(res);
         if (res.data.code === 200) {
-          this.$toast.success({
-            message: "视频上传成功!"
-          });
-          setTimeout(() => {
-            this.$store.commit("change_page","/me");
-            this.$router.push("/me");
-          }, 2000);
+          this.$notify({
+                        message:'视频上传成功',
+                        duration: 2000,
+                        background:"#07C160",
+                        className:"notifyClass"
+                    });
+            this.$store.commit("updateVideo"); //增加视频数量
+            setTimeout(() => {
+              this.$store.commit("change_page","/me");
+              this.$router.push("/me");
+            }, 2000);
         }else{
-          this.$toast(res.data.msg);
-        }
-      });
+          this.$notify({
+                message:res.data.msg,
+                duration:5000,
+                className:"notifyClass"
+              });
+           }
+       });
     },
     pauseVideo(){ //暂停按钮
       let video = document.querySelectorAll("video")[0];

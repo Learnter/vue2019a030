@@ -22,7 +22,7 @@
         </div>
         <div class="videos_box">
             <keep-alive>
-                  <component v-bind:is="currentTabComponent" :uid="user_info.user_id"></component>
+                <component v-bind:is="currentTabComponent" :uid="user_id"></component>
             </keep-alive>
         </div> 
     </div>
@@ -70,7 +70,6 @@ export default {
       this.$https.get(url,data).then(res => {
         if(res.data.code === 200 && res.data.data){
             this.user_info = res.data.data;
-            // console.log(this.user_info);
          }
       })
     },

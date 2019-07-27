@@ -7,11 +7,11 @@ import reset from "reset-css";
 import store from './store';
 
 
-import VueVideoPlayer from 'vue-video-player' 
-// require videojs style
-import 'video.js/dist/video-js.css'
-//使用VueVideoPlayer组件
-Vue.use(VueVideoPlayer);
+// import VueVideoPlayer from 'vue-video-player' 
+// // require videojs style
+// import 'video.js/dist/video-js.css'
+// //使用VueVideoPlayer组件
+// Vue.use(VueVideoPlayer);
 
 
 import "./assets/iconFont/iconfont.css"; //引入阿里字体库

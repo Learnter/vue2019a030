@@ -25,6 +25,7 @@
   </section>
 </template>
 <script>
+import {mapGetters} from "vuex";
 export default {
   name: "fans",
   data() {
@@ -40,6 +41,9 @@ export default {
   },
   created() {
     this.fetchData();
+  },
+  computed:{
+    ...mapGetters(["statistics"])
   },
   methods: {
     fetchData() {
@@ -64,7 +68,12 @@ export default {
        }
        this.$https.post(url,data).then(res => {
           if(res.data.code === 200){
-            this.fansList[index].is_follow ? this.fansList[index].is_follow = false : this.fansList[index].is_follow = true;
+            this.fansList[index].is_follow = !this.fansList[index].is_follow; //是否关注
+            if(this.fansList[index].is_follow){
+              this.$store.commit("follow");
+            }else{
+              this.$store.commit("unfollow");
+            }
             this.$toast({
                position:"bottom",
                message:res.data.data

@@ -32,7 +32,7 @@ export default {
 
             console.log(this.uid);
             this.$https.get(url,this.requestConfig).then(res => {
-                console.log(res.data.data.length);
+                // console.log(res.data.data.length);
                 if(res.data.code === 200 && res.data.data.length > 0){
 
                     this.videoList =  this.videoList.concat(res.data.data);

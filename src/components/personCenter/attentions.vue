@@ -63,6 +63,7 @@ export default {
           if(res.data.code === 200){
             this.attentionList.splice(index,1);
             this.$toast(res.data.data); 
+            this.$store.commit("unfollow");
           }
        })
     },

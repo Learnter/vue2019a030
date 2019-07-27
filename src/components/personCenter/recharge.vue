@@ -7,13 +7,13 @@
 
     <div class="recharge_main">
       <div class="recharge_account">
-        <div v-if="user_asset['2']">
-          <h3>{{user_asset['2'].wallet_name}}</h3>
-          <p>{{user_asset['2'].money}}</p>
+        <div>
+          <h3>邮币</h3>
+          <p>{{statistics.postal_currency}}</p>
         </div>
-        <div v-if="user_asset['4']">
-          <h3>{{user_asset['4'].wallet_name}}</h3>
-          <p>{{user_asset['4'].money}}</p>
+        <div>
+          <h3>积分</h3>
+          <p>{{statistics.integral}}</p>
         </div>
       </div>
 
@@ -62,6 +62,7 @@
 </template>
 <script>
 import returnNav from "@/components/common/returnNav";
+import {mapGetters} from "vuex";
 export default {
   name: "recharge",
   data() {
@@ -85,7 +86,8 @@ export default {
   computed:{
     user_asset(){ //vuex 拉取用户资产
       return this.$store.state.user_asset;
-    }
+    },
+    ...mapGetters(['statistics'])
   },
   methods:{
     fetchRecharge() {

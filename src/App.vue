@@ -92,8 +92,9 @@ button{
 }
 
 /* 顶部消息通知栏 */
-/* .notifyClass{ 
-    border-radius:8px 8px 0 0;
-  } */
+.notifyClass{ 
+    border-radius:0 0 3px 3px;
+    transition: all 1s ease-in-out;
+  }
 
 </style>

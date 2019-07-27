@@ -29,22 +29,22 @@
 
           <div class="user_watch uni-flex">
             <div class="uni_watch_item" @click="videosBtn">
-              <div>{{statisticsData.video_num}}</div>
+              <div>{{statistics.video_num}}</div>
               <div>视频</div>
             </div>
             <div class="split_line"></div>
             <div class="uni_watch_item" @click="attentionsBtn">
-              <div>{{statisticsData.follow_num}}</div>
+              <div>{{statistics.follow_num}}</div>
               <div>关注</div>
             </div>
             <div class="split_line"></div>
             <div class="uni_watch_item" @click="fansBtn">
-              <div>{{statisticsData.fans_num}}</div>
+              <div>{{statistics.fans_num}}</div>
               <div>粉丝</div>
             </div>
-            <div class="split_line"></div>
+            <div class="split_line"></div> 
             <div class="uni_watch_item">
-              <div>{{statisticsData.team_num}}</div>
+              <div>{{statistics.team_num}}</div>
               <div>团队</div>
             </div>
           </div>
@@ -80,35 +80,35 @@
         </div>
 
         <div class="user_money uni-flex">
-          <div class="uni_watch_item" v-if="accountData['1']"> 
-            <p>{{accountData['1']['wallet_name']}}</p>
-            <p>{{accountData['1']['money']}}</p>
+          <div class="uni_watch_item" > 
+            <p>余额</p>
+            <p>{{statistics.balance}}</p>
           </div>
           <div class="uni_watch_item">
             <p>今日回馈</p>
-            <p>66678789</p>
+            <p>{{statistics.dividend_today}}</p>
           </div>
           <div class="uni_watch_item">
             <p>佣金</p>
-            <p>66152165</p>
+            <p>{{statistics.brokerage}}</p>
           </div>
           <div class="uni_watch_item">
             <p>总收入</p>
-            <p>64565</p>
+            <p>{{statistics.total_bonus}}</p>
           </div>
         </div>
         <div class="user_integral uni-flex">
-          <div class="uni_watch_item" v-if="accountData['2']">
-            <p>{{accountData['2']['wallet_name']}}</p>
-            <p>{{accountData['2']['money']}}</p>
+          <div class="uni_watch_item">
+            <p>邮币</p>
+            <p>{{statistics.postal_currency}}</p>
           </div>
-          <div class="uni_watch_item" v-if="accountData['3']">
-            <p>{{accountData['3']['wallet_name']}}</p>
-            <p>{{accountData['3']['money']}}</p>
+          <div class="uni_watch_item">
+            <p>邮票</p>
+            <p>{{statistics.stamp}}</p>
           </div>
-          <div class="uni_watch_item" v-if="accountData['4']">
-            <p>{{accountData['4']['wallet_name']}}</p>
-            <p>{{accountData['4']['money']}}</p>
+          <div class="uni_watch_item">
+            <p>积分</p>
+            <p>{{statistics.integral}}</p>
           </div>
         </div>
       </div>
@@ -180,43 +180,23 @@
     created(){
       this.getUserInfo();
     },
-    activated(){
-      this.getStatistics();
-    },
     computed:{
       accountData(){ //获取账号资产
         return this.$store.state.user_asset;
       },
-      ...mapGetters(['userInfo'])
+      ...mapGetters(['userInfo','statistics'])
     },
     methods: { 
       getUserInfo(){ //获取用户信息存储到vuex
         let url = "user/getUserInfo";
         this.$https.get(url).then(res => {
+           console.log(res);
           if(res.data.code === 200 && Object.keys(res.data.data).length != 0){
                 // this.userInfo = res.data.data;
                 this.$store.commit("set_user_info",res.data.data);
            }
         })
       },
-      getStatistics(){ //获取统计信息
-        let url = "user/getStatistics"; 
-        this.$https.get(url).then(res => {
-          if(res.data.code === 200 && res.data.data){
-             this.statisticsData = res.data.data;
-          }
-        })
-      },
-      // fetchAccountMoney(){ //获取账号资产
-      //     let url = 'money/getUserWalletAmount';
-      //     this.$https.get(url).then(res => {
-      //       // console.log(res);
-      //       if( res.data.code === 200 && res.data.data){
-      //           this.accountData = res.data.data;
-      //           this.$store.commit("change_user_asset",res.data.data); //将用户资产存储到vuex中
-      //        }
-      //     })
-      // },
       setUp() { //设置按钮
        this.$router.push('/personCenter/editPersonInfo')
       },
@@ -249,7 +229,7 @@
         this.$router.push("/personCenter/attentions");
       },
       videosBtn(){ //视频列表
-        this.$router.push("/personCenter/videoDetails");
+        this.$router.push({path:"/personCenter/videoDetails",query:{user_id:this.userInfo.user_id}});
       },
       exit(){ //用户退出
         this.$dialog.confirm({
@@ -262,9 +242,6 @@
            return ;
         })
       }
-    },
-    components: {
-
     }
   }
 

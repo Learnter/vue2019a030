@@ -69,6 +69,7 @@ export default {
   },
    created(){
       this.fetchAccountMoney();
+      this.getStatistics();
   },
   methods: {
      fetchAccountMoney(){ //获取会员账号资产
@@ -82,6 +83,15 @@ export default {
              }
           })
       },
+       getStatistics(){ //获取统计信息
+        let url = "user/getStatistics"; 
+        this.$https.get(url).then(res => {
+          if(res.data.code === 200 && res.data.data){
+             this.$store.commit("set_user_statistics",res.data.data);
+            //  console.log(this.$store.state.user_statistics);
+          }
+        })
+       },
     //获取视频列表
     fetchVideos(){
       let url = "video/smallVideoList";
@@ -116,11 +126,22 @@ export default {
         this.$https.post(url,data).then(res => {
           if (res.data.code === 200) {
             if( this.videoList[index].is_collect == true){
-              this.$toast("已取消收藏");
+              // this.$toast("已取消收藏");
+               this.$notify({
+                       message:"取消收藏",
+                       className:"notifyClass",
+                       duration: 3000,
+                   });
               this.videoList[index].collect_num--;
               this.videoList[index].is_collect = false;
             }else{
-              this.$toast("已收藏");
+              // this.$toast("已收藏");
+               this.$notify({
+                       message:"已收藏",
+                       className:"notifyClass",
+                       duration:3000,
+                       background:"#07C160"
+                   });
               this.videoList[index].collect_num++;
               this.videoList[index].is_collect = true;
             }
