@@ -174,23 +174,36 @@
     data(){
       return {
         statisticsData:{},//统计数据
-        // userInfo:{} //用户信息
       };
     },
+    beforeRouteEnter (to, from, next) { //此路由守卫用于判断是否从第三方充值成功页面进入;
+      if(from.path == "/"){
+          next(vm => {
+            vm.uploadStatistics();
+          })
+      }else{
+         next();
+      }
+   },
     created(){
       this.getUserInfo();
     },
     computed:{
-      accountData(){ //获取账号资产
-        return this.$store.state.user_asset;
-      },
       ...mapGetters(['userInfo','statistics'])
     },
     methods: { 
+      uploadStatistics(){ //此方法用户充值成功后、重新获取用户新的资产数据、并重新存储到vuex;
+          let url = "user/getStatistics"; 
+          this.$https.get(url).then(res => {
+          if(res.data.code === 200 && res.data.data){
+             this.$store.commit("set_user_statistics",res.data.data);
+            }
+          })
+      },
       getUserInfo(){ //获取用户信息存储到vuex
         let url = "user/getUserInfo";
         this.$https.get(url).then(res => {
-           console.log(res);
+          //  console.log(res);
           if(res.data.code === 200 && Object.keys(res.data.data).length != 0){
                 // this.userInfo = res.data.data;
                 this.$store.commit("set_user_info",res.data.data);
@@ -237,6 +250,7 @@
           message: '您确定要退出吗'
         }).then(()=>{
             localStorage.removeItem("user"); //移除永久缓存信息
+            this.$store.commit("clearState"); //退出清空vuex数据
             this.$router.push('/login'); //跳转到登录页面
         }).catch(()=>{
            return ;

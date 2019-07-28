@@ -53,6 +53,9 @@ const store = new Vuex.Store({
 		user_statistics:{} //用户的统计信息
 	},
 	mutations:{
+		clearState(state){ //退出时清空vuex;
+			state = {};
+		},
 		change_nav_list(state,data){ 
 			state.footer_nav = data;
 		},
@@ -94,11 +97,14 @@ const store = new Vuex.Store({
 		withDraw(state,values){ //充值提现
 			state.user_statistics.balance -= values;
 		},
+		increaseBalance(state,money){ //增加余额
+			state.user_statistics.balance += money;
+		},
 		subtractStamp(state,num){ //扣除邮票
 		   state.user_statistics.stamp -= num;
 		},
-		increaseBalance(state,money){ //增加余额
-			state.user_statistics.balance += money;
+		increaseStamp(state,num){ //增加邮票
+			state.user_statistics.stamp += num;
 		},
 		updateVideo(state){ //上传视频
 		   state.user_statistics.video_num += 1;

@@ -7,66 +7,6 @@
       <van-tab v-for="(item,index) in 8" :title="'推荐' + index" :key="index"></van-tab>
     </van-tabs>-->
     <div class="video_main">
-<!-- 
-      <van-swipe style="height:100%"  vertical  :show-indicators="false"  @change="onChange"  :loop="false">
-          <van-swipe-item class="video_item" v-for="(vItem,vIndex) in videosList" :key="vIndex">
-              <div class="video_content">
-                <div class="video_title">
-                  <span>{{vItem.title}}</span>
-                </div>
-                <div class="video_container" style="width:100%;height:200px">
-                  <video
-                    class="video_box"
-                    width="100%"
-                    height="100%"
-                    webkit-playsinline="true"
-                    x5-playsinline
-                    x5-video-player-type="h5"
-                    playsinline
-                    preload="auto"
-                    :poster="vItem.poster"
-                    :src="vItem.video_url"
-                    :playOrPause="playOrPause"
-                    x-webkit-airplay="allow"
-                    x5-video-orientation="landscape"
-                    @click="pauseVideo(vIndex)"
-                    @ended="onPlayerEnded($event)"
-                  ></video>
-                  <div class="playOrPause" v-if="vItem.isPlay||vItem.isPause">
-                    <van-icon
-                      name="play-circle"
-                      v-show="vItem.isPlay"
-                      class="play"
-                      @click="playVideo(vIndex)"
-                    />
-                     <van-icon
-                      name="pause-circle"
-                      v-show="vItem.isPause"
-                      class="icon_play"
-                      @click="pauseVideo(vIndex)"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div class="video_info">
-                <div class="video_info_left">
-                  <div class="video_info_img">
-                    <img :src="vItem.avatar" alt />
-                  </div>
-                  <div v-if="vItem.uid !== 0">
-                       <van-tag color="#f2826a" v-if="!vItem.is_follow" class="video_info_title" @click="attentionBtn(vItem,vIndex)">+关注</van-tag>
-                       <van-tag color="#F00" v-else class="video_info_title" @click="attentionBtn(vItem,vIndex)">已关注</van-tag>
-                  </div>
-                </div>
-                <div class="video_info_icons">
-                  <p>{{vItem.collect_num}}</p>
-                  <van-icon :class="vItem.is_collect == true ? 'follow_active':''"  name="like" @click.stop="likeBtn(vItem,vIndex)"/>
-                </div>
-              </div>
-
-          </van-swipe-item>
-      </van-swipe> -->
-
 
     <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="刷新成功">
         <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad" :offset="100">
@@ -150,7 +90,7 @@
               class="closeBtn"
               @click.stop="vItem.isReward = false"
             />
-            <p>使用积分送礼物&nbsp;奖励12%邮票</p>
+            <h3>使用积分送礼物&nbsp;奖励12%邮票</h3>
             <div>
               <ul class="mask_bottom_gifts">
                 <li class="mask_gift_item" :class="selGiftIndex == gIndex ?'selActive':''" v-for="(gItem,gIndex) in giftList" :key="gIndex" @click.stop="selGiftIndex = gIndex">
@@ -350,14 +290,26 @@ export default {
               uid:item.user_id
           }
           this.$https.post(url,data).then(res => {
+
               if(res.data.code === 200){
+
                 this.videosList[index].is_follow = !this.videosList[index].is_follow;
-                this.$notify({
-                    message:res.data.msg,
-                    duration: 2000,
+                if(this.videosList[index].is_follow){ //增加、减少关注的数量
+                  this.$store.commit("follow");
+                  this.$notify({
+                    message:"关注成功",
+                    duration: 3000,
                     className:"notifyClass",
                     background:"#07C160"
-                    }); 
+                    });
+                }else{
+                    this.$store.commit("unfollow");
+                    this.$notify({
+                    message:"取消关注",
+                    duration:3000,
+                    className:"notifyClass",
+                    });
+                }    
              }else{
                this.$notify({
                     message:res.data.msg,
@@ -379,12 +331,16 @@ export default {
         gift_id:selGift.id,
         num:number
       }
-      this.$https.post(url,data).then(res => {
-          this.$https.post(url,data).then(res => {
-          if(res.data.code == 200 ){
-            
+       this.$https.post(url,data).then(res => {
+
+          if(res.data.code == 200 ){          
+
             let integral  = selGift.amount * number; //赠送成功扣除积分
             this.$store.commit("reduceIntegral",integral);
+
+            let returnStamp = selGift.amount * number * 0.12; //使用积分打赏返回12%的邮票;
+            this.$store.commit("increaseStamp",returnStamp);
+
             this.$notify({
                   message:'礼物赠送成功',
                   className:"notifyClass",
@@ -398,11 +354,10 @@ export default {
                   duration: 5000,
                 });
             }
+            obj.isReward = false;
+            this.sel_gift_number = 1;
          })
-         obj.isReward = false;
-         this.sel_gift_number = 1;
-      })
-    },
+      },
     onSearch() {
       console.log("点击搜索按钮" + this.search_text);
     },
@@ -621,6 +576,10 @@ video {
     border-radius: 10px 10px 0 0;
     text-align: left;
     color: #ffffff;
+     h3{
+      text-align:center;
+      color:yellow;
+    }
     .selActive{
       transition: color .5s ease,border-radius 1s ease;
       color:yellow;
