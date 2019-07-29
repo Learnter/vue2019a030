@@ -10,7 +10,7 @@
             <van-list v-model="loading" :finished="finished" finished-text="没有更多了"  @load="onLoad">
               <div class="main_ul">
                 <van-cell class="main_item" v-for="(item,index) in videoList" :key="index" @click.stop="playVideo(index)">
-                  <img  v-lazy="item.poster" alt="加载失败" />
+                  <img  :src="item.poster" alt="加载失败" />
 
                   <!-- 视频信息栏 -->
                   <div class="min_item_info uni-flex">
