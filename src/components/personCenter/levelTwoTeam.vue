@@ -1,19 +1,8 @@
 <template>
   <section class="team">
     <return-nav style="background:#5077F8">
-      <template v-slot:middle>我的社区</template>
+      <template v-slot:middle>{{parentName}}的团队</template>
     </return-nav>
-    <div class="team_account">
-      <div>
-        <p>直推总人数</p>
-        <p class="team_number">{{teamNumber.zt_num}}</p>
-      </div>
-      <div>
-        <p>团队总人数</p>
-        <p class="team_number">{{teamNumber.team_num}}</p>
-      </div>
-    </div>
-
     <div class="team_main">
       <van-list
         v-model="loading"
@@ -40,9 +29,6 @@
                   </P>
                 </div>
               </div>
-              <div class="right_arrows" @click="secondlevel(item)">
-                <img src="@/assets/tabImg/zpzpwz_47.png" alt="箭头" />
-              </div>
             </li>
           </ul>
         </div>
@@ -64,12 +50,13 @@ export default {
         user_id:""
       },//获取条件
       teamNumber:{},//团队人数
-      teamList:{} //团队列表
+      teamList:{},//团队列表
+      parentName:"" //父团队用户名
     };
   },
  created(){
-   //获取用户的id;
-   this.teamConfig.user_id = JSON.parse(localStorage.getItem("user")).userInfo.user_id;
+   this.teamConfig.user_id = this.$route.query.user_id;  //获取用户的id;
+   this.parentName = this.$route.query.name; 
    this.fetchTeamInfo();
  },
   methods:{
@@ -86,7 +73,6 @@ export default {
         this.$https.get(url,this.teamConfig).then(res => {
            if(res.data.code === 200 && res.data.data.length > 0){
               this.teamList = res.data.data;
-              console.log(this.teamList);
               this.teamConfig.page++;
               this.loading = false;
            }else{
@@ -94,10 +80,6 @@ export default {
               this.finished = true;
            }
         })
-    },
-    secondlevel(obj){ //跳转二级团队
-      console.log(obj);
-      this.$router.push({path:"/personCenter/levelTwoTeam",query:{user_id:obj.user_id,name:obj.username}});
     },
     onLoad(){
       this.fetchTeamList();
@@ -117,28 +99,9 @@ export default {
   bottom: 0;
   z-index: 999;
   background: #f2f2f2;
-  .team_account {
-    position: absolute;
-    top: 54px;
-    left: 0;
-    width: 100%;
-    background: #ffffff;
-    border-radius: 5px;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    div {
-      width: 50%;
-      font-size: 20px;
-      .team_number {
-        margin-top: 10px;
-        color: #e8cb70;
-      }
-    }
-  }
     .team_main {
       position: absolute;
-      top: 130px;
+      top:60px;
       left: 0;
       width: 100%;
       bottom: 0;

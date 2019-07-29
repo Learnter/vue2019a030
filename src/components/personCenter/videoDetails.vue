@@ -44,7 +44,6 @@ export default {
     };
   },
   created(){  
-      console.log("每次进入");
       this.user_id = this.$route.query.user_id;
       this.fetchUserInfo();
   },

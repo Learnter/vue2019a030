@@ -129,8 +129,8 @@ export default {
   .van-cell{
       background:#000000;
       border-bottom:1px solid rgba(255,255,255,0.1);
+      margin-bottom:10px;
   }
-
   .van-cell__value{
      color:#ffffff;
      display:flex;

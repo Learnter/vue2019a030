@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-   <keep-alive>
+     <keep-alive>
         <router-view v-if="$route.meta.KeepAlive"></router-view>
     </keep-alive>
     <router-view v-if="!$route.meta.KeepAlive"></router-view>
@@ -96,5 +96,10 @@ button{
     border-radius:0 0 3px 3px;
     transition: all 1s ease-in-out;
   }
+
+  /* .van-image{
+        width:100%;
+        height:100%;
+     } */
 
 </style>

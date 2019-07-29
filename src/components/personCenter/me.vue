@@ -29,22 +29,22 @@
 
           <div class="user_watch uni-flex">
             <div class="uni_watch_item" @click="videosBtn">
-              <div>{{statistics.video_num}}</div>
+              <div>{{statistics.video_num|numberFilter}}</div>
               <div>视频</div>
             </div>
             <div class="split_line"></div>
             <div class="uni_watch_item" @click="attentionsBtn">
-              <div>{{statistics.follow_num}}</div>
+              <div>{{statistics.follow_num|numberFilter}}</div>
               <div>关注</div>
             </div>
             <div class="split_line"></div>
             <div class="uni_watch_item" @click="fansBtn">
-              <div>{{statistics.fans_num}}</div>
+              <div>{{statistics.fans_num|numberFilter}}</div>
               <div>粉丝</div>
             </div>
             <div class="split_line"></div> 
             <div class="uni_watch_item">
-              <div>{{statistics.team_num}}</div>
+              <div>{{statistics.team_num|numberFilter}}</div>
               <div>团队</div>
             </div>
           </div>
@@ -82,33 +82,33 @@
         <div class="user_money uni-flex">
           <div class="uni_watch_item" > 
             <p>余额</p>
-            <p>{{statistics.balance}}</p>
+            <p>{{statistics.balance|numberFilter}}</p>
           </div>
           <div class="uni_watch_item">
             <p>今日回馈</p>
-            <p>{{statistics.dividend_today}}</p>
+            <p>{{statistics.dividend_today|numberFilter}}</p>
           </div>
           <div class="uni_watch_item">
             <p>佣金</p>
-            <p>{{statistics.brokerage}}</p>
+            <p>{{statistics.brokerage|numberFilter}}</p>
           </div>
           <div class="uni_watch_item">
             <p>总收入</p>
-            <p>{{statistics.total_bonus}}</p>
+            <p>{{statistics.total_bonus|numberFilter}}</p>
           </div>
         </div>
         <div class="user_integral uni-flex">
           <div class="uni_watch_item">
             <p>邮币</p>
-            <p>{{statistics.postal_currency}}</p>
+            <p>{{statistics.postal_currency|numberFilter}}</p>
           </div>
           <div class="uni_watch_item">
             <p>邮票</p>
-            <p>{{statistics.stamp}}</p>
+            <p>{{statistics.stamp|numberFilter}}</p>
           </div>
           <div class="uni_watch_item">
             <p>积分</p>
-            <p>{{statistics.integral}}</p>
+            <p>{{statistics.integral|numberFilter}}</p>
           </div>
         </div>
       </div>

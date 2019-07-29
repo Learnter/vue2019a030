@@ -69,6 +69,11 @@ Vue.filter('timeFormat', function (value) {  //全局日期过滤器
 })
 
 
+Vue.filter('numberFilter',function(num){ //小数限定转换过滤器
+  return Math.floor(num*100)/100;
+})
+
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
@@ -96,18 +101,18 @@ router.beforeEach((to, from, next) => { //全局路由守卫
 })
 
 
-document.documentElement.addEventListener('touchstart', function (event) {
-  if (event.touches.length > 1) {
-    event.preventDefault();
-  }
-}, false);
+// document.documentElement.addEventListener('touchstart', function (event) {
+//   if (event.touches.length > 1) {
+//     event.preventDefault();
+//   }
+// }, false);
 
- //禁止双击放大
-var lastTouchEnd = 0;
-document.documentElement.addEventListener('touchend', function (event) {
-  var now = Date.now();
-  if (now - lastTouchEnd <= 300) {
-    event.preventDefault();
-  }
-  lastTouchEnd = now;
-}, false);
+//  //禁止双击放大
+// var lastTouchEnd = 0;
+// document.documentElement.addEventListener('touchend', function (event) {
+//   var now = Date.now();
+//   if (now - lastTouchEnd <= 300) {
+//     event.preventDefault();
+//   }
+//   lastTouchEnd = now;
+// }, false);

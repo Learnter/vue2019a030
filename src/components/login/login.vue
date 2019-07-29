@@ -76,21 +76,23 @@ export default {
       this.$https.post(url, this.user).then(res => {
 
         if (res.data.code == 200 && res.data.data) {
-
-            this.$toast({
-              message:"登录成功",
-              duration:1000
-              });
+               this.$notify({
+                         message:"登录成功",
+                        duration: 2000,
+                        background:"#07C160",
+                        className:"notifyClass"
+                    });
             localStorage.setItem("user",JSON.stringify(res.data.data)); //将登陆token信息存储到localStorage
             
-            // console.log(res.data.data);
-            // let userConfig = JSON.stringify(res.data.data);
-            // sessionStorage.setItem("user",userConfig);
             setTimeout(() => {
               this.$router.push("/smallVideo");
             }, 2000);
         }else{
-            this.$toast(res.data.msg);
+             this.$notify({
+                         message:res.data.msg,
+                        duration: 2000,
+                        className:"notifyClass"
+                    });
             localStorage.removeItem("user"); //移除本地token
           }
       });

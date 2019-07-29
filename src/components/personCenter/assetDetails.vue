@@ -78,7 +78,7 @@
         //获取钱包列表
         let url = "money/getMoneyLogList";
         this.$https.get(url, this.requrstConfig).then(res => {
-          console.log(res);
+          // console.log(res);
           if (res.data.code === 200 && res.data.data) {
             this.assetList = res.data.data;
             if(this.assetList.length > 0){

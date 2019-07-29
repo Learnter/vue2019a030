@@ -4,13 +4,13 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 export default new Router({
-  scrollBehavior (to, from, savedPosition) {
-  if (savedPosition) {
-    return savedPosition
-  } else {
-    return { x: 0, y: 0 }
-  }
-},
+//   scrollBehavior (to, from, savedPosition) {
+//   if (savedPosition) {
+//     return savedPosition
+//   } else {
+//     return { x: 0, y: 0 }
+//   }
+// },
   routes: [
     {
       path: '/',
@@ -21,7 +21,7 @@ export default new Router({
       name:"SmallVideo",
       component: resolve => require(["@/components/smallVideo"],resolve),
       meta:{
-        KeepAlive:true
+        keepAlive:true
       }
     },
     {
@@ -29,26 +29,32 @@ export default new Router({
       name:"shortVideoTwo",
       component: resolve => require(["@/components/shortVideoTwo"],resolve),
       meta:{
-        KeepAlive:true
-       }
+        keepAlive:true
+      }
     },
     {
       path:"/live",//直播
       name:"live",
-      component: resolve => require(["@/components/common/systemMask"],resolve)
+      component: resolve => require(["@/components/common/systemMask"],resolve),
+      meta:{
+        keepAlive:true
+      }
     },
     {
       path:"/me", // 个人中心
       name:"Me",
       component: resolve => require(["@/components/personCenter/me"],resolve),
       meta:{
-        KeepAlive:true
+        keepAlive:true
       }
     },
     {
       path:"/personCenter/editPersonInfo", // 编辑个人中心
       name:"EditPersonInfo",
       component: resolve => require(["@/components/personCenter/editPersonInfo"],resolve),
+      meta:{
+        keepAlive:true
+      }
     },
     {
       path:"/personCenter/gameGuide", //玩法攻略
@@ -94,6 +100,11 @@ export default new Router({
       path:"/personCenter/team",//我的团队
       name:"team",
       component: resolve => require(["@/components/personCenter/team"],resolve)
+    },
+    {
+      path:"/personCenter/levelTwoTeam",//二级团队
+      name:"levelTwoTeam",
+      component: resolve => require(["@/components/personCenter/levelTwoTeam"],resolve)
     },
     {
       path:"/personCenter/fans",//我的粉丝

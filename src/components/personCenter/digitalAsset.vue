@@ -7,43 +7,43 @@
       <ul>
         <li style="background:#B522FD">
              <h3>全国邮币生产数量</h3>
-             <p>{{assetList.nationalPostalCurrency}}</p>
+             <p>{{assetList.nationalPostalCurrency|numberFilter}}</p>
         </li>
         <li style="background:#B522FD">
              <h3>我的邮币总资产</h3>
-             <p>{{assetList.personalNationalPostalCurrency}}</p>
+             <p>{{assetList.personalNationalPostalCurrency|numberFilter}}</p>
         </li>
         <li>
              <h3>邮币持仓数量</h3>
-             <p>{{assetList.postCurrencyPosition}}</p>
+             <p>{{assetList.postCurrencyPosition|numberFilter}}</p>
         </li>
         <li>
              <h3>邮币流通数量</h3>
-             <p>{{assetList.personalPostCurrencyPosition}}</p>
+             <p>{{assetList.personalPostCurrencyPosition|numberFilter}}</p>
         </li>
         <li>
              <h3>昨日回收邮币</h3>
-             <p>{{assetList.recycledPostageCurrencyYesterday}}</p>
+             <p>{{assetList.recycledPostageCurrencyYesterday|numberFilter}}</p>
         </li>
         <li>
              <h3>昨日转出邮币</h3>
-             <p>{{assetList.transferringThePostalCurrencyYesterday}}</p>
+             <p>{{assetList.transferringThePostalCurrencyYesterday|numberFilter}}</p>
         </li>
         <li>
              <h3>今日生产邮币</h3>
-             <p>{{assetList.producePostalCurrencyToday}}</p>
+             <p>{{assetList.producePostalCurrencyToday|numberFilter}}</p>
         </li>
         <li>
              <h3>今日存入邮币</h3>
-             <p>{{assetList.depositMoneyToday}}</p>
+             <p>{{assetList.depositMoneyToday|numberFilter}}</p>
         </li>
         <li>
              <h3>万份邮币每日回馈</h3>
-             <p>{{assetList.millionFeedback}}</p>
+             <p>{{assetList.millionFeedback|numberFilter}}</p>
         </li>
         <li>
              <h3>总共回馈收益</h3>
-             <p>{{assetList.totalRewards}}</p>
+             <p>{{assetList.totalRewards|numberFilter}}</p>
         </li>
       </ul>
     </div>

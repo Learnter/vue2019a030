@@ -11,15 +11,15 @@
               <div class="main_ul">
                 <van-cell class="main_item" v-for="(item,index) in videoList" :key="index" @click.stop="playVideo(index)">
                   <!--<img  :src="item.poster" alt="加载失败" />-->
-                  <van-image  fit="fill"  lazy-load :src="item.poster"/>
+                  <van-image style="border-radius:5px" fit="fill" round lazy-load :src="item.poster"/>
 
                   <!-- 视频信息栏 -->
                   <div class="min_item_info uni-flex">
                     <div class="min_item_info_left">
-                      <div class="user_img">
+                      <!-- <div class="user_img"> -->
                         <!--<img :src="item.avatar"/>-->
-                        <van-image  fit="fill"  lazy-load :src="item.avatar"/>
-                      </div>
+                        <van-image  class="user_img" fit="fill" round  lazy-load :src="item.avatar"/>
+                      <!-- </div> -->
                       <p>{{item.title}}</p>
                     </div>
                     <div class="min_item_info_right">
@@ -223,6 +223,7 @@ export default {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    padding-bottom:10px;
     .main_item {
       position: relative;
       width:47%;

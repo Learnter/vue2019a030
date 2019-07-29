@@ -102,7 +102,7 @@
             </div>
             <div class="mask_bottom_column">
               <div class="mask_bottom_left">
-                 <p>可用积分&nbsp;{{statistics.integral}}</p>
+                 <p>可用积分&nbsp;{{statistics.integral|numberFilter}}</p>
                 <van-button round type="primary" size="small" class="rechargeBtn" @click.stop="$router.push('/personCenter/recharge')">充值</van-button>
               </div>
               <van-button round size="small" class="presentBtn" @click.stop="presentBtn(vItem)">赠送</van-button>

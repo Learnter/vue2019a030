@@ -44,9 +44,6 @@
 				isShowMask:false //是否显示遮罩层
 			};
 		},
-		mounted(){
-			this.refresh();//F5页面刷新
-		},
 		methods:{
 			change_nav(item){ // 底部导航切换
 
@@ -60,10 +57,6 @@
 
 				this.$router.push(item.path);
 
-			},
-			refresh(){ //页面刷新存储当前路由地址
-				let now_path =  location.hash.slice(1); 
-				this.$store.commit('change_page',now_path);
 			},
 			uploadVideo(type){ //上传视频
 			   this.$store.commit("change_uploadType",type); //type为视频类型,用于区分是小视频、短视频

@@ -111,9 +111,6 @@ const store = new Vuex.Store({
 		}
 	},
 	getters:{
-		integral(state){ //用户积分
-			return state.user_asset['4'].money * 1 
-		},
 		userInfo(state){ //用户基本信息
 		   return state.user_info;
 		},

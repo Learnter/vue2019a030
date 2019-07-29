@@ -64,10 +64,10 @@ export default {
     computed:{
         ...mapGetters(['statistics']),
         exchangeRate(){ //兑换比例
-            return this.baseNumber * this.stamp_info.exchangeRate;
+            return this.baseNumber * this.stamp_info.exchangeRate/100;
         },
         exchangeMoney(){ //兑换的金额
-            return this.stamp_num * this.stamp_info.exchangeRate;
+            return this.stamp_num * this.stamp_info.exchangeRate/100;
         }
     },
     methods:{
@@ -98,7 +98,8 @@ export default {
                    this.$notify({
                        message:"邮票对换成功",
                        className:"notifyClass",
-                       duration:2000
+                       background:"#07C160",
+                       duration:3000
                      });
                      this.$store.commit("subtractStamp",this.stamp_num); //减少邮票数量
                      this.$store.commit("increaseBalance",this.exchangeMoney);//增加账号余额
