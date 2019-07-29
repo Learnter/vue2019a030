@@ -10,13 +10,15 @@
             <van-list v-model="loading" :finished="finished" finished-text="没有更多了"  @load="onLoad">
               <div class="main_ul">
                 <van-cell class="main_item" v-for="(item,index) in videoList" :key="index" @click.stop="playVideo(index)">
-                  <img  :src="item.poster" alt="加载失败" />
+                  <!--<img  :src="item.poster" alt="加载失败" />-->
+                  <van-image  fit="fill"  lazy-load :src="item.poster"/>
 
                   <!-- 视频信息栏 -->
                   <div class="min_item_info uni-flex">
                     <div class="min_item_info_left">
                       <div class="user_img">
-                        <img :src="item.avatar"/>
+                        <!--<img :src="item.avatar"/>-->
+                        <van-image  fit="fill"  lazy-load :src="item.avatar"/>
                       </div>
                       <p>{{item.title}}</p>
                     </div>
@@ -68,21 +70,21 @@ export default {
     };
   },
    created(){
-      this.fetchAccountMoney();
+      // this.fetchAccountMoney();
       this.getStatistics();
   },
   methods: {
-     fetchAccountMoney(){ //获取会员账号资产
-          let url = 'money/getUserWalletAmount';
-          this.$https.get(url).then(res => {
-            console.log(res);
-            if( res.data.code === 200 && res.data.data){
-                // this.accountData = res.data.data;
-                this.$store.commit("change_user_asset",res.data.data); //将用户资产存储到vuex中
-                // console.log(res.data.data);
-             }
-          })
-      },
+    //  fetchAccountMoney(){ //获取会员账号资产
+    //       let url = 'money/getUserWalletAmount';
+    //       this.$https.get(url).then(res => {
+    //         console.log(res);
+    //         if( res.data.code === 200 && res.data.data){
+    //             // this.accountData = res.data.data;
+    //             this.$store.commit("change_user_asset",res.data.data); //将用户资产存储到vuex中
+    //             // console.log(res.data.data);
+    //          }
+    //       })
+    //   },
        getStatistics(){ //获取统计信息
         let url = "user/getStatistics"; 
         this.$https.get(url).then(res => {

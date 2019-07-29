@@ -90,7 +90,7 @@
               class="closeBtn"
               @click.stop="vItem.isReward = false"
             />
-            <p>使用积分送礼物&nbsp;奖励12%邮票</p>
+            <h3>使用积分送礼物&nbsp;奖励12%邮票</h3>
             <div>
               <ul class="mask_bottom_gifts">
                 <li class="mask_gift_item" :class="selGiftIndex == gIndex ?'selActive':''" v-for="(gItem,gIndex) in giftList" :key="gIndex" @click.stop="selGiftIndex = gIndex">
@@ -290,14 +290,26 @@ export default {
               uid:item.user_id
           }
           this.$https.post(url,data).then(res => {
+
               if(res.data.code === 200){
+
                 this.videosList[index].is_follow = !this.videosList[index].is_follow;
-                this.$notify({
-                    message:res.data.msg,
-                    duration: 2000,
+                if(this.videosList[index].is_follow){ //增加、减少关注的数量
+                  this.$store.commit("follow");
+                  this.$notify({
+                    message:"关注成功",
+                    duration: 3000,
                     className:"notifyClass",
                     background:"#07C160"
-                    }); 
+                    });
+                }else{
+                    this.$store.commit("unfollow");
+                    this.$notify({
+                    message:"取消关注",
+                    duration:3000,
+                    className:"notifyClass",
+                    });
+                }    
              }else{
                this.$notify({
                     message:res.data.msg,
@@ -319,12 +331,16 @@ export default {
         gift_id:selGift.id,
         num:number
       }
-      this.$https.post(url,data).then(res => {
-          this.$https.post(url,data).then(res => {
-          if(res.data.code == 200 ){
-            
+       this.$https.post(url,data).then(res => {
+
+          if(res.data.code == 200 ){          
+
             let integral  = selGift.amount * number; //赠送成功扣除积分
             this.$store.commit("reduceIntegral",integral);
+
+            let returnStamp = selGift.amount * number * 0.12; //使用积分打赏返回12%的邮票;
+            this.$store.commit("increaseStamp",returnStamp);
+
             this.$notify({
                   message:'礼物赠送成功',
                   className:"notifyClass",
@@ -338,11 +354,10 @@ export default {
                   duration: 5000,
                 });
             }
+            obj.isReward = false;
+            this.sel_gift_number = 1;
          })
-         obj.isReward = false;
-         this.sel_gift_number = 1;
-      })
-    },
+      },
     onSearch() {
       console.log("点击搜索按钮" + this.search_text);
     },
@@ -561,6 +576,10 @@ video {
     border-radius: 10px 10px 0 0;
     text-align: left;
     color: #ffffff;
+     h3{
+      text-align:center;
+      color:yellow;
+    }
     .selActive{
       transition: color .5s ease,border-radius 1s ease;
       color:yellow;

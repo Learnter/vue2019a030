@@ -44,6 +44,7 @@ export default {
     };
   },
   created(){  
+      console.log("每次进入");
       this.user_id = this.$route.query.user_id;
       this.fetchUserInfo();
   },
@@ -92,14 +93,29 @@ export default {
           if(res.data.code === 200){
 
             this.user_info.is_follow ? this.user_info.is_follow = false : this.user_info.is_follow = true;
-
-            this.$toast({
-               position:"bottom",
-               message:res.data.data
-            }); 
+            if( this.user_info.is_follow){
+                this.$store.commit("follow");
+               this.$notify({
+                    message:"关注成功",
+                    duration: 3000,
+                    className:"notifyClass",
+                    background:"#07C160"
+                    });
+            }else{
+              this.$store.commit("unfollow");
+              this.$notify({
+                    message:"取消关注",
+                    duration: 3000,
+                    className:"notifyClass",
+                    });
+            } 
           }else{
-            this.$toast(res.data.msg);
-          }
+             this.$notify({
+                    message:res.data.msg,
+                    duration: 3000,
+                    className:"notifyClass",
+              });
+           }
        })
      }
   },
@@ -219,28 +235,6 @@ export default {
         width:100%;
         box-sizing:border-box;
         bottom:0px;
-    //     .multiple_video{
-    //         display:flex;
-    //         flex-wrap:wrap;
-    //     }
-    //     .single_video{
-    //         position: relative;
-    //         box-sizing:border-box;
-    //         width:47%;
-    //         height:220px;
-    //         margin-right:3%;
-    //         margin-bottom:10px;
-    //         border-radius:10px;
-    //         overflow:hidden;
-    //         background:#191B28;
-    //         .duration{
-    //           position: absolute;
-    //           right:5px;
-    //           top:5px;
-    //           background:rgba(0,0,0,0.5) !important;
-    //           padding:2px 10px;
-    //         }
-    //     }
     }
   }
 }

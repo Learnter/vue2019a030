@@ -1,6 +1,6 @@
 <template>
   <div class="container_box" id="video_box">
-    <div class="van_swipe">
+    <div class="van_swipe_box">
       <!--vant van-swipe 滑动组件 -->
       <van-swipe :show-indicators="false" @change="onChange" vertical :loop="false" :initial-swipe="current" :duration="1000">
         <van-swipe-item v-for="(vItem, vIndex) in videoList" :key="vIndex" class="product_swiper">
@@ -41,7 +41,7 @@
           <!-- 顶部邮票功能 -->
           <div class="tools_top">
             <h2>邮票</h2>
-            <p>{{vItem.amount}}</p>
+            <p>{{vItem.amount*1}}</p>
           </div>
 
           <!-- 右侧点赞、分享功能 -->
@@ -86,7 +86,7 @@
               class="closeBtn"
               @click.stop="isPresent = false"
             />
-            <p>使用积分送礼物&nbsp;奖励12%邮票</p>
+            <h3>使用积分送礼物&nbsp;奖励12%邮票</h3>
             <div>
               <ul class="mask_bottom_gifts">
                 <li class="mask_gift_item" :class="selGiftIndex == gIndex ?'selActive':''" v-for="(gItem,gIndex) in giftList" :key="gIndex" @click.stop="selGiftIndex = gIndex">
@@ -198,7 +198,7 @@ export default {
       let giftUrl = "video/giftList";  
       this.$https.get(giftUrl).then(res => {
         if(res.data.code === 200 && res.data.data){
-          console.log(res.data.data);
+          // console.log(res.data.data);
           this.giftList = res.data.data;
         }
       });
@@ -227,9 +227,11 @@ export default {
           let data = { id:item.id }
           this.$https.post(url,data).then(res => {
               if(res.data.code === 200){
-               this.videoList[index].is_praise = true;
-               this.videoList[index].praise_num++;
-               this.likeNum--;
+               this.videoList[index].is_praise = true; //设置为已点赞
+               this.videoList[index].praise_num++; //视频点赞数+1
+               this.likeNum--; //用户每日点赞数减1
+               this.videoList[index].amount = parseInt(this.videoList[index].amount)+2; //每次点赞视频增加2枚邮票
+               this.$store.commit("increaseStamp",6); //每次点赞用户增加6枚邮票
                 this.$notify({
                        message:"今天还剩下"+this.likeNum+"点赞",
                        className:"notifyClass",
@@ -354,10 +356,15 @@ export default {
         num:number
       }
       this.$https.post(url,data).then(res => {
-          if(res.data.code == 200 ){
-            
+
+          if(res.data.code == 200 ){          
+
             let integral  = selGift.amount * number; //赠送成功扣除积分
             this.$store.commit("reduceIntegral",integral);
+
+            let returnStamp = selGift.amount * number * 0.12; //使用积分打赏返回12%的邮票;
+            this.$store.commit("increaseStamp",returnStamp);
+
             this.$notify({
                   message:'礼物赠送成功',
                   className:"notifyClass",
@@ -397,7 +404,7 @@ export default {
   height: 100vh;
 }
 
-.van_swipe {
+.van_swipe_box {
   width: 100vw;
   height: 100vh;
 }
@@ -436,6 +443,9 @@ export default {
     font-size:30px;
   }
 }
+.van-hairline--bottom:after{
+    border:none;
+  }
 
 video {
   object-position: 0 0;
@@ -593,6 +603,10 @@ video {
     border-radius: 10px 10px 0 0;
     text-align: left;
     color: #ffffff;
+    h3{
+      text-align:center;
+      color:yellow;
+    }
     .mask_bottom_gifts{
         min-height:123px;
         display:-webkit-box;
