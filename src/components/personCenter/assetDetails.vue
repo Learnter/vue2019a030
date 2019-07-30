@@ -6,12 +6,12 @@
 
     <van-dropdown-menu class="search_short">
       <van-dropdown-item v-model="categoryInit" :options="categoryList" title="分类" @change="categorySort" />
-      <!-- <van-dropdown-item v-model="dateInit" :options="dateList" title="日期" @change="dateSort" /> -->
-      <van-dropdown-item v-model="sortInit" :options="sortList" title="日期" @change="sortWay" />
+      <van-dropdown-item v-model="dateInit" :options="dateList" title="日期" @change="dateSort" />
+      <van-dropdown-item v-model="sortInit" :options="sortList" title="排序" @change="sortWay" />
     </van-dropdown-menu>
 
     <div class="asset_main">
-      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad" :immediate-check='false' :offset=10>
+      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad"  :offset=10> <!--:immediate-check='false'-->
         <div class="asset_list">
           <ul>
             <li class="asset_details_li" v-for="(item,index) in assetList" :key="index">
@@ -44,15 +44,15 @@
         dateInit: "", //日期初始值
         sortInit: "", //排序初始值
         categoryList: [], //分类列表
-        // dateList: [
-        //   { text: "一星期", value: "week" },
-        //   { text: "一个月", value: "month" },
-        //   { text: "3个月", value: "threeMonth" },
-        //   { text: "一年", value: "year" }
-        // ], //时间列表
+        dateList: [
+          { text: "一周之内", value: "week" },
+          { text: "一个月", value: "month" },
+          { text: "3个月", value: "threeMonth" },
+          { text: "一年", value: "year" }
+        ], //时间列表
         sortList: [
-          { text: "日期正序", value: "asc" },
-          { text: "日期倒序", value: "desc" }
+          { text: "正序", value: "asc" },
+          { text: "倒序", value: "desc" }
         ], //排序列表
         requrstConfig:{
           //请求配置参数
@@ -70,25 +70,23 @@
       };
     },
     created(){
-      this.fetchAssetData();
       this.fetchCategory();
     },
-    methods: {
+    methods:{
       fetchAssetData(){
         //获取钱包列表
         let url = "money/getMoneyLogList";
         this.$https.get(url, this.requrstConfig).then(res => {
           // console.log(res);
-          if (res.data.code === 200 && res.data.data) {
-            this.assetList = res.data.data;
-            if(this.assetList.length > 0){
+          if (res.data.code === 200 && res.data.data.length > 0){
+             this.assetList = this.assetList.concat(res.data.data);
+              this.requrstConfig.page++;
               this.loading = false;
             }else{
               this.loading = false;
               this.finished = true;
             }
-          }
-        });
+          });
       },
       fetchCategory(){
         //获取排序分类数据
@@ -99,41 +97,56 @@
           }
         });
       },
-      categorySort(e){
-        //排序分类
+      categorySort(e){//排序分类
         this.categoryInit = e;
         this.requrstConfig.type = e;
         this.requrstConfig.page = 1; //重新获取首页数据
+        this.assetList = [];
         this.fetchAssetData();
       },
-      sortWay(e){
-        //排序方式
+      sortWay(e){//排序方式
         this.sortInit = e;
         this.requrstConfig.sort = e; //获取排序方式
         this.requrstConfig.page = 1; //重新获取首页数据
+        this.assetList = [];
         this.fetchAssetData();
       },
-      dateSort(e){
-        //日期排序
-        this.$toast("日期排序还没完善...");
+      dateSort(e){ //日期排序
+        this.dateInit = e;
+        this.requrstConfig.start_time = this.getNowFormatDate(e); //开始时间
+        this.requrstConfig.end_time =  this.getNowFormatDate(); //结束时间
+        this.requrstConfig.page = 1; //重新获取首页数据
+        this.assetList = [];
+        this.fetchAssetData();
       },
       onLoad(){ //滚动加载
-        this.requrstConfig.page++;
-        let url = "money/getMoneyLogList";
-        this.$https.get(url, this.requrstConfig).then(res => {
-          if (res.data.code === 200 && res.data.data.length > 0) {
-            let newData = res.data.data;
-            newData.forEach((item) => {
-              this.assetList.push(item); //新增数据
-            });
-            this.loading = false; //加载完成后,设置为false
-          } else {
-            this.loading = false;
-            this.finished = true; //没数据后,设置为true
-          }
-          // console.log(this.assetList);
-        });
-      }
+         this.fetchAssetData();
+      },
+      getNowFormatDate(type) { //获取当前时间日期
+            let date = new Date();
+            let seperator1 = "-";
+            let year = date.getFullYear();
+            let month = date.getMonth() + 1;
+            let strDate = date.getDate();
+            if (month >= 1 && month <= 9) {
+                month = "0" + month;
+            }
+            if (strDate >= 0 && strDate <= 9) {
+                strDate = "0" + strDate;
+            }
+            switch (type) {
+              case 'week':  
+                return year + seperator1 + month + seperator1 + (strDate-7);
+              case 'month':
+                 return  year + seperator1 + (month-1) + seperator1 + strDate;
+              case 'threeMonth':
+                 return  year + seperator1 + (month-3) + seperator1 + strDate;
+              case 'year':
+                 return (year-1) + seperator1 + month + seperator1 + strDate;
+              default:
+                 return year + seperator1 + month + seperator1 + strDate;
+            }
+        }
     },
     components: {
       returnNav
@@ -155,7 +168,7 @@
   .search_short {
     top: 54px;
     .van-cell {
-      padding: 0 10px;
+      padding: 5px 10px;
       .van-cell__title {
         text-align: left;
       }

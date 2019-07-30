@@ -11,7 +11,7 @@
               <div class="main_ul">
                 <van-cell class="main_item" v-for="(item,index) in videoList" :key="index" @click.stop="playVideo(index)">
                   <!--<img  :src="item.poster" alt="加载失败" />-->
-                  <van-image style="border-radius:5px" fit="fill" round lazy-load :src="item.poster"/>
+                  <van-image fit="fill" round lazy-load :src="item.poster"/>
 
                   <!-- 视频信息栏 -->
                   <div class="min_item_info uni-flex">
@@ -70,32 +70,18 @@ export default {
     };
   },
    created(){
-      // this.fetchAccountMoney();
       this.getStatistics();
   },
   methods: {
-    //  fetchAccountMoney(){ //获取会员账号资产
-    //       let url = 'money/getUserWalletAmount';
-    //       this.$https.get(url).then(res => {
-    //         console.log(res);
-    //         if( res.data.code === 200 && res.data.data){
-    //             // this.accountData = res.data.data;
-    //             this.$store.commit("change_user_asset",res.data.data); //将用户资产存储到vuex中
-    //             // console.log(res.data.data);
-    //          }
-    //       })
-    //   },
-       getStatistics(){ //获取统计信息
+       getStatistics(){ //获取资产统计信息
         let url = "user/getStatistics"; 
         this.$https.get(url).then(res => {
           if(res.data.code === 200 && res.data.data){
              this.$store.commit("set_user_statistics",res.data.data);
-            //  console.log(this.$store.state.user_statistics);
           }
         })
-       },
-    //获取视频列表
-    fetchVideos(){
+       }, 
+    fetchVideos(){//获取视频列表
       let url = "video/smallVideoList";
       this.$https.get(url,this.videoConfig).then(res => {
         //  console.log(res);
@@ -148,8 +134,12 @@ export default {
               this.videoList[index].is_collect = true;
             }
           }else{
-            this.$toast(res.data.msg);
-          }
+            this.$notify({
+                      message:res.data.msg,
+                      className:"notifyClass",
+                      duration: 3000,
+                   });
+              }
         });
     },
     onLoad(){ //上拉加载
@@ -158,8 +148,8 @@ export default {
     onRefresh() { //下拉刷新
       setTimeout(() => {
         this.fetchVideos();
-      }, 500);
-    }
+       }, 500);
+     }
   }
 };
 </script>

@@ -1,168 +1,165 @@
 <template>
   <section class="page">
-
     <div class="user_main">
-
-      <div class="userTop">
-
-        <img src="@/assets/tabImg/2019_a030_64.png" />
-
-        <div class="setup" @click="setUp">
-           <van-icon name="setting-o" />
-        </div>
-
-        <div class="user_content">
-          <div class="userInfo uni-flex">
-            <div class="user_img">
-              <img :src="userInfo.avatar" />
+      <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="数据更新成功">
+          <div class="userTop">
+            <!-- <img src="@/assets/tabImg/2019_a030_64.png" /> -->
+            <div class="setup" @click="setUp">
+              <van-icon name="setting-o" />
             </div>
-            <div class="user_detail">
-              <div class="user_name uni-flex">
-                <p>{{userInfo.nickname}}</p>
-                <div class="user_tag">
-                  <img src="@/assets/tabImg/2019_a030_20.png" />
+            <div class="user_content">
+              <div class="userInfo uni-flex">
+                <div class="user_img">
+                  <img :src="userInfo.avatar" />
+                </div>
+                <div class="user_detail">
+                  <div class="user_name uni-flex">
+                    <p>{{userInfo.nickname}}</p>
+                    <div class="user_tag">
+                      <img src="@/assets/tabImg/2019_a030_20.png" />
+                    </div>
+                  </div>
+                  <p class="user_account">ID:{{userInfo.user_id}}</p>
                 </div>
               </div>
-              <p class="user_account">ID:{{userInfo.user_id}}</p>
+
+              <div class="user_watch uni-flex">
+                <div class="uni_watch_item" @click="videosBtn">
+                  <div>{{statistics.video_num|numberFilter}}</div>
+                  <div>视频</div>
+                </div>
+                <div class="split_line"></div>
+                <div class="uni_watch_item" @click="attentionsBtn">
+                  <div>{{statistics.follow_num|numberFilter}}</div>
+                  <div>关注</div>
+                </div>
+                <div class="split_line"></div>
+                <div class="uni_watch_item" @click="fansBtn">
+                  <div>{{statistics.fans_num|numberFilter}}</div>
+                  <div>粉丝</div>
+                </div>
+                <div class="split_line"></div> 
+                <div class="uni_watch_item">
+                  <div>{{statistics.team_num|numberFilter}}</div>
+                  <div>团队</div>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div class="user_watch uni-flex">
-            <div class="uni_watch_item" @click="videosBtn">
-              <div>{{statistics.video_num|numberFilter}}</div>
-              <div>视频</div>
+          <div class="user_assets">
+            <div class="user_operation uni-flex">
+              <div class="user_operation_item uni_watch_item" @click="recharge">
+                <div class=" operation_icon" style="color:#0ECDFF">
+                  <van-icon name="cash-back-record"/>
+                </div>
+                <p>充值</p>
+              </div>
+              <div class="user_operation_item uni_watch_item" @click="deposit">
+                <div class="operation_icon" style="color:#0ECDFF">
+                  <van-icon name="pending-payment"/>
+                </div>
+                <p>提现</p>
+              </div>
+              <div class="user_operation_item uni_watch_item" @click="numberAssets">
+                <div class="operation_icon">
+                  <van-icon name="gem-o"/>
+                </div>
+                <p>数字资产</p>
+              </div>
+              <div class="user_operation_item uni_watch_item" @click="convert">
+                <div class="operation_icon">
+                  <van-icon name="point-gift-o"/>
+                </div>
+                <p>邮票兑换</p>
+              </div>
             </div>
-            <div class="split_line"></div>
-            <div class="uni_watch_item" @click="attentionsBtn">
-              <div>{{statistics.follow_num|numberFilter}}</div>
-              <div>关注</div>
-            </div>
-            <div class="split_line"></div>
-            <div class="uni_watch_item" @click="fansBtn">
-              <div>{{statistics.fans_num|numberFilter}}</div>
-              <div>粉丝</div>
-            </div>
-            <div class="split_line"></div> 
-            <div class="uni_watch_item">
-              <div>{{statistics.team_num|numberFilter}}</div>
-              <div>团队</div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <div class="user_assets">
-        <div class="user_operation uni-flex">
-          <div class="user_operation_item uni_watch_item" @click="recharge">
-            <div class=" operation_icon" style="color:#0ECDFF">
-              <van-icon name="cash-back-record"/>
+            <div class="user_money uni-flex">
+              <div class="uni_watch_item" > 
+                <p>余额</p>
+                <p>{{statistics.balance|numberFilter}}</p>
+              </div>
+              <div class="uni_watch_item">
+                <p>今日回馈</p>
+                <p>{{statistics.dividend_today|numberFilter}}</p>
+              </div>
+              <div class="uni_watch_item">
+                <p>佣金</p>
+                <p>{{statistics.brokerage|numberFilter}}</p>
+              </div>
+              <div class="uni_watch_item">
+                <p>总收入</p>
+                <p>{{statistics.total_bonus|numberFilter}}</p>
+              </div>
             </div>
-            <p>充值</p>
-          </div>
-          <div class="user_operation_item uni_watch_item" @click="deposit">
-            <div class="operation_icon" style="color:#0ECDFF">
-              <van-icon name="pending-payment"/>
+            <div class="user_integral uni-flex">
+              <div class="uni_watch_item">
+                <p>邮币</p>
+                <p>{{statistics.postal_currency|numberFilter}}</p>
+              </div>
+              <div class="uni_watch_item">
+                <p>邮票</p>
+                <p>{{statistics.stamp|numberFilter}}</p>
+              </div>
+              <div class="uni_watch_item">
+                <p>积分</p>
+                <p>{{statistics.integral|numberFilter}}</p>
+              </div>
             </div>
-            <p>提现</p>
           </div>
-          <div class="user_operation_item uni_watch_item" @click="numberAssets">
-            <div class="operation_icon">
-               <van-icon name="gem-o"/>
-            </div>
-            <p>数字资产</p>
-          </div>
-          <div class="user_operation_item uni_watch_item" @click="convert">
-            <div class="operation_icon">
-              <van-icon name="point-gift-o"/>
-            </div>
-            <p>邮票兑换</p>
-          </div>
-        </div>
 
-        <div class="user_money uni-flex">
-          <div class="uni_watch_item" > 
-            <p>余额</p>
-            <p>{{statistics.balance|numberFilter}}</p>
+          <div class="user_config">
+            <div class="user_config_item uni-flex">
+              <div class="user_icon ">
+                <van-icon name="chat-o" />
+              </div>
+              <p>消息</p>
+            </div>
+            <div class="user_config_item uni-flex" @click="$router.push('/personCenter/assetDetails')">
+              <div class="user_icon ">
+                <van-icon name="balance-o" />
+              </div>
+              <p>钱包明细</p>
+            </div>
+            <div class="user_config_item uni-flex">
+              <div class="user_icon ">
+                <van-icon name="manager-o" />
+              </div>
+              <p>主播认证</p>
+            </div>
+            <div class="user_config_item uni-flex" @click="$router.push('/personCenter/team')">
+              <div class="user_icon ">
+                <van-icon name="medel-o" />
+              </div>
+              <p>我的团队</p>
+            </div>
+            <div class="user_config_item uni-flex" @click="inviteFriends">
+              <div class="user_icon ">
+                <van-icon name="friends-o" />
+              </div>
+              <p>邀请好友</p>
+            </div>
+            <div class="user_config_item uni-flex" @click="gameGuide">
+              <div class="user_icon ">
+                <van-icon name="question-o" />
+              </div>
+              <p>玩法攻略</p>
+            </div>
+            <div class="user_config_item uni-flex" @click='updateVersion'>
+              <div class="user_icon">
+                <van-icon name="upgrade" />
+              </div>
+              <p>版本更新</p>
+            </div>
+            <div class="user_config_item uni-flex" @click='exit'>
+              <div class="user_icon">
+                <van-icon name="qr" />
+              </div>
+              <p>退出</p>
+            </div>
           </div>
-          <div class="uni_watch_item">
-            <p>今日回馈</p>
-            <p>{{statistics.dividend_today|numberFilter}}</p>
-          </div>
-          <div class="uni_watch_item">
-            <p>佣金</p>
-            <p>{{statistics.brokerage|numberFilter}}</p>
-          </div>
-          <div class="uni_watch_item">
-            <p>总收入</p>
-            <p>{{statistics.total_bonus|numberFilter}}</p>
-          </div>
-        </div>
-        <div class="user_integral uni-flex">
-          <div class="uni_watch_item">
-            <p>邮币</p>
-            <p>{{statistics.postal_currency|numberFilter}}</p>
-          </div>
-          <div class="uni_watch_item">
-            <p>邮票</p>
-            <p>{{statistics.stamp|numberFilter}}</p>
-          </div>
-          <div class="uni_watch_item">
-            <p>积分</p>
-            <p>{{statistics.integral|numberFilter}}</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="user_config">
-        <div class="user_config_item uni-flex">
-          <div class="user_icon ">
-            <van-icon name="chat-o" />
-          </div>
-          <p>消息</p>
-        </div>
-        <div class="user_config_item uni-flex" @click="$router.push('/personCenter/assetDetails')">
-          <div class="user_icon ">
-            <van-icon name="balance-o" />
-          </div>
-          <p>钱包明细</p>
-        </div>
-        <div class="user_config_item uni-flex">
-          <div class="user_icon ">
-            <van-icon name="manager-o" />
-          </div>
-          <p>主播认证</p>
-        </div>
-        <div class="user_config_item uni-flex" @click="$router.push('/personCenter/team')">
-          <div class="user_icon ">
-            <van-icon name="medel-o" />
-          </div>
-          <p>我的团队</p>
-        </div>
-        <div class="user_config_item uni-flex" @click="inviteFriends">
-          <div class="user_icon ">
-            <van-icon name="friends-o" />
-          </div>
-          <p>邀请好友</p>
-        </div>
-        <div class="user_config_item uni-flex" @click="gameGuide">
-          <div class="user_icon ">
-            <van-icon name="question-o" />
-          </div>
-          <p>玩法攻略</p>
-        </div>
-        <div class="user_config_item uni-flex" @click='updateVersion'>
-          <div class="user_icon">
-            <van-icon name="upgrade" />
-          </div>
-          <p>版本更新</p>
-        </div>
-        <div class="user_config_item uni-flex" @click='exit'>
-          <div class="user_icon">
-            <van-icon name="qr" />
-          </div>
-          <p>退出</p>
-        </div>
-      </div>
+       </van-pull-refresh>
     </div>
   </section>
 </template>
@@ -173,6 +170,7 @@
     name:"personCenter",
     data(){
       return {
+        isLoading:false,
         statisticsData:{},//统计数据
       };
     },
@@ -198,7 +196,8 @@
           if(res.data.code === 200 && res.data.data){
              this.$store.commit("set_user_statistics",res.data.data);
             }
-          })
+            this.isLoading = false;
+         })
       },
       getUserInfo(){ //获取用户信息存储到vuex
         let url = "user/getUserInfo";
@@ -255,6 +254,11 @@
         }).catch(()=>{
            return ;
         })
+      },
+      onRefresh(){ //下拉刷新,更新vuex中的用户资产数据
+        setTimeout(() => {
+          this.uploadStatistics();
+        },1000);
       }
     }
   }
@@ -265,7 +269,15 @@
   .user_main {
     padding-bottom: 60px;
     font-size: 14px;
+    background-image: url('../../assets/tabImg/2019_a030_64.png');
+    background-repeat: no-repeat;
+    background-size:100% auto;
+    background-position: left top;
   }
+
+  /deep/.van-pull-refresh .van-pull-refresh__head{
+      color:green;
+    }
 
   .user_icon {
     font-size:25px;
@@ -361,6 +373,7 @@
 
 
   .user_assets {
+    background: #ffffff;
     padding: 15px;
   }
 
@@ -388,6 +401,7 @@
   }
 
   .user_config {
+    background: #ffffff;
     padding: 0 15px;
   }
 
