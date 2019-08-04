@@ -20,8 +20,8 @@ export default new Router({
       path:"/smallVideo",//小视频
       name:"SmallVideo",
       component: resolve => require(["@/components/smallVideo"],resolve),
-      meta:{
-        keepAlive:true
+      meta: { 
+        keepAlive: true // 需要缓存 
       }
     },
     {
@@ -51,10 +51,7 @@ export default new Router({
     {
       path:"/personCenter/editPersonInfo", // 编辑个人中心
       name:"EditPersonInfo",
-      component: resolve => require(["@/components/personCenter/editPersonInfo"],resolve),
-      meta:{
-        keepAlive:true
-      }
+      component: resolve => require(["@/components/personCenter/editPersonInfo"],resolve)
     },
     {
       path:"/personCenter/gameGuide", //玩法攻略

@@ -1,11 +1,11 @@
 <template>
-  <div class="smallVideo">
+  <div class="smallVideo" >
     <div class="switchBox">
       <div class="navBtn uni-flex">
         <p class="nav_item" :class="actived == index ? 'actived' :''" v-for="(item,index) in navList" :key="index"  @click="toggleNav(item)" v-text="item.title"></p>
       </div>
     </div>
-    <div class="main_content">
+    <div class="main_content" ref="smallScroll">
         <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="刷新成功">
             <van-list v-model="loading" :finished="finished" finished-text="没有更多了"  @load="onLoad">
               <div class="main_ul">
@@ -66,11 +66,15 @@ export default {
         row:10,
         uid:''
       },
-      videoList: []//视频列表
+      videoList: [],//视频列表
+      scrollPosition:0 //页面滚动位置
     };
   },
    created(){
       this.getStatistics();
+  },
+  mounted(){
+    this.$refs.smallScroll.addEventListener('scroll', this.handleScroll);
   },
   methods: {
        getStatistics(){ //获取资产统计信息
@@ -149,8 +153,21 @@ export default {
       setTimeout(() => {
         this.fetchVideos();
        }, 500);
+     },
+     handleScroll(){ //页面滚动位置
+         this.scrollPosition  = this.$refs.smallScroll.scrollTop
      }
-  }
+  },
+  activated() {
+      if(this.scrollPosition > 0){
+        this.$refs.smallScroll.scrollTo(0, this.scrollPosition);
+        this.scrollPosition = 0;
+        this.$refs.smallScroll.addEventListener('scroll', this.handleScroll);
+      }
+   },
+   deactivated(){
+     this.$refs.smallScroll.removeEventListener('scroll', this.handleScroll);
+    }
 };
 </script>
 

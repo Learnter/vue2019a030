@@ -6,7 +6,7 @@
     <!--<van-tabs>
       <van-tab v-for="(item,index) in 8" :title="'推荐' + index" :key="index"></van-tab>
     </van-tabs>-->
-    <div class="video_main">
+    <div class="video_main" ref="shortScroll">
 
     <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="刷新成功">
         <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad" :offset="100">
@@ -143,11 +143,15 @@ export default {
          page:1,
          row:10,
          uid:''
-        }
+        },
+      scrollPosition:0 //页面滚动位置
      }
   },
   created(){
     this.fetchGifts();
+  },
+  mounted(){
+     this.$refs.shortScroll.addEventListener('scroll', this.handleScroll);
   },
   computed:{
     ...mapGetters(["statistics"])
@@ -363,8 +367,21 @@ export default {
     },
     onLoad() {
       this.fetchVideoList();
+    },
+    handleScroll(){ //页面滚动位置
+         this.scrollPosition  = this.$refs.shortScroll.scrollTop;
+     }
+  },
+  activated() {
+      if(this.scrollPosition > 0){
+        this.$refs.shortScroll.scrollTo(0, this.scrollPosition);
+        this.scrollPosition = 0;
+        this.$refs.shortScroll.addEventListener('scroll', this.handleScroll);
+      }
+   },
+   deactivated(){
+     this.$refs.shortScroll.removeEventListener('scroll', this.handleScroll);
     }
-  }
 };
 </script>
 <style lang="scss" scoped>

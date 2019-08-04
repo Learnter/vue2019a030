@@ -128,24 +128,46 @@
             let year = date.getFullYear();
             let month = date.getMonth() + 1;
             let strDate = date.getDate();
+            
+            switch (type) {
+              case 'week':  
+                   if(strDate <= 7){
+                      strDate = (30 + strDate) - 7;
+                      month -= 1;
+                   }else{
+                     strDate -= 7;
+                   }
+                   break;
+              case 'month':
+                      if(month == 1){
+                        year -= 1;
+                        month = 12;
+                      }else{
+                        month -= 1;
+                      }
+                 break;
+              case 'threeMonth':
+                      if(month <= 3){
+                        year -= 1;
+                        month = (12 + month )- 3;
+                      }else{
+                        month -= 3;
+                      }
+                   break;
+              case 'year':
+                  year -= 1;
+                  break;
+            }
+
             if (month >= 1 && month <= 9) {
                 month = "0" + month;
             }
+
             if (strDate >= 0 && strDate <= 9) {
                 strDate = "0" + strDate;
             }
-            switch (type) {
-              case 'week':  
-                return year + seperator1 + month + seperator1 + (strDate-7);
-              case 'month':
-                 return  year + seperator1 + (month-1) + seperator1 + strDate;
-              case 'threeMonth':
-                 return  year + seperator1 + (month-3) + seperator1 + strDate;
-              case 'year':
-                 return (year-1) + seperator1 + month + seperator1 + strDate;
-              default:
-                 return year + seperator1 + month + seperator1 + strDate;
-            }
+
+           return year + seperator1 + month + seperator1 + strDate;
         }
     },
     components: {
