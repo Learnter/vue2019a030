@@ -118,7 +118,6 @@ export default {
         this.$https.post(url,data).then(res => {
           if (res.data.code === 200) {
             if( this.videoList[index].is_collect == true){
-              // this.$toast("已取消收藏");
                this.$notify({
                        message:"取消收藏",
                        className:"notifyClass",
@@ -127,7 +126,6 @@ export default {
               this.videoList[index].collect_num--;
               this.videoList[index].is_collect = false;
             }else{
-              // this.$toast("已收藏");
                this.$notify({
                        message:"已收藏",
                        className:"notifyClass",
@@ -158,12 +156,12 @@ export default {
          this.scrollPosition  = this.$refs.smallScroll.scrollTop
      }
   },
-  activated() {
+  activated(){
       if(this.scrollPosition > 0){
         this.$refs.smallScroll.scrollTo(0, this.scrollPosition);
-        this.scrollPosition = 0;
-        this.$refs.smallScroll.addEventListener('scroll', this.handleScroll);
       }
+      this.scrollPosition = 0;
+      this.$refs.smallScroll.addEventListener('scroll', this.handleScroll);
    },
    deactivated(){
      this.$refs.smallScroll.removeEventListener('scroll', this.handleScroll);

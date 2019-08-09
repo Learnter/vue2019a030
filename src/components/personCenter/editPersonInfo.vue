@@ -47,7 +47,7 @@ export default {
     created(){
         // this.fetchUserInfo();
         this.user = this.$store.state.user_info;
-        console.log(this.user);
+        // console.log(this.user);
         this.fetchAddress();
     },
     computed:{

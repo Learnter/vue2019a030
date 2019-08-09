@@ -375,9 +375,9 @@ export default {
   activated() {
       if(this.scrollPosition > 0){
         this.$refs.shortScroll.scrollTo(0, this.scrollPosition);
-        this.scrollPosition = 0;
-        this.$refs.shortScroll.addEventListener('scroll', this.handleScroll);
       }
+      this.scrollPosition = 0;
+      this.$refs.shortScroll.addEventListener('scroll', this.handleScroll);
    },
    deactivated(){
      this.$refs.shortScroll.removeEventListener('scroll', this.handleScroll);

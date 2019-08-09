@@ -30,7 +30,7 @@ const store = new Vuex.Store({
 			path:"/release"
 		},
     {
-    	name:'直播',
+    	name:'商城',
     	name_code:'live',
     	icon:require('@/assets/tabImg/2019_a030_11.png'),
     	select_icon:require('@/assets/tabImg/2019_a030_12.png'),

@@ -47,8 +47,8 @@ export default {
     localStorage.getItem("user")? token = JSON.parse(localStorage.getItem("user")).token : token = '';
 
     return axios({
-      method: 'post',
-      baseURL: 'http://2019a030api.jiafuw.com/v1',
+      method:'post',
+      baseURL:'http://api.huyouhulian.com/v1',
       url,
       data: data,
       timeout: 10000,
@@ -72,7 +72,7 @@ export default {
     localStorage.getItem("user")? token = JSON.parse(localStorage.getItem("user")).token : token = '';
     return axios({
       method: 'get',
-      baseURL: 'http://2019a030api.jiafuw.com/v1',
+      baseURL: 'http://api.huyouhulian.com/v1',
       // baseURL: 'http://rest.apizza.net/mock/39803a938ae791610110c61f6d51194b/',
       url,
       params, // get 请求时带的参数

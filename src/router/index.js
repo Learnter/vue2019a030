@@ -4,13 +4,6 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 export default new Router({
-//   scrollBehavior (to, from, savedPosition) {
-//   if (savedPosition) {
-//     return savedPosition
-//   } else {
-//     return { x: 0, y: 0 }
-//   }
-// },
   routes: [
     {
       path: '/',
@@ -43,10 +36,7 @@ export default new Router({
     {
       path:"/me", // 个人中心
       name:"Me",
-      component: resolve => require(["@/components/personCenter/me"],resolve),
-      meta:{
-        keepAlive:true
-      }
+      component: resolve => require(["@/components/personCenter/me"],resolve)
     },
     {
       path:"/personCenter/editPersonInfo", // 编辑个人中心

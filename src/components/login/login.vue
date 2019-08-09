@@ -5,29 +5,13 @@
     </div>
     <div class="login_info">
       <van-cell-group>
-        <van-field
-          v-model="user.account"
-          clearable
-          label="用户名"
-          right-icon="question-o"
-          placeholder="请输入用户名"
-        />
+          <van-field type="text" v-model="user.account"  clearable label="用户名"  placeholder="请输入用户名" left-icon="contact" right-icon="question-o"  @click-right-icon="$toast('用户名必须是手机号')"/>
 
-        <van-field
-          v-model="user.password"
-          type="password"
-          label="密码"
-          placeholder="请输入密码"
-          clearable
-        />
+          <van-field type="password" v-model="user.password" label="密码" placeholder="请输入密码" clearable  left-icon="closed-eye" right-icon="question-o"  @click-right-icon="$toast('密码必须是数字、字母、下划线')"/>
+      
+          <van-button class="loginBtn" icon="https://img.yzcdn.cn/vant/logo.png" type="info" round  @click="toLogin">立即登录</van-button>
       </van-cell-group>
-      <van-button
-        class="loginBtn"
-        icon="https://img.yzcdn.cn/vant/logo.png"
-        type="info"
-        round
-        @click="toLogin"
-      >立即登录</van-button>
+
       <div class="login_tips">
         <van-button
           class="regestBtn"
@@ -89,7 +73,7 @@ export default {
             }, 2000);
         }else{
              this.$notify({
-                         message:res.data.msg,
+                        message:res.data.msg,
                         duration: 2000,
                         className:"notifyClass"
                     });
@@ -121,7 +105,7 @@ export default {
     margin: 10px auto;
   }
   .login_info {
-    width: 70%;
+    width: 80%;
     padding: 20px;
     margin: auto;
     .van-cell-group {
@@ -132,6 +116,9 @@ export default {
         color: white;
         margin-bottom: 10px;
         border-radius: 5px;
+        .van-field__label{
+          width:55px;
+        }
         .van-field__control{
           &::-webkit-input-placeholder{
             color:#ae8ee8;
