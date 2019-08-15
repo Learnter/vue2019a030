@@ -51,24 +51,17 @@ export default {
       playOrPause:true,//播放或暂停
       video_title: "", //视频标题
       video:{}, //视频对象
-      videoTime:0 //视频时长
     };
   },
   created(){
     this.video = JSON.parse(this.$route.query.video);
-    this.videoDuration(); 
   },
-  computed: {
+   computed: {
     videoType() { //获取上传的视频类型
       return this.$store.state.uploadType;
     }
   },
   methods: {
-     videoDuration(){ //获取视频时长 
-        setTimeout(() => {
-          this.videoTime = Math.floor(document.querySelectorAll("video")[0].duration);
-        }, 500);
-    },
     publishVideo() {
       if (this.video_title.trim().length === 0) {
         //标题非空判断
@@ -93,16 +86,17 @@ export default {
                 className:"notifyClass"
               });
         setTimeout(() => {
-            this.$store.commit("change_page","/me");
             this.$router.push("/me");
           }, 1000);
         return;
       }
+
+      let videoTime = Math.ceil(document.querySelectorAll("video")[0].duration); //获取视频播放时长
+
       let data = {
         title: this.video_title,
         video_url: this.video.video_url,
-        // poster: this.video.poster
-        video_duration:this.videoTime
+        video_duration:videoTime
       };
 
       this.$https.post(url, data).then(res => {
@@ -115,7 +109,6 @@ export default {
                     });
             this.$store.commit("updateVideo"); //增加视频数量
             setTimeout(() => {
-              this.$store.commit("change_page","/me");
               this.$router.push("/me");
             }, 2000);
         }else{

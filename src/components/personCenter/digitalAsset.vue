@@ -1,8 +1,6 @@
 <template>
   <section class="digitalAsset">
-    <return-nav style="background:#B522FD">
-      <template v-slot:middle>数字资产</template>
-    </return-nav>
+    <van-nav-bar title="数字资产"  left-arrow  @click-left="$router.go(-1)"></van-nav-bar>
     <div class="digital_main">
       <ul>
         <li style="background:#B522FD">
@@ -20,6 +18,14 @@
         <li>
              <h3>邮币流通数量</h3>
              <p>{{assetList.personalPostCurrencyPosition|numberFilter}}</p>
+        </li>
+         <li>
+             <h3>今日回收邮币</h3>
+             <p>{{assetList.recycledPostageCurrencyToday|numberFilter}}</p>
+        </li>
+        <li>
+             <h3>今日转出邮币</h3>
+             <p>{{assetList.transferringThePostalCurrencyToday|numberFilter}}</p>
         </li>
         <li>
              <h3>昨日回收邮币</h3>
@@ -50,7 +56,6 @@
   </section>
 </template>
 <script>
-import returnNav from "@/components/common/returnNav";
 export default {
   name: "digitalAsset",
   data() {
@@ -72,9 +77,6 @@ export default {
      })
     }
   },
-  components: {
-    returnNav
-  }
 };
 </script>
 <style lang="scss">
@@ -86,12 +88,30 @@ export default {
   bottom: 0;
   z-index: 999;
   background: #ffffff;
-  overflow: scroll;
+  .van-nav-bar{
+      height:54px;
+      line-height:54px;
+      background:#B522FD;
+      .van-nav-bar__title{
+          font-size:18px;
+          color:#ffffff;
+      }
+      .van-icon{
+         font-size: 24px;
+         color: white;
+      }
+
+  }
   .digital_main {
-    box-sizing: border-box;
-    padding: 64px 10px 0;
     text-align: left;
-    ul{
+    position: absolute;
+    top:54px;
+    left:0;
+    width:100%;
+    bottom:0;
+    overflow:auto;
+    ul{ 
+        padding:10px 10px 0;
         display:flex;
         flex-wrap:wrap;
         justify-content:space-between;

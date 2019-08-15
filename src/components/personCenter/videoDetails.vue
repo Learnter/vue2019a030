@@ -49,7 +49,7 @@ export default {
   },
   computed:{
       oneselfId(){ //返回账户本身ID   
-        return JSON.parse(localStorage.getItem("user")).userInfo.user_id;
+        return JSON.parse(localStorage.getItem("LOGININFO")).userInfo.user_id;
       },
       returnTitle(){ //返回栏标题
          let title 

@@ -40,10 +40,10 @@ export default {
   },
   methods:{
     beforLogin(){ //判断以前是否有登陆
-      let user = JSON.parse(localStorage.getItem("user"));
+      let user = JSON.parse(localStorage.getItem("LOGININFO"));
       if(user && user.token){
         this.$router.push("/smallVideo");
-      }
+      }  
     },
     toLogin(){ //登录
      
@@ -66,8 +66,8 @@ export default {
                         background:"#07C160",
                         className:"notifyClass"
                     });
-            localStorage.setItem("user",JSON.stringify(res.data.data)); //将登陆token信息存储到localStorage
-            
+            localStorage.setItem("LOGININFO",JSON.stringify(res.data.data)); //将登陆token信息存储到localStorage
+            // console.log(localStorage.getItem("user"));
             setTimeout(() => {
               this.$router.push("/smallVideo");
             }, 2000);
@@ -77,7 +77,7 @@ export default {
                         duration: 2000,
                         className:"notifyClass"
                     });
-            localStorage.removeItem("user"); //移除本地token
+            localStorage.removeItem("LOGININFO"); //移除本地token
           }
       });
     },

@@ -58,6 +58,17 @@
         <button @click="rechargeBtn">立即充值</button>
       </div>
     </div>
+    <van-popup v-model="aplayShow">
+          <div class="qrContent" >
+            <h3>{{reacharge_way_title}}充值&nbsp;&nbsp;金额&nbsp;:<span style="color:#CF1E81">￥{{reacharge_price}}</span></h3>
+            <div class="qrImg">
+              <!-- <a :href="qrCodeUrl" download="qr.jpg"> -->
+                  <img :src="qrCodeUrl" alt="">
+              <!-- </a> -->
+            </div>
+            <p>截图保存图片、二维码支付[扫一扫]</p>
+          </div>
+    </van-popup>
   </section>
 </template>
 <script>
@@ -67,14 +78,16 @@ export default {
   name: "recharge",
   data() {
     return {
-      reacharge_way_title:"微信充值",//支付标题
+      aplayShow:false, //支付宝遮罩层
+      qrCodeUrl:"",//支付二维码Url
+      reacharge_way_title:"微信",//支付标题
+      reacharge_price:null, //充值金额
       reacharge_type:"weixin",//支付类型
       reacharge_way:[{id:0,src:require('@/assets/tabImg/2019_a030_33.png'),title:'微信',type:'weixin'},{id:1,src:require('@/assets/tabImg/2019_a030_34.png'),title:'支付宝',type:"alipay"}],
       nav_right_color: "#CF1E81", //导航栏右侧字体颜色
       nav_route_path: "/personCenter/assetDetails", //导航栏右侧路由地址
-      con_actived: 0,//兑换方案索引
+      con_actived: 0,//金额方案索引
       rechargeCofig:[],//充值配置方案
-      // user_asset:{} //用户资产
     };
   },
   created(){
@@ -95,6 +108,7 @@ export default {
       this.$https.get(url).then(res => {
           if(res.data.data && res.data.code === 200){
              this.rechargeCofig = res.data.data;
+             this.reacharge_price = res.data.data[0].price; //初始化充值金额
           }
       });
     },
@@ -112,12 +126,14 @@ export default {
       }
     },
     convertTab(index,item) {
-      //兑换方案切换
+      //充值金额方案切换
       this.con_actived = index;
+      this.reacharge_price = item.price;
     },
     paymentTab(item,index) {
       //支付方式切换
       this.reacharge_way_title = item.title;
+      
       this.reacharge_type = item.type;
     },
     rechargeBtn(){ //点击充值
@@ -129,17 +145,29 @@ export default {
      this.$https.post(url,data).then(res => {
 
          if(res.data.code === 200 && res.data.data){
+            //  console.log(res);
+              let success = res.data.data;
+              if(success.pay_method == 1){
+                 let originUrl = location.origin+"/#/me"; //获取支付成功跳转的地址
 
-           let originUrl = location.origin+"/#/me"; //获取支付成功跳转的地址
+                 var base64Url = this.base64EncodeUnicode(originUrl); //将地址转化为base64编码格式
 
-           var base64Url = this.base64EncodeUnicode(originUrl); //将地址转化为base64编码格式
+                 let payUrl = success.pay_url+"?return_url="+base64Url; //支付的链接地址,成功的回调页面url
 
-           let payUrl = res.data.data.pay_url+"?return_url="+base64Url; //支付的链接地址,成功的回调页面url
-
-           window.open(payUrl,"_self"); //打开支付窗口
-        }
-     })
+                 window.open(payUrl,"_self"); //打开支付窗口
+              }else if(success.pay_method == 2){
+                 this.aplayShow = true;
+                 this.qrCodeUrl = success.pay_url;
+              }
+           }
+       })
     },
+    // downLoad(){ //保存图片
+    //     let alink  = document.createElement("a");
+    //     alink.href = this.qrCodeUrl;
+    //     alink.download = "pic";
+    //     alink.click();
+    // },
    base64EncodeUnicode(str) { //base64编码转化 字符串转base64编码
    
     return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
@@ -296,6 +324,29 @@ export default {
     background: #fe39a5;
     border: none;
     color: white;
+  }
+}
+
+.qrContent{
+  width:300px;
+  min-height:300px;
+  background:#019FE8;
+  color:#ffffff;
+  padding:20px;
+  text-align:center;
+  .qrImg{
+    width:250px;
+    height:300px;
+    background:#ffffff;
+    margin:10px auto;
+    border-radius:5px;
+    overflow: hidden;
+  }
+  h3{
+    font-size:18px;
+    span{
+      font-size:16px;
+    }
   }
 }
 </style>

@@ -69,7 +69,7 @@ export default {
   },
  created(){
    //获取用户的id;
-   this.teamConfig.user_id = JSON.parse(localStorage.getItem("user")).userInfo.user_id;
+   this.teamConfig.user_id = JSON.parse(localStorage.getItem("LOGININFO")).userInfo.user_id;
    this.fetchTeamInfo();
  },
   methods:{
@@ -86,7 +86,7 @@ export default {
         this.$https.get(url,this.teamConfig).then(res => {
            if(res.data.code === 200 && res.data.data.length > 0){
               this.teamList = res.data.data;
-              console.log(this.teamList);
+              // console.log(this.teamList);
               this.teamConfig.page++;
               this.loading = false;
            }else{

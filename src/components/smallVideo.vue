@@ -82,6 +82,7 @@ export default {
         this.$https.get(url).then(res => {
           if(res.data.code === 200 && res.data.data){
              this.$store.commit("set_user_statistics",res.data.data);
+            //  console.log("用户资产数据",res.data.data);
           }
         })
        }, 

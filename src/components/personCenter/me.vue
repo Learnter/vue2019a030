@@ -246,7 +246,7 @@
           title:"重要提示",
           message: '您确定要退出吗'
         }).then(()=>{
-            localStorage.removeItem("user"); //移除永久缓存信息
+            localStorage.removeItem("LOGININFO"); //移除永久缓存信息
             this.$store.commit("clearState"); //退出清空vuex数据
             this.$router.push('/login'); //跳转到登录页面
         }).catch(()=>{

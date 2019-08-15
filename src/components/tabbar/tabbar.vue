@@ -41,34 +41,70 @@
 	export default {
 		data() {
 			return {
-				isShowMask:false //是否显示遮罩层
+				isShowMask:false,//是否显示遮罩层
+				footer_nav:[
+					{
+						name:'小视频',
+						name_code:'smallVideo',
+						icon:require('@/assets/tabImg/2019_a030_7.png'),
+						select_icon:require('@/assets/tabImg/2019_a030_8.png'),
+						size:'small',
+						path:"/smallVideo"
+					},
+					{
+						name:'短视频',
+						name_code:'shortVideoTwo',
+						icon:require('@/assets/tabImg/2019_a030_9.png'),
+						select_icon:require('@/assets/tabImg/2019_a030_10.png'),
+						size:'small',
+						path:"/shortVideoTwo"
+					},
+				{
+					name:'发布',
+					name_code:'release',
+					icon:require('@/assets/tabImg/2019_a030_15.png'),
+					select_icon:require('@/assets/tabImg/2019_a030_16.png'),
+					size:'big',
+					path:"/release"
+				},
+			{
+				name:'商城',
+				name_code:'live',
+				icon:require('@/assets/tabImg/2019_a030_11.png'),
+				select_icon:require('@/assets/tabImg/2019_a030_12.png'),
+				size:'small',
+				path:"/live"
+			},
+			{
+				name:'我的',
+				name_code:'me',
+				icon:require('@/assets/tabImg/2019_a030_13.png'),
+				select_icon:require('@/assets/tabImg/2019_a030_14.png'),
+				size:'small',
+				path:"/me"
+			}],
+			 now_path:"/smallVideo"
 			};
 		},
 		methods:{
 			change_nav(item){ // 底部导航切换
-
 				if(item.size == 'big'){
 					this.isShowMask = true;
-					this.$store.commit("change_page",item.path);
-					return false;
+					this.now_path = item.path;
+					return;
 				}
-
-				this.$store.commit("change_page",item.path);
-
+				this.now_path = item.path;
 				this.$router.push(item.path);
-
 			},
 			uploadVideo(type){ //上传视频
 			   this.$store.commit("change_uploadType",type); //type为视频类型,用于区分是小视频、短视频
 			   this.$router.push("/release");
 			}
 		},
-		computed:{
-			footer_nav(){
-				return this.$store.state.footer_nav;
-			},
-			now_path(){
-				return this.$store.state.now_page_path;
+		watch:{
+			"$route":function(){
+				let pathUrl = window.location.hash.slice(1);
+				this.now_path = pathUrl;
 			}
 		}
 	}
