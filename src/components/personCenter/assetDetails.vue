@@ -11,7 +11,7 @@
     </van-dropdown-menu>
 
     <div class="asset_main">
-      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad"  :offset=10> <!--:immediate-check='false'-->
+      <van-list v-model="loading" :finished="finished" finished-text="暂时没有更多了" @load="onLoad"  :offset=10> <!--:immediate-check='false'-->
         <div class="asset_list">
           <ul>
             <li class="asset_details_li" v-for="(item,index) in assetList" :key="index">

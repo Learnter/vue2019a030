@@ -1,6 +1,6 @@
 <template>
   <section class="reward">
-    <img src="../../assets/tabImg/2019_a030_4.png" alt />
+    <img src="@/assets/tabImg/2019_a030_4.png" alt />
 
     <van-icon class="returnBtn" name="arrow-left" @click="$router.go(-1)" />
 
@@ -11,7 +11,7 @@
 
     <div class="mask_middle">
       <div class="mask_user_img">
-        <img src="../../assets/tabImg/2019_a030_19.png" alt />
+        <img src="@/assets/tabImg/2019_a030_19.png" alt />
       </div>
       <van-icon name="thumb-circle-o" info="9" />
       <van-icon name="chat-o" info="999999" />

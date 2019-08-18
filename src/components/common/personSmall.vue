@@ -1,6 +1,6 @@
 <template>
     <section class="personSmall">
-         <van-list  v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">  
+         <van-list  v-model="loading" :finished="finished" finished-text="暂时没有更多了" @load="onLoad">  
             <div class="multiple_video">
                 <div class="single_video" v-for="(item,index) in videoList" :key="index" @click="smallVideo(index)">
                     <img v-lazy="item.poster" alt="">

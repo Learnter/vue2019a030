@@ -91,9 +91,17 @@ button{
  margin:10px auto;
 }
 
+.van-cell:not(:last-child):after{
+  display:none;
+}
+
+[class*=van-hairline]:after{
+  display:none;
+}
+
 /* 顶部消息通知栏 */
 .notifyClass{ 
-    border-radius:0 0 3px 3px;
+    border-radius:0 0 5px 5px;
     transition: all 1s ease-in-out;
   }
 

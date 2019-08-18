@@ -1,6 +1,9 @@
 <template>
   <section class="videoDetails">
     <van-nav-bar :title="returnTitle" left-arrow @click-left="$router.go(-1)"></van-nav-bar>
+    <!--<return-nav style="background:#B522FD">
+      <template v-slot:middle>{{returnTitle}}</template>
+    </return-nav>-->
     <div class="video_user">
       <div class="user_photo">
         <img :src="user_info.avatar"/>
@@ -13,7 +16,7 @@
                  <van-button round v-if="user_info.is_follow" class="cancelAttention" @click="attentionBtn">取消关注</van-button>
              </div>
          </div>
-        <p>ID:<span>{{user_info.user_id}}</span></p>
+        <p>ID:<span style="color:#B40CFF">{{user_info.user_id}}</span></p>
       </div>
     </div>
     <div class="video_main">
@@ -31,6 +34,7 @@
 <script>
 import personSmall from "@/components/common/personSmall";
 import personShort from "@/components/common/personShort";
+import returnNav from "@/components/common/returnNav";
 export default {
   name: "videoDetails",
   data() {
@@ -120,7 +124,8 @@ export default {
   },
   components:{
     personSmall,
-    personShort
+    personShort,
+    returnNav
   }
 };
 </script>
@@ -132,12 +137,10 @@ export default {
   right: 0;
   bottom: 0;
   z-index: 999;
-  background: #000000;
-
   .van-nav-bar {
-    height: 54px;
-    line-height: 54px;
-    background: #000000;
+    height:54px;
+    line-height:54px;
+    background-color:#6495ED !important;
     .van-nav-bar__title {
       font-size: 18px;
       color: #ffffff;
@@ -152,23 +155,34 @@ export default {
     padding: 20px;
     display: flex;
     letter-spacing: 2px;
+    margin:10px;
+    background: #E6E6FA;
+    border-radius:10px;
     .user_photo {
-      width: 80px;
-      height: 80px;
-      background:#793DFF;
-      border-radius:50%;
+      width: 65px;
+      height: 65px;
+      padding: 2px;
+      border-radius: 50%;
+      margin-right: 15px;
+      background: linear-gradient(to right, #B40CFF, #793DFF);
       overflow: hidden;
+      background:#fff;
+      img{
+        width:100%;
+        height:100%;
+        border-radius:50%;
+      }
     }
     .user_info {
       flex: 1;
-      padding: 0 15px;
+      padding:10px 0;
       text-align: left;
-      color: #ffffff;
+      color: #B40CFF;
       .user_info_top{
         display:flex;
         justify-content:space-between;
         align-items:center;
-        font-size:18px;
+        font-size:16px;
         padding:8px 0;
          .attention{
             height:25px;
@@ -188,7 +202,6 @@ export default {
            letter-spacing:2px;
          }
       }
-     
       p {
         font-size:15px;
         span {
@@ -201,15 +214,17 @@ export default {
   .video_main {
     position: absolute;
     width: 100%;
-    top: 174px;
+    top: 184px;
     left: 0;
     bottom: 0;
+    background:#fff;
     .video_tab{
        height:45px;
-       background:#191B28;
+       background:#D8BFD8;
        display:flex;
        justify-content:space-between;
        align-items:center;
+       border-radius:5px;
        p{
            width:50%;
            height:100%;
@@ -221,7 +236,7 @@ export default {
        } 
        .active{
          font-size:18px;
-         color:#ffffff;
+         color:#9370DB;
          transition:font-weight .5s ease,color 1s ease-in-out;
        }
     }

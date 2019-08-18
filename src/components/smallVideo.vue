@@ -7,7 +7,7 @@
     </div>
     <div class="main_content" ref="smallScroll">
         <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="刷新成功">
-            <van-list v-model="loading" :finished="finished" finished-text="没有更多了"  @load="onLoad">
+            <van-list v-model="loading" :finished="finished" finished-text="暂时没有更多了"  @load="onLoad">
               <div class="main_ul">
                 <van-cell class="main_item" v-for="(item,index) in videoList" :key="index" @click.stop="playVideo(index)">
                   <!--<img  :src="item.poster" alt="加载失败" />-->

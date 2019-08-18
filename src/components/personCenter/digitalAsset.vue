@@ -1,6 +1,9 @@
 <template>
   <section class="digitalAsset">
-    <van-nav-bar title="数字资产"  left-arrow  @click-left="$router.go(-1)"></van-nav-bar>
+    <!--<van-nav-bar title="数字资产" style="background:#B522FD" left-arrow  @click-left="$router.go(-1)"></van-nav-bar>-->
+    <return-nav style="background:#B522FD">
+      <template v-slot:middle>数字资产</template>
+    </return-nav>
     <div class="digital_main">
       <ul>
         <li style="background:#B522FD">
@@ -56,6 +59,7 @@
   </section>
 </template>
 <script>
+import returnNav from "@/components/common/returnNav";
 export default {
   name: "digitalAsset",
   data() {
@@ -77,6 +81,9 @@ export default {
      })
     }
   },
+  components:{
+    returnNav
+  }
 };
 </script>
 <style lang="scss">
@@ -88,7 +95,7 @@ export default {
   bottom: 0;
   z-index: 999;
   background: #ffffff;
-  .van-nav-bar{
+ .van-nav-bar{
       height:54px;
       line-height:54px;
       background:#B522FD;

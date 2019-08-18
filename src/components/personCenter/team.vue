@@ -3,22 +3,22 @@
     <return-nav style="background:#5077F8">
       <template v-slot:middle>我的社区</template>
     </return-nav>
-    <div class="team_account">
-      <div>
-        <p>直推总人数</p>
-        <p class="team_number">{{teamNumber.zt_num}}</p>
-      </div>
-      <div>
-        <p>团队总人数</p>
-        <p class="team_number">{{teamNumber.team_num}}</p>
-      </div>
-    </div>
-
     <div class="team_main">
+      <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="刷新成功">
+        <div class="team_account">
+          <div>
+            <p>直推总人数</p>
+            <p class="team_number">{{teamNumber.zt_num}}</p>
+          </div>
+          <div>
+            <p>团队总人数</p>
+            <p class="team_number">{{teamNumber.team_num}}</p>
+          </div>
+      </div>
       <van-list
         v-model="loading"
         :finished="finished"
-        finished-text="没有更多了"
+        finished-text="暂时没有更多了"
         @load="onLoad"
         :offset="100"
       >
@@ -47,6 +47,7 @@
           </ul>
         </div>
       </van-list>
+      </van-pull-refresh>
     </div>
   </section>
 </template>
@@ -56,6 +57,7 @@ export default {
   name: "team",
   data(){
     return {
+      isLoading:false,
       loading: false,
       finished: false,
       teamConfig:{
@@ -64,7 +66,7 @@ export default {
         user_id:""
       },//获取条件
       teamNumber:{},//团队人数
-      teamList:{} //团队列表
+      teamList:[] //团队列表
     };
   },
  created(){
@@ -85,7 +87,7 @@ export default {
         let url = "user/getTeamList";
         this.$https.get(url,this.teamConfig).then(res => {
            if(res.data.code === 200 && res.data.data.length > 0){
-              this.teamList = res.data.data;
+              this.teamList = this.teamList.concat(res.data.data);
               // console.log(this.teamList);
               this.teamConfig.page++;
               this.loading = false;
@@ -93,15 +95,21 @@ export default {
               this.loading = false;
               this.finished = true;
            }
+           this.isLoading = false;
         })
     },
     secondlevel(obj){ //跳转二级团队
-      console.log(obj);
+      // console.log(obj);
       this.$router.push({path:"/personCenter/levelTwoTeam",query:{user_id:obj.user_id,name:obj.username}});
     },
     onLoad(){
       this.fetchTeamList();
-    }
+    },
+     onRefresh() { //下拉刷新
+      setTimeout(() => {
+        this.fetchTeamList();
+       }, 500);
+     }
   },
   components:{
     returnNav
@@ -117,32 +125,33 @@ export default {
   bottom: 0;
   z-index: 999;
   background: #f2f2f2;
-  .team_account {
-    position: absolute;
-    top: 54px;
-    left: 0;
-    width: 100%;
-    background: #ffffff;
-    border-radius: 5px;
-    padding: 10px;
-    display: flex;
-    align-items: center;
-    div {
-      width: 50%;
-      font-size: 20px;
-      .team_number {
-        margin-top: 10px;
-        color: #e8cb70;
-      }
-    }
-  }
+
     .team_main {
       position: absolute;
-      top: 130px;
+      top:54px;
       left: 0;
       width: 100%;
       bottom: 0;
       overflow-y: scroll;
+       .team_account {
+          box-sizing:border-box;
+          width: 100%;
+          background: #ffffff;
+          border-radius: 5px;
+          padding: 10px;
+          display: flex;
+          align-items: center;
+          margin-bottom:10px;
+          div {
+            width: 50%;
+            font-size: 20px;
+            .team_number {
+              margin-top: 10px;
+              color: #e8cb70;
+            }
+          }
+        }
+
       .team_user_one {
         display: flex;
         justify-content: space-between;

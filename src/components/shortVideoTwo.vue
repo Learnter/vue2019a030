@@ -9,7 +9,7 @@
     <div class="video_main" ref="shortScroll">
 
     <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="刷新成功">
-        <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad" :offset="100">
+        <van-list v-model="loading" :finished="finished" finished-text="暂时没有更多了" @load="onLoad" :offset="100">
           <ul>
             <li class="video_item" v-for="(vItem,vIndex) in videosList" :key="vIndex">
               <div class="video_content">
