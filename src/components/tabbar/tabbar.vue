@@ -12,13 +12,13 @@
 			</div>
 			<div :class="isShowMask?'maskLayer':'hiddenMask'" @click="isShowMask = false">
 				<div class="publish">
-					<div class="iconItem" @click="uploadVideo('uploadSmallVideo')"> 
+					<div class="iconItem" @click="uploadVideo(1)">  
 						<div class="updateIcon">
 						    <img src="@/assets/tabImg/2019_a030_53.png" alt="">
 						</div>
 						<p>小视频</p>
 					</div>
-					<div class="iconItem" @click="uploadVideo('uploadShortVideo')">
+					<div class="iconItem" @click="uploadVideo(2)">
 						<div class="updateIcon">
 							<img src="@/assets/tabImg/2019_a030_52.png" alt="">
 						</div>
@@ -97,7 +97,7 @@
 				this.$router.push(item.path);
 			},
 			uploadVideo(type){ //上传视频
-			   this.$store.commit("change_uploadType",type); //type为视频类型,用于区分是小视频、短视频
+			   this.$store.commit("change_uploadType",type); //type为视频类型,1是小视频,2是短视频;
 			   this.$router.push("/release");
 			}
 		},

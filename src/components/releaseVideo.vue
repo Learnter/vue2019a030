@@ -46,7 +46,7 @@
       </div>
       <div class="outStation">
         <h3>支持外站</h3>
-        <div v-if="uploadType=='uploadSmallVideo'">
+        <div v-if="uploadType == 1">
           <ul class="outStation_items">
             <li>
               <div class="outStation_icon">
@@ -68,7 +68,7 @@
             </li>
           </ul>
         </div>
-        <div v-if="uploadType=='uploadShortVideo'">
+        <div v-if="uploadType == 2">
           <ul class="outStation_items">
             <li>
               <div class="outStation_icon">
@@ -112,18 +112,21 @@ export default {
     afterRead(file){ //上传视频
       //  console.log(file.file);
       
+       this.isEmptyUploadType();
+
        let fileFormData = new FormData();
            fileFormData.append('video',file.file);
            fileFormData.append('name','video');
+           fileFormData.append('video_type',this.uploadType);
 
        let url = "uploadVideo/file";
        this.$https.post(url,fileFormData,'multipart/form-data').then(res => {
-
+          console.log(res);
           if(res.data.code === 200 && res.data.data.length != 0){
 
             let video = {
               realy_url:res.data.data.src,
-              video_url:res.data.data.show_src
+              video_url:res.data.data.show_src,
             }
 
             this.$router.push({path:'/video/parseVideo',query:{video:JSON.stringify(video)}})
@@ -131,11 +134,15 @@ export default {
        })
     },
     onClickRight() { //点击站外链接
+      this.isEmptyUploadType();
       if(this.address.trim().length !== 0 && /(http|https):\/\/([\w.]+\/?)\S*/.test(this.address)) {
         let url = "uploadVideo/url";
         let data = {
-          url:this.address
+          "url":this.address,
+          "video_type":this.uploadType
         };
+
+        // console.log(data);
         this.$https.post(url,data).then(res => {
           // console.log(res);
             if(res.data.code === 200 && res.data.data){
@@ -172,6 +179,20 @@ export default {
           duration:3000
         });
       }
+    },
+    isEmptyUploadType(){ //视频类型非空判断
+       let videoType = this.uploadType;
+       if(!videoType || videoType == "undefine" || videoType == null){
+           this.$notify({
+                message:"不清楚视频类型,请重新发布",
+                duration:5000,
+                className:"notifyClass"
+              });
+        setTimeout(() => {
+            this.$router.push("/me");
+          }, 1000);
+        return;
+       }
     }
   }
 };

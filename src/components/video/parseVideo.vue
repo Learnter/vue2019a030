@@ -43,7 +43,7 @@
   </section>
 </template>
 <script>
-import {mapGetters} from "vuex";
+import {mapState,mapGetters} from "vuex";
 export default {
   name: "parseVideo",
   data() {
@@ -56,10 +56,8 @@ export default {
   created(){
     this.video = JSON.parse(this.$route.query.video);
   },
-   computed: {
-    videoType() { //获取上传的视频类型
-      return this.$store.state.uploadType;
-    }
+   computed:{
+    ...mapState(['uploadType']) //视频类型
   },
   methods: {
     publishVideo() {
@@ -74,12 +72,12 @@ export default {
        }
 
       let url;
-      if (this.videoType == "uploadSmallVideo") {
+      if (this.uploadType == 1 ) {
         //根据videoType判断上传的是小视频还是短视频，调用不同的接口
         url = "video/addSmallVideoideo";
-      } else if (this.videoType == "uploadShortVideo") {
+      } else if (this.uploadType == 2 ) {
         url = "video/addShortVideo";
-      } else {
+      }else{
         this.$notify({
                 message:"不清楚视频类型,请重新发布",
                 duration:5000,

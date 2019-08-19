@@ -50,7 +50,9 @@ export default {
       },
       checked: true, //阅读协议
       verifyCode: "获取验证码",
-      time:0 //倒计时
+      time:0,//倒计时
+      isSendMessage:false,//是否正在发送信息期间
+      timeOut:{} //全局计时器对象
     };
   },
   created(){
@@ -78,9 +80,19 @@ export default {
      },
     getQueryVariable (variable){ //获取路由后邀请码参数
         var query = window.location.hash;
-        // console.log(query);
+        // alert(query);
         if(query.indexOf(variable) != -1){
+
           var vars = query.split("=");
+
+          //  alert(vars);
+          if(vars[1].indexOf("&") != -1){ //解决微信中在后面拼接其他参数,
+
+             var wx = vars[1].split("&");
+            //  alert(wx[0]); 
+             return wx[0]; 
+          }
+
           return vars[1];
         }
       return '';
@@ -105,13 +117,16 @@ export default {
       let url = "user/reg";
       console.log(this.user);
       this.$https.post(url, this.user).then(res => {
-        console.log(res);
+        // console.log(res);
         if (res && res.data) {
           let data = res.data;
           if (data.code === 200) {
             this.$toast("注册成功");
+            // alert(res.data.data.app_download_url);
             setTimeout(() => {
-              this.$router.push("/login");
+              // this.$router.push("/login");
+              // window.location.href = res.data.data.app_download_url;
+              window.location.replace(res.data.data.app_download_url)
             }, 1000);
           } else {
             this.$toast(data.msg);
@@ -124,21 +139,34 @@ export default {
           this.$toast("请输入正确的手机号!");
           return false;
        }
+       if(this.isSendMessage){ //防止重复点击发送按钮
+          this.$toast("亲,请稍安勿躁!");
+          return;
+       }
       let url = "sendPhoneVerifyCode"; 
       this.$https.post(url,this.verifyInfo).then(res => {
+        
         if (res && res.data && res.data.code === 200){
+
+          this.isSendMessage = true;
+
           this.$toast("信息已发送,请注意查收!");
-          let timeOut = setInterval(() => {  //验证码倒计时
+
+          this.timeOut = setInterval(() => {  //验证码倒计时
              this.verifyCode = this.time-- + "(S)";
             if(this.time === 0) {
                 this.verifyCode = "重新获取";
                 this.time = 60;
-                clearInterval(timeOut);
+                this.isSendMessage = false;
+                clearInterval(this.timeOut);
             }
           }, 1000);
         }
       });
     }
+  },
+  destroyed(){ //退出清除定时器
+    clearInterval(this.timeOut);
   }
 };
 </script>
