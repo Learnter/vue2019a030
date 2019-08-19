@@ -1,19 +1,22 @@
 <template>
     <section class="personSmall">
-         <van-list  v-model="loading" :finished="finished" finished-text="暂时没有更多了" @load="onLoad">  
-            <div class="multiple_video">
-                <div class="single_video" v-for="(item,index) in videoList" :key="index" @click="smallVideo(index)">
-                    <img v-lazy="item.poster" alt="">
-                    <van-tag round class="duration">{{item.video_duration|timeFormat()}}</van-tag>
+        <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="刷新成功">
+            <van-list  v-model="loading" :finished="finished" finished-text="暂时没有更多了" @load="onLoad">  
+                <div class="multiple_video">
+                    <div class="single_video" v-for="(item,index) in videoList" :key="index" @click="smallVideo(index)">
+                        <img v-lazy="item.poster" alt="">
+                        <van-tag round class="duration">{{item.video_duration|timeFormat()}}</van-tag>
+                    </div>
                 </div>
-            </div>
-       </van-list> 
+            </van-list> 
+       </van-pull-refresh>
     </section>
 </template><script>
 export default {
     name:"smallVideo",
     data(){
         return{
+           isLoading:false,
            loading:false,
            finished:false,
             requestConfig:{ //请求配置
@@ -43,6 +46,7 @@ export default {
                     this.loading = false;
                     this.finished = true;
                 }
+                this.isLoading = false;
             })
        },
         smallVideo(index){ //点击作品页面小视频
@@ -52,6 +56,11 @@ export default {
         },
         onLoad(){ //上拉首次加载
          this.fetchVideo();
+       },
+       onRefresh(){ //下拉刷新
+         setTimeout(() => {
+           this.fetchVideo();
+         }, 500);
        }
     }
 }

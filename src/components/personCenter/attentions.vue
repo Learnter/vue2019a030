@@ -41,14 +41,10 @@ export default {
       attentionList: []
     };
   },
-  created() {
-    this.fetchData();
-  },
   methods: {
     fetchData() {
       let url = "user/getFollowList";
       this.$https.get(url, this.attConfig).then(res => {
-          // console.log(res);
         if (res.data.code === 200 && res.data.data.length > 0) {
           this.attentionList = this.attentionList.concat(res.data.data);
           this.attConfig.page++;
@@ -95,14 +91,14 @@ export default {
   right: 0;
   bottom: 0;
   z-index: 999;
-  background:#F8F8FF;
-
+  // background:#F8F8FF;
+  background:#000000;
   .van-nav-bar{
       height:54px;
       line-height:54px;
-      /*background-color:#000000;*/
+      background-color:#000000;
       /*background:linear-gradient(120deg,#E0FFFF,#EEE685,#F8F8FF)!important;*/
-      background-color:#9F79EE !important;
+      // background-color:#9F79EE !important;
       .van-nav-bar__title{
           font-size:18px;
           color:#ffffff;
@@ -127,8 +123,9 @@ export default {
   }
 
   .van-cell{
-      background:linear-gradient(120deg,#E0FFFF,#EE7AE9,#EEE685);
-      border-radius:10px;
+      // background:linear-gradient(120deg,#E0FFFF,#EE7AE9,#EEE685);
+      // border-radius:10px;
+      background:#000000;
       border-bottom:1px solid rgba(255,255,255,0.1);
       margin-bottom:10px;
   }
@@ -144,7 +141,8 @@ export default {
       flex:1;
       display:flex;
       align-items:center;
-      color:#8B008B;
+      // color:#8B008B;
+      color:#fff;
       .fl_img{
         box-sizing:border-box;
         z-index:999;
@@ -166,7 +164,8 @@ export default {
       line-height:25px;
       font-size:12px;
       color:#fff;
-      background:linear-gradient(120deg,#EE7AE9,#E0FFFF,#EEE685);
+      // background:linear-gradient(120deg,#EE7AE9,#E0FFFF,#EEE685);
+      background:transparent;
       letter-spacing:2px;
     }
   }

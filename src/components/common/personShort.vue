@@ -1,33 +1,35 @@
 <template>
     <section class="personShort">
-        <van-list  v-model="loading" :finished="finished" finished-text="暂时没有更多了" @load="onLoad">  
-            <div class="multiple_video">
-                <div class="single_video" v-for="(vItem,vIndex) in newVideoList" :key="vIndex">
-                    <!-- <img v-lazy="item.poster" alt=""> -->
-                    <video class="video_box"  width="100%" height="100%" webkit-playsinline="true" x5-playsinline x5-video-player-type="h5" playsinline preload="auto"
-                        :poster="vItem.poster"
-                        :src="vItem.video_url"
-                        x-webkit-airplay="allow"
-                        x5-video-orientation="landscape"
-                        style="display:inline;object-fit:fill"
-                        controls
-                        controlslist="nodownload noremoteplayback"
-                        @play="playVideo(vIndex)"
-                        @ended="onPlayerEnded($event)"                  
-                    ></video>
+        <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="刷新成功">
+                <van-list  v-model="loading" :finished="finished" finished-text="暂时没有更多了" @load="onLoad">  
+                    <div class="multiple_video">
+                        <div class="single_video" v-for="(vItem,vIndex) in newVideoList" :key="vIndex">
+                            <!-- <img v-lazy="item.poster" alt=""> -->
+                            <video class="video_box"  width="100%" height="100%" webkit-playsinline="true" x5-playsinline x5-video-player-type="h5" playsinline preload="auto"
+                                :poster="vItem.poster"
+                                :src="vItem.video_url"
+                                x-webkit-airplay="allow"
+                                x5-video-orientation="landscape"
+                                style="display:inline;object-fit:fill"
+                                controls
+                                controlslist="nodownload noremoteplayback"
+                                @play="playVideo(vIndex)"
+                                @ended="onPlayerEnded($event)"                  
+                            ></video>
 
 
-                    <van-tag round class="duration">{{vItem.video_duration|timeFormat()}}</van-tag>
+                            <van-tag round class="duration">{{vItem.video_duration|timeFormat()}}</van-tag>
 
 
-                    <!-- <div class="playOrPause" v-if="vItem.isPlay||vItem.isPause">
-                        <van-icon name="play-circle" v-show="vItem.isPlay" class="play" @click="playVideo(vIndex)"/>
+                            <!-- <div class="playOrPause" v-if="vItem.isPlay||vItem.isPause">
+                                <van-icon name="play-circle" v-show="vItem.isPlay" class="play" @click="playVideo(vIndex)"/>
 
-                         <van-icon name="pause-circle" v-show="vItem.isPause" class="icon_play" @click="pauseVideo(vIndex)"/>
-                    </div> -->
-                </div>
-            </div>
-       </van-list> 
+                                <van-icon name="pause-circle" v-show="vItem.isPause" class="icon_play" @click="pauseVideo(vIndex)"/>
+                            </div> -->
+                        </div>
+                    </div>
+            </van-list> 
+       </van-pull-refresh>
     </section>
 </template>
 <script>
@@ -36,6 +38,7 @@ export default {
     props:['uid'],
     data(){
        return{
+           isLoading:false,
             loading: false,
             finished: false,
             requestConfig:{ //请求配置
@@ -69,6 +72,7 @@ export default {
                     this.loading = false;
                     this.finished = true;
                 }
+                this.isLoading = false;
             })
         },
       playVideo(index) { //点击播放按钮
@@ -111,7 +115,12 @@ export default {
         },
      onLoad(){ //上拉首次加载
          this.fetchVideo();
-     }
+     },
+     onRefresh() { //下拉刷新
+      setTimeout(() => {
+        this.fetchVideo();
+       }, 500);
+     },
    }
 }
 </script>

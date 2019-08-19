@@ -44,9 +44,6 @@ export default {
       fansList: []
     };
   },
-  created() {
-    this.fetchData();
-  },
   computed:{
     ...mapGetters(["statistics"])
   },
@@ -111,12 +108,13 @@ export default {
   right: 0;
   bottom: 0;
   z-index: 999;
-  /*background: #000000;*/
-  background:#F8F8FF;
+  background: #000000;
+  // background:#F8F8FF;
   .van-nav-bar{
       height:54px;
       line-height:54px;
-      background-color:#9F79EE !important;
+      background-color:#000000;
+      // background-color:#9F79EE !important;
       .van-nav-bar__title{
           font-size:18px;
           color:#ffffff;
@@ -142,12 +140,12 @@ export default {
   }
 
   .van-cell{
-      /*background:#000000;*/
+      background:#000000;
       /*background:linear-gradient(30deg,#EEE685,#E0FFFF,#EE7AE9);*/
-      background:linear-gradient(120deg,#E0FFFF,#EEE685,#F8F8FF)!important;
+      // background:linear-gradient(120deg,#E0FFFF,#EEE685,#F8F8FF)!important;
       border-bottom:1px solid rgba(255,255,255,0.1);
       margin-bottom:10px;
-      border-radius:10px;
+      // border-radius:10px;
   }
   .van-cell__value{
      color:#ffffff;
@@ -160,7 +158,8 @@ export default {
       flex:1;
       display:flex;
       align-items:center;
-      color:#8B008B;
+      // color:#8B008B;
+      color:#fff;
       .fl_img{
         box-sizing:border-box;
         z-index:999;
@@ -192,8 +191,9 @@ export default {
       line-height:25px;
       font-size:12px;
       color:white;
-      color:#AB82FF;
-      background:linear-gradient(120deg,#EE7AE9,#E0FFFF,#EEE685);
+      // color:#AB82FF;
+      background: transparent;
+      // background:linear-gradient(120deg,#EE7AE9,#E0FFFF,#EEE685);
       letter-spacing:2px;
        }
    }
