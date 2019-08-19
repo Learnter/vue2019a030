@@ -100,11 +100,11 @@ export default {
       this.$https.post(url, data).then(res => {
         if (res.data.code === 200) {
           this.$notify({
-                        message:'视频上传成功',
-                        duration: 2000,
-                        background:"#07C160",
-                        className:"notifyClass"
-                    });
+                    message:'视频上传成功',
+                    duration: 2000,
+                    background:"#07C160",
+                    className:"notifyClass"
+                  });
             this.$store.commit("updateVideo"); //增加视频数量
             setTimeout(() => {
               this.$router.push("/me");

@@ -101,7 +101,7 @@ button{
 
 /* 顶部消息通知栏 */
 .notifyClass{ 
-    border-radius:0 0 5px 5px;
+    border-radius:0 0 8px 8px;
     transition: all 1s ease-in-out;
   }
 

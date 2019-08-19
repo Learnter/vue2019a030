@@ -121,7 +121,7 @@ export default {
 
        let url = "uploadVideo/file";
        this.$https.post(url,fileFormData,'multipart/form-data').then(res => {
-          console.log(res);
+          // console.log(res);
           if(res.data.code === 200 && res.data.data.length != 0){
 
             let video = {
@@ -130,8 +130,14 @@ export default {
             }
 
             this.$router.push({path:'/video/parseVideo',query:{video:JSON.stringify(video)}})
-          }
-       })
+          }else{
+             this.$notify({
+                 message:res.data.msg,
+                 duration:3000,
+                 className:"notifyClass"
+              });    
+            }
+        })
     },
     onClickRight() { //点击站外链接
       this.isEmptyUploadType();
@@ -147,38 +153,59 @@ export default {
           // console.log(res);
             if(res.data.code === 200 && res.data.data){
               if(res.data.data.length === 0 || res.data.data.video_url.length === 0){
-                this.$toast({
-                  className:'parseFail',
-                  message:"视频解析失败!",
-                  duration:3000
-                });
+                // this.$toast({
+                //   className:'parseFail',
+                //   message:"视频解析失败!",
+                //   duration:3000
+                // });
+                this.$notify({
+                  message:"视频解析失败",
+                  duration:3000,
+                  className:"notifyClass"
+                 }); 
                 return false;
               }else{
                 let videoInfo = res.data.data; //获取解析成功后的视频信息
-                this.$toast.success({
-                  className:'parseSuccess',
-                  message:"视频解析成功"
-                });
+                // this.$toast.success({
+                //   className:'parseSuccess',
+                //   message:"视频解析成功"
+                // });
+                this.$notify({
+                  message:"视频解析成功",
+                  duration:2000,
+                  background:"#07C160",
+                  className:"notifyClass"
+                 });
                 setTimeout(()=>{
                     this.$router.push({path:'/video/parseVideo',query:{video:JSON.stringify(videoInfo)}})
                 },3000)
                 
               }
             }else{
-               this.$toast({
-                  className:'parseFail',
-                  message:res.data.msg,
-                  duration:3000
-                });
+              //  this.$toast({
+              //     className:'parseFail',
+              //     message:res.data.msg,
+              //     duration:3000
+              //   });
+                 this.$notify({
+                   message:res.data.msg,
+                   duration:3000,
+                   className:"notifyClass"
+               }); 
             }
         });
       }else{
-        this.$toast({
-          className:'parseFail',
-          message:"请正确输入解析地址!",
-          duration:3000
-        });
-      }
+        // this.$toast({
+        //   className:'parseFail',
+        //   message:"请正确输入解析地址!",
+        //   duration:3000
+        // });
+         this.$notify({
+            message:"请正确输入解析地址!",
+            duration:3000,
+            className:"notifyClass"
+         }); 
+       }
     },
     isEmptyUploadType(){ //视频类型非空判断
        let videoType = this.uploadType;
