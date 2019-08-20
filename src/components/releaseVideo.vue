@@ -93,6 +93,11 @@
       </div>
         <van-button class="nextStep" size="small" @click="onClickRight">下一步</van-button>
     </div>
+    <div class="maskStyle" v-show="isShowTrack">
+        <van-circle  v-model="currentRate" :rate="20" :speed="100" :text="text" size="60px" color="green" fill="#1989FA" />
+        <p class="maskText">正在努力加载中...</p>
+    </div>
+    
   </section>
 </template>
 <script>
@@ -101,12 +106,16 @@ export default {
   name: "release",
   data() {
     return {
-      // uploadType:"",//上传视频类型
+      isShowTrack:false,//是否展示进度框
+      currentRate:0,//当前解析进度
       address:"",//外链接地址
     };
   },
   computed:{
-    ...mapState(['uploadType'])
+    ...mapState(['uploadType']),
+    text(){
+      return this.currentRate.toFixed(0) + '%';
+    }
   },
   methods: {
     afterRead(file){ //上传视频
@@ -119,23 +128,39 @@ export default {
            fileFormData.append('name','video');
            fileFormData.append('video_type',this.uploadType);
 
+       this.currentRate = 50;
        let url = "uploadVideo/file";
        this.$https.post(url,fileFormData,'multipart/form-data').then(res => {
+
           // console.log(res);
-          if(res.data.code === 200 && res.data.data.length != 0){
+          this.currentRate = 80;
+
+          if(res.data.code === 200 && res.data.data != {} && res.data.data != ""){
 
             let video = {
               realy_url:res.data.data.src,
               video_url:res.data.data.show_src,
             }
+             this.currentRate = 100;
 
-            this.$router.push({path:'/video/parseVideo',query:{video:JSON.stringify(video)}})
+             this.$notify({
+                  message:"视频获取成功",
+                  duration:2000,
+                  background:"#07C160",
+                  className:"notifyClass"
+                 });
+
+             setTimeout(()=> {
+                this.isShowTrack = false;
+                this.$router.push({path:'/video/parseVideo',query:{video:JSON.stringify(video)}})
+             },2000)
           }else{
              this.$notify({
                  message:res.data.msg,
                  duration:3000,
                  className:"notifyClass"
-              });    
+              }); 
+             this.isShowTrack = false;     
             }
         })
     },
@@ -148,28 +173,22 @@ export default {
           "video_type":this.uploadType
         };
 
-        // console.log(data);
+        this.currentRate = 50;
         this.$https.post(url,data).then(res => {
           // console.log(res);
             if(res.data.code === 200 && res.data.data){
+              this.currentRate = 80;
               if(res.data.data.length === 0 || res.data.data.video_url.length === 0){
-                // this.$toast({
-                //   className:'parseFail',
-                //   message:"视频解析失败!",
-                //   duration:3000
-                // });
                 this.$notify({
                   message:"视频解析失败",
                   duration:3000,
                   className:"notifyClass"
                  }); 
-                return false;
+                this.isShowTrack = false;
+                return;
               }else{
                 let videoInfo = res.data.data; //获取解析成功后的视频信息
-                // this.$toast.success({
-                //   className:'parseSuccess',
-                //   message:"视频解析成功"
-                // });
+                this.currentRate = 100;
                 this.$notify({
                   message:"视频解析成功",
                   duration:2000,
@@ -177,21 +196,17 @@ export default {
                   className:"notifyClass"
                  });
                 setTimeout(()=>{
+                    this.isShowTrack = false;
                     this.$router.push({path:'/video/parseVideo',query:{video:JSON.stringify(videoInfo)}})
-                },3000)
-                
-              }
+                },3000)  
+              }              
             }else{
-              //  this.$toast({
-              //     className:'parseFail',
-              //     message:res.data.msg,
-              //     duration:3000
-              //   });
                  this.$notify({
                    message:res.data.msg,
                    duration:3000,
                    className:"notifyClass"
                }); 
+               this.isShowTrack = false;
             }
         });
       }else{
@@ -208,16 +223,19 @@ export default {
        }
     },
     isEmptyUploadType(){ //视频类型非空判断
+
+       this.isShowTrack = true; //显示进度框
        let videoType = this.uploadType;
+
        if(!videoType || videoType == "undefine" || videoType == null){
            this.$notify({
                 message:"不清楚视频类型,请重新发布",
-                duration:5000,
+                duration:3000,
                 className:"notifyClass"
               });
         setTimeout(() => {
             this.$router.push("/me");
-          }, 1000);
+          },2000);
         return;
        }
     }
@@ -368,5 +386,24 @@ export default {
       }
     }
   }
+}
+
+.maskStyle{
+    position:fixed;
+    left:50%;
+    top:40%;
+    transform:translate(-50%,-40%);
+    width:150px;
+    height:150px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    background:rgba(0,0,0,0.5);
+    border-radius:10px;
+    .maskText{
+      color:#ffffff;
+      margin-top:10px;
+    }
 }
 </style>

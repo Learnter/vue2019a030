@@ -7,14 +7,14 @@
       <van-cell-group>
         <van-field v-model="user.reg_code" label="推荐码" placeholder="请输入推荐码" clearable />
         <van-field v-model="user.account" label="手机号" placeholder="请输入手机号" clearable />
-        <van-field
+        <van-field 
           v-model="user.password"
           type="password"
           label="密码"
           placeholder="请输入密码"
           clearable
         />
-        <van-field v-model="user.verify_code" center clearable label="短信验证" placeholder="请输入手机验证码">
+        <van-field v-if="smsSwitch"  v-model="user.verify_code" center clearable label="短信验证" placeholder="请输入手机验证码">
           <van-button
             slot="button"
             size="small"
@@ -52,7 +52,8 @@ export default {
       verifyCode: "获取验证码",
       time:0,//倒计时
       isSendMessage:false,//是否正在发送信息期间
-      timeOut:{} //全局计时器对象
+      timeOut:{},//全局计时器对象
+      smsSwitch:false //短息验证码开关
     };
   },
   created(){
@@ -75,6 +76,7 @@ export default {
       this.$https.get(url).then( res => {
         if( res && res.data && res.data.data){
            this.time = res.data.data.send_sms_time_out;
+           this.smsSwitch = res.data.data.register_sms_switch;
          }
       })
      },
@@ -107,15 +109,15 @@ export default {
        }else if(!(/^[a-zA-Z0-9]{6,}$/).test(this.user.password)){
           this.$toast("密码输入有误!"); 
           return false;
-       }else if(!(/^[0-9]{4}$/).test(this.user.verify_code)){
-          this.$toast("验证码输入有误!");
-          return false;
-       }else if(!this.checked){
-          this.$toast("请先阅读协议!");
-       }
+       }   
+      // else if(!(/^[0-9]{4}$/).test(this.user.verify_code)){
+      //     this.$toast("验证码输入有误!");
+      //     return false;
+      //  }else if(!this.checked){
+      //     this.$toast("请先阅读协议!");
+      //  }
 
       let url = "user/reg";
-      console.log(this.user);
       this.$https.post(url, this.user).then(res => {
         // console.log(res);
         if (res && res.data) {
