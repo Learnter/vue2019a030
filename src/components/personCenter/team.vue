@@ -4,7 +4,7 @@
       <template v-slot:middle>我的社区</template>
     </return-nav>
     <div class="team_main">
-      <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="刷新成功">
+      <van-pull-refresh class="refreshBox" v-model="isLoading" @refresh="onRefresh" success-text="刷新成功">
         <div class="team_account">
           <div>
             <p>直推总人数</p>
@@ -107,6 +107,8 @@ export default {
     },
      onRefresh() { //下拉刷新
       setTimeout(() => {
+        this.teamConfig.page = 1;
+        this.teamList = [];
         this.fetchTeamList();
        }, 500);
      }
@@ -133,6 +135,9 @@ export default {
       width: 100%;
       bottom: 0;
       overflow-y: scroll;
+      .refreshBox{
+        min-height:100%;
+      }
        .team_account {
           box-sizing:border-box;
           width: 100%;

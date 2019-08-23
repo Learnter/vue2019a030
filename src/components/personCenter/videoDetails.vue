@@ -77,7 +77,6 @@ export default {
          }
       })
     },
-
      coverTab(type){ //切换导航
          if(type == "personSmall"){
           this.currentTabComponent = 'personSmall';

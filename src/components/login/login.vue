@@ -15,16 +15,17 @@
       <div class="login_tips">
         <van-button
           class="regestBtn"
-          style="color:#007A"
+          style="color:#fff"
           size="mini"
           @click="$router.push('/register')">立即注册</van-button>
-        <div class="delimiter"></div>
-        <van-button class="regestBtn" type="info" size="mini" @click="getVerifyCode">手机验证码登录</van-button>
+        <!-- <div class="delimiter"></div>
+        <van-button class="regestBtn" type="info" size="mini" @click="getVerifyCode">手机验证码登录</van-button> -->
       </div>
     </div>
   </section>
 </template>
 <script>
+// import "@/axios/gt.js";
 export default {
   name:"login",
   data() {
@@ -47,21 +48,21 @@ export default {
     },
     toLogin(){ //登录
      
-      // /* 账号/密码非空判断*/
-      // if (!(/^1[34578]\d{9}$/).test(user.account) ) {
-      //   this.$toast("手机号码不存在!");
-      //   return false;
-      // } else if (!(/^[a-zA-Z0-9]{6,}$/).test(user.password)) {/* 密码规则最少需要6位数*/
-      //   this.$toast("密码输入有误!");
-      //   return false;
-      // }
+      /* 账号/密码非空判断*/
+      if (!(/^1[34578]\d{9}$/).test(this.user.account) ) {
+        this.$toast("手机号码不存在!");
+        return false;
+      } else if (!(/^[a-zA-Z0-9]{6,}$/).test(this.user.password)) {/* 密码规则最少需要6位数*/
+        this.$toast("密码输入有误!");
+        return false;
+      }
 
       let url = "user/login";  
       this.$https.post(url, this.user).then(res => {
 
         if (res.data.code == 200 && res.data.data) {
                this.$notify({
-                         message:"登录成功",
+                        message:"登录成功",
                         duration: 2000,
                         background:"#07C160",
                         className:"notifyClass"
@@ -151,7 +152,7 @@ export default {
         background: transparent;
         outline: none;
         border: none;
-        font-size: 18px;
+        font-size: 14px;
       }
     }
   }

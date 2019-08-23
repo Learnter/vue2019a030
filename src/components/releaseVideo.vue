@@ -201,20 +201,18 @@ export default {
                 },3000)  
               }              
             }else{
-                 this.$notify({
+                this.$notify({
                    message:res.data.msg,
                    duration:3000,
                    className:"notifyClass"
-               }); 
-               this.isShowTrack = false;
-            }
+               });
+                this.isShowTrack = false;
+                setTimeout(() => {
+                this.$router.push("/me");
+              }, 2000);
+            } 
         });
       }else{
-        // this.$toast({
-        //   className:'parseFail',
-        //   message:"请正确输入解析地址!",
-        //   duration:3000
-        // });
          this.$notify({
             message:"请正确输入解析地址!",
             duration:3000,
@@ -242,7 +240,7 @@ export default {
   }
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 
 //解析失败样式
 .parseFail{ 

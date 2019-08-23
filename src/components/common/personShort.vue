@@ -1,35 +1,19 @@
 <template>
     <section class="personShort">
-        <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="刷新成功">
-                <van-list  v-model="loading" :finished="finished" finished-text="暂时没有更多了" @load="onLoad">  
-                    <div class="multiple_video">
-                        <div class="single_video" v-for="(vItem,vIndex) in newVideoList" :key="vIndex">
-                            <!-- <img v-lazy="item.poster" alt=""> -->
-                            <video class="video_box"  width="100%" height="100%" webkit-playsinline="true" x5-playsinline x5-video-player-type="h5" playsinline preload="auto"
-                                :poster="vItem.poster"
-                                :src="vItem.video_url"
-                                x-webkit-airplay="allow"
-                                x5-video-orientation="landscape"
-                                style="display:inline;object-fit:fill"
-                                controls
-                                controlslist="nodownload noremoteplayback"
-                                @play="playVideo(vIndex)"
-                                @ended="onPlayerEnded($event)"                  
-                            ></video>
-
-
-                            <van-tag round class="duration">{{vItem.video_duration|timeFormat()}}</van-tag>
-
-
-                            <!-- <div class="playOrPause" v-if="vItem.isPlay||vItem.isPause">
-                                <van-icon name="play-circle" v-show="vItem.isPlay" class="play" @click="playVideo(vIndex)"/>
-
-                                <van-icon name="pause-circle" v-show="vItem.isPause" class="icon_play" @click="pauseVideo(vIndex)"/>
-                            </div> -->
-                        </div>
-                    </div>
-            </van-list> 
-       </van-pull-refresh>
+        <van-swipe :show-indicators="false" @change="onChange" vertical :loop="false" :initial-swipe="current" :duration="500" :height="380">
+            <van-swipe-item v-for="(vItem, vIndex) in newVideoList" :key="vIndex" class="product_swiper"> 
+                <video class="video_box"  width="100%" height="100%" webkit-playsinline="true" x5-playsinline x5-video-player-type="h5" playsinline preload="auto"
+                    :poster="vItem.poster"
+                    x-webkit-airplay="allow"
+                    x5-video-orientation="landscape"
+                    style="display:inline;object-fit:fill"
+                    controls
+                    controlslist="nodownload noremoteplayback">
+                    <source :data-src="vItem.video_url" type="video/mp4"/>
+                </video>
+                <van-tag round class="duration">{{vItem.video_duration|timeFormat()}}</van-tag>
+           </van-swipe-item>  
+       </van-swipe>
     </section>
 </template>
 <script>
@@ -50,74 +34,74 @@ export default {
            newVideoList:[]
        }
     },
+    created(){
+        this.fetchVideo();
+    },
     methods:{
-        fetchVideo(){ //获取视频列表
+        onChange(index){ //视频滑动
+
+            this.isPlayEnd(index);//
+                
+            let frontVideo = document.querySelectorAll("video")[this.current]; //关闭前一个视频播放
+            frontVideo.pause();
+
+            this.playOrPause = false;
+
+            this.current = index; //播放当前视频
+            this.playVideo();
+        },
+         playVideo(){ //播放视频
+
+            let currentVideo = document.querySelectorAll("video")[this.current];
+
+            if(currentVideo.src){ //判断是否已经播放过,无需重新再次获取视频url
+               currentVideo.play();
+            }else{
+              let currentVideoSrc = document.querySelectorAll("source")[this.current];
+              currentVideo.src = currentVideoSrc.getAttribute('data-src');
+              currentVideo.play();
+            }
+        },
+        isPlayEnd(index){ //列表播放到最后增加数据
+    
+            let len = this.newVideoList.length; //视频列表长度
+
+            if((len-1) === index){  //滑动到最后追加数据
+               let url = "video/shortVideoList";
+                this.$https.get(url,this.requestConfig).then(res => {
+                    if(res.data.code === 200 && res.data.data.length > 0){
+                        this.newVideoList = this.newVideoList.concat(res.data.data);
+                        this.requestConfig.page++;
+                    }
+                });
+            }
+         },
+         fetchVideo(){ //获取视频列表
 
             let url = "video/shortVideoList";
-        
             this.requestConfig.uid = this.uid;
-        
             this.$https.get(url, this.requestConfig).then(res => {
-                // console.log(res.data.data.length);
                 if(res.data.code === 200 && res.data.data.length > 0){
                     let list = res.data.data;
-                    for (let i = 0; i < list.length; i++){
-                        list[i].isPlay = true;
-                        list[i].isPause = false;
-                    }
                     this.newVideoList = this.newVideoList.concat(list); //合并数组
                     this.requestConfig.page++;
-                    this.loading = false;
-                }else{
-                    this.loading = false;
-                    this.finished = true;
+                    this.$nextTick(()=>{
+                        let firstVideo = document.querySelectorAll("video")[this.current]; //获取当前的video对象
+                        let firstVideoSrc = document.querySelectorAll("source")[this.current]; //获取当前的video的source对象
+                        firstVideo.src = firstVideoSrc.getAttribute('data-src'); //将source的data-src赋值给video的src
+                    })
                 }
                 this.isLoading = false;
             })
-        },
-      playVideo(index) { //点击播放按钮
-
-        this.current = index;
-
-        let video = document.querySelectorAll("video")[this.current];
-    
-        this.otherVideoPause(index);
-        
-        // this.newVideoList[this.current].isPlay = false; //隐藏播放按钮
-
-        video.play();
-        },
-        // pauseVideo(index) { //暂停\播放
-        //     this.current = index;
-        //     let video = document.querySelectorAll("video")[this.current];
-        //     if (this.playOrPause) {
-        //         video.pause();
-        //         this.newVideoList[this.current].isPause = true; //显示暂停按钮
-        //     } else {
-        //         this.otherVideoPause(index);
-        //         video.play();
-        //         this.newVideoList[this.current].isPause = false; //隐藏暂停按钮
-        //     }
-        //     this.playOrPause = !this.playOrPause;
-        // },
-        otherVideoPause(index){ //暂停其他视频播放
-            let allVideo = document.querySelectorAll("video");
-            for(let i = 0; i < allVideo.length ;i++){
-                if(index === i){
-                continue;
-                }else{
-                allVideo[i].pause();
-                }
-            }
-        },
-     onPlayerEnded(player) { //视频结束
-        // this.newVideoList[this.current].isPlay = true; //显示播放按钮
         },
      onLoad(){ //上拉首次加载
          this.fetchVideo();
      },
      onRefresh() { //下拉刷新
       setTimeout(() => {
+        this.requestConfig.page = 1; //获取短视频最新数据
+        this.newVideoList = []; //清空视频列表
+        this.current = 0;
         this.fetchVideo();
        }, 500);
      },
@@ -126,8 +110,32 @@ export default {
 </script>
 <style lang="scss" scoped>
 
+        .personShort{
+            width:100%;
+            height:100%;
+            overflow: hidden;
+            position:relative;
+        }
+
+
+        .product_swiper{
+            box-sizing:border-box;
+            padding:10px 10px 0;
+            border-radius:10px;
+            box-shadow:rgba(0,0,0,.2) 0 5px 3px 0px;
+        }
+        .duration{
+            position:absolute;
+            right:15px;
+            top:15px;
+            background:rgba(0,0,0,0.5) !important;
+            padding:2px 10px;
+        }
+
         .multiple_video{
             padding:10px 10px 0;
+            width:400px;
+            height:400px;
             display:flex;
             flex-direction:column;
         }
@@ -139,13 +147,7 @@ export default {
             border-radius:10px;
             overflow:hidden;
             background:#191B28;
-            .duration{
-              position: absolute;
-              right:5px;
-              top:5px;
-              background:rgba(0,0,0,0.5) !important;
-              padding:2px 10px;
-            }
+            
         }
 
     .playOrPause {

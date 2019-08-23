@@ -89,6 +89,8 @@ export default {
     },
     onRefresh() { //下拉刷新
       setTimeout(() => {
+        this.fansConfig.page = 1;
+        this.fansList = [];
         this.fetchData();
        }, 500);
      },

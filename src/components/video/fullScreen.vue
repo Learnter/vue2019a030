@@ -15,27 +15,28 @@
                 poster：封面
                 src：播放地址
             -->
-            <video
-              class="video_box"
-              width="100%"
-              height="100%"
-              webkit-playsinline="true"
-              x5-playsinline
-              x5-video-player-type="h5"
-              x5-video-player-fullscreen
-              playsinline
-              preload="auto"
-              :poster="vItem.poster"
-              :src="vItem.video_url"
-              :playOrPause="playOrPause"
-              x-webkit-airplay="allow"
-              x5-video-orientation="portrait"
-              loop
-              controls
-              networkState
-              controlsList='nofullscreen nodownload' 
-            ></video>
-            <!-- @click="pauseVideo" @ended="onPlayerEnded($event)" -->
+              <video
+                class="video_box"
+                width="100%"
+                height="100%"
+                webkit-playsinline="true"
+                x5-playsinline
+                x5-video-player-type="h5"
+                x5-video-player-fullscreen
+                playsinline
+                preload="auto"
+                :poster="vItem.poster"
+                :playOrPause="playOrPause"
+                x-webkit-airplay="allow"
+                x5-video-orientation="portrait"
+                loop
+                controls
+                networkState
+                controlsList='nofullscreen nodownload' 
+              >
+               <source :data-src="vItem.video_url" type="video/mp4">
+              </video>
+              <!-- @click="pauseVideo" @ended="onPlayerEnded($event)"  :src="vItem.video_url" -->
           </div>
 
           <!-- 顶部邮票功能 -->
@@ -80,7 +81,7 @@
           </div>
 
           <!-- 底部礼物列表 -->
-          <div class="mask_bottom" v-if="isPresent">
+          <div class="mask_bottom" v-show="isPresent">
              <van-icon
               name="close"
               class="closeBtn"
@@ -141,7 +142,6 @@ import { mapGetters } from 'vuex'
 export default {
   name: "videoChild",
   data() {
-    // let u = navigator.userAgent;
     return {
       likeNum:'',//每日点赞数
       isPresent:false,//是否赠送礼物
@@ -153,8 +153,6 @@ export default {
       playOrPause: true, //播放或暂停
       video: null,
       iconPlayShow: false,
-      // isAndroid: u.indexOf("Android") > -1 || u.indexOf("Adr") > -1, // android终端
-      // isiOS: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), // ios终端
       tabIndex: 0,
       showShareBox: false,
       videoList: [], //视频列表
@@ -179,7 +177,10 @@ export default {
   },
   mounted(){
     this.$nextTick(()=>{
-          document.querySelectorAll("video")[this.current].play(); //一进来就播放
+          let video = document.querySelectorAll("video")[this.current]; //获取当前的video对象
+          let videoSrc = document.querySelectorAll("source")[this.current]; //获取当前的video的source对象
+          video.src = videoSrc.getAttribute('data-src'); //将source的data-src赋值给video的src
+          video.play(); //一进来就播放
       })
   },
   computed:{
@@ -198,15 +199,10 @@ export default {
       let giftUrl = "video/giftList";  
       this.$https.get(giftUrl).then(res => {
         if(res.data.code === 200 && res.data.data){
-          // console.log(res.data.data);
           this.giftList = res.data.data;
         }
       });
     },
-    //改变菜单
-    // changeTab(index) {
-    //   this.tabIndex = index;
-    // },
     //查看视频资料
     photoBtn(id,name){
      this.$router.push({path:"/personCenter/videoDetails",query:{user_id:id,user_name:name}});
@@ -216,10 +212,10 @@ export default {
      let objVideo = this.videoList[index];
      if( this.likeNum < 0){
        this.$notify({
-                    message:"今天点赞数已用完",
-                    className:"notifyClass",
-                    duration:5000
-                   });
+              message:"今天点赞数已用完",
+              className:"notifyClass",
+              duration:5000
+              });
      }else{
 
        if(!objVideo.is_praise){
@@ -259,20 +255,13 @@ export default {
     onChange(index){
       this.isPlayEnd(index);
       //改变的时候 暂停当前播放的视频
-      let video = document.querySelectorAll("video")[this.current];
-      video.pause();
+      let frontVideo = document.querySelectorAll("video")[this.current];
+      frontVideo.pause();
+
       this.playOrPause = false;
+
       this.current = index;
-      // console.log("滑动改变视频");
-      // if (this.isiOS) {
-        //ios切换直接自动播放下一个
-        // this.isVideoShow = false;
-        this.pauseVideo();
-      // } else {
-      //   //安卓播放时重置显示封面。图标等
-      //   this.isVideoShow = true;
-      //   this.iconPlayShow = true;
-      // }
+      this.pauseVideo();
     },
     isPlayEnd(index){ //是否列表播放到最后
     
@@ -288,32 +277,17 @@ export default {
           });
        }
     },
-    // playvideo(event) {
-    //   let video = document.querySelectorAll("video")[this.current];
-    //   console.log("播放当前视频索引" + this.current);
-    //   this.isVideoShow = false;
-    //   this.iconPlayShow = false;
-    //   video.play();
-    //   window.onresize = function() {
-    //     video.style.width = window.innerWidth + "px";
-    //     video.style.height = window.innerHeight + "px";
-    //   };
-    // },
     pauseVideo() { //暂停\播放
-      let video = document.querySelectorAll("video")[this.current];
-      // if (this.playOrPause) {
-      //   video.pause();
-      //   // this.iconPlayShow = true;
-      // } else {
-        video.play();
-        // this.iconPlayShow = false;
-      // }
-      // this.playOrPause = !this.playOrPause;
+      let curVideo = document.querySelectorAll("video")[this.current];
+      if(curVideo.src){
+         curVideo.play();
+      }else{
+        let curSrc = document.querySelectorAll("source")[this.current];
+        curVideo.src = curSrc.getAttribute('data-src');
+        // console.log("进来播放");
+        curVideo.play();
+      }
     },
-    // onPlayerEnded(player) {
-    //   //视频结束
-    //   // this.isVideoShow = true;
-    // },
     //复制当前链接
     copyUrl() {
       let httpUrl = window.location.href;
@@ -656,12 +630,12 @@ video {
   }
 
   .closeBtn{
-    font-size:25px;
-    position: absolute;
-    z-index:1005;
+    font-size:30px;
+    position:absolute;
     right:5px;
     top:5px;
     color:gray;
+    z-index:1005;
   }
 
 

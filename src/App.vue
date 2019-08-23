@@ -86,6 +86,11 @@ button{
 }
 
 /*vantUI框架样式*/
+
+.van-image{
+  width:100%;
+  height:100%;
+}
 .van-list__finished-text{
  line-height:24px;
  margin:10px auto;

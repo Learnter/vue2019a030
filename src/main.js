@@ -20,12 +20,15 @@ import "./assets/iconFont/iconfont.css"; //引入阿里字体库
 //使用vantUI框架
 import Vant from 'vant'
 import 'vant/lib/index.css';
-Vue.use(Vant)
+Vue.use(Vant);
+
+import { Lazyload } from 'vant';
+Vue.use(Lazyload);
 
 
 //图片懒加载插件
-import VueLazyLoad from 'vue-lazyload'
-Vue.use(VueLazyLoad)
+// import VueLazyLoad from 'vue-lazyload'
+// Vue.use(VueLazyLoad)
 
 
 

@@ -13,7 +13,7 @@ export default new Router({
       path:"/smallVideo",//小视频
       name:"SmallVideo",
       component: resolve => require(["@/components/smallVideo"],resolve),
-      meta: { 
+      meta:{ 
         keepAlive: true // 需要缓存 
       }
     },
@@ -142,6 +142,11 @@ export default new Router({
       path:"/video/reward",//打赏
       name:"reward",
       component: resolve => require(["@/components/video/reward"],resolve)
+    },
+    {
+      path:"/personCenter/customerService",//打赏
+      name:"customerService",
+      component: resolve => require(["@/components/personCenter/customerService"],resolve)
     }
   ]
 })

@@ -90,6 +90,8 @@ export default {
     },
     onRefresh() { //下拉刷新
       setTimeout(() => {
+       this.teamConfig.page = 1;
+       this.teamList = [] ;
        this.fetchTeamList();
        }, 500);
      }

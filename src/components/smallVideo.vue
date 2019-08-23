@@ -5,21 +5,22 @@
         <p class="nav_item" :class="actived == index ? 'actived' :''" v-for="(item,index) in navList" :key="index"  @click="toggleNav(item)" v-text="item.title"></p>
       </div>
     </div>
-    <div class="main_content" ref="smallScroll">
+    <div class="main_content"  ref="smallScroll">
         <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="刷新成功">
-            <van-list v-model="loading" :finished="finished" finished-text="暂时没有更多了"  @load="onLoad">
+            <van-list v-model="loading" :finished="finished" finished-text="暂时没有更多了"  @load="onLoad" >
               <div class="main_ul">
                 <van-cell class="main_item" v-for="(item,index) in videoList" :key="index" @click.stop="playVideo(index)">
-                  <!--<img  :src="item.poster" alt="加载失败" />-->
-                  <van-image fit="fill" round lazy-load :src="item.poster"/>
 
+                    <van-image fit="fill" round lazy-load :src="item.poster">
+                        <template v-slot:loading>
+                          <van-loading type="spinner" size="20" />
+                        </template>
+                    </van-image>
+                    <!-- <img v-lazy="item.poster" > -->
                   <!-- 视频信息栏 -->
                   <div class="min_item_info uni-flex">
                     <div class="min_item_info_left">
-                      <!-- <div class="user_img"> -->
-                        <!--<img :src="item.avatar"/>-->
-                        <van-image  class="user_img" fit="fill" round  lazy-load :src="item.avatar"/>
-                      <!-- </div> -->
+                        <van-image  class="user_img" fit="fill"  round  lazy-load :src="item.avatar"/>
                       <p>{{item.title}}</p>
                     </div>
                     <div class="min_item_info_right">
@@ -72,6 +73,7 @@ export default {
   },
    created(){
       this.getStatistics();
+      this.getUserInfo();
   },
   mounted(){
     this.$refs.smallScroll.addEventListener('scroll', this.handleScroll);
@@ -82,10 +84,16 @@ export default {
         this.$https.get(url).then(res => {
           if(res.data.code === 200 && res.data.data){
              this.$store.commit("set_user_statistics",res.data.data);
-            //  console.log("用户资产数据",res.data.data);
           }
         })
        }, 
+       getUserInfo(){ //获取用户信息存储到vuex
+        let url = "user/getUserInfo";
+        this.$https.get(url).then(res => {
+          if(res.data.code === 200 && Object.keys(res.data.data).length != 0){
+                this.$store.commit("set_user_info",res.data.data);
+           }
+        })},
     fetchVideos(){//获取视频列表
       let url = "video/smallVideoList";
       this.$https.get(url,this.videoConfig).then(res => {
@@ -150,8 +158,22 @@ export default {
     },
     onRefresh() { //下拉刷新
       setTimeout(() => {
-        this.fetchVideos();
-       }, 500);
+        let url = "video/smallVideoList";
+        this.videoConfig.page = 1;
+        this.$https.get(url,this.videoConfig).then(res => {
+        //  console.log(res);
+        if (res.data.code === 200 && res.data.data.length > 0){
+          // console.log(this.videoList);
+          this.videoList = res.data.data;
+          this.videoConfig.page++;
+          this.loading = false;
+        }else{
+            this.loading = false;
+            this.finished = true;
+        }
+        this.isLoading = false;
+        })
+       }, 1000);
      },
      handleScroll(){ //页面滚动位置
          this.scrollPosition  = this.$refs.smallScroll.scrollTop
@@ -238,17 +260,8 @@ export default {
       margin-top:10px;
       border-radius:5px;
       border:1px solid rgba(0, 0, 0, 0.1);
+      object-fit:fill;
     }
-
-      // .play {
-      //   font-size:40px;
-      //   position: absolute;
-      //   top:50%;
-      //   left:50%;
-      //   transform:translate(-50%);
-      //   border-radius: 50%;
-      //   color: rgba(0,0,0,0.5);
-      // }
 
      .duration{
         position: absolute;
@@ -303,26 +316,6 @@ export default {
         margin-left: 5px;
       }
     }
-
-    // .heart_img {
-    //   width: 14px;
-    //   height: 14px;
-    //   line-height: 14px;
-    //   margin-right: 5px;
-    // }
-
-  //   .duration {
-  //     position: absolute;
-  //     font-size: 12px;
-  //     top: 5px;
-  //     right: 5px;
-  //     padding: 5px;
-  //     line-height: 1.1;
-  //     color: white;
-  //     border-radius: 4px;
-  //     background: #ff8585;
-  //     z-index: 2;
-  //   }
   }
 }
 </style>

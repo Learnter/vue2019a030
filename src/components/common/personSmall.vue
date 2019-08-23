@@ -1,6 +1,6 @@
 <template>
     <section class="personSmall">
-        <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="刷新成功">
+        <van-pull-refresh class="refreshBox" v-model="isLoading" @refresh="onRefresh" success-text="刷新成功">
             <van-list  v-model="loading" :finished="finished" finished-text="暂时没有更多了" @load="onLoad">  
                 <div class="multiple_video">
                     <div class="single_video" v-for="(item,index) in videoList" :key="index" @click="smallVideo(index)">
@@ -33,7 +33,6 @@ export default {
             let url = "video/smallVideoList";
             this.requestConfig.uid = this.uid;
 
-            // console.log(this.uid);
             this.$https.get(url,this.requestConfig).then(res => {
                 // console.log(res.data.data.length);
                 if(res.data.code === 200 && res.data.data.length > 0){
@@ -59,6 +58,8 @@ export default {
        },
        onRefresh(){ //下拉刷新
          setTimeout(() => {
+           this.requestConfig.page = 1; //获取最新视频数据
+           this.videoList = [];//清空视频列表;
            this.fetchVideo();
          }, 500);
        }
@@ -66,6 +67,14 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+
+        .personSmall{
+            width:100%;
+            height:100%;
+            .refreshBox{
+                min-height:100%;
+            }
+        }
 
         .multiple_video{
             display:flex;

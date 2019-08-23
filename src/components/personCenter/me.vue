@@ -1,7 +1,7 @@
 <template>
   <section class="page">
     <div class="user_main">
-      <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="数据更新成功">
+      <!-- <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="数据更新成功"> -->
           <div class="userTop">
             <!-- <img src="@/assets/tabImg/2019_a030_64.png" /> -->
             <div class="setup" @click="setUp">
@@ -110,11 +110,11 @@
           </div>
 
           <div class="user_config">
-            <div class="user_config_item uni-flex">
+            <div class="user_config_item uni-flex"  @click="$router.push('/personCenter/customerService')">
               <div class="user_icon ">
                 <van-icon name="chat-o" />
               </div>
-              <p>消息</p>
+              <p>在线客服</p>
             </div>
             <div class="user_config_item uni-flex" @click="$router.push('/personCenter/assetDetails')">
               <div class="user_icon ">
@@ -159,7 +159,7 @@
               <p>退出</p>
             </div>
           </div>
-       </van-pull-refresh>
+       <!-- </van-pull-refresh> -->
     </div>
   </section>
 </template>
@@ -174,17 +174,8 @@
         statisticsData:{},//统计数据
       };
     },
-    beforeRouteEnter (to, from, next) { //此路由守卫用于判断是否从第三方充值成功页面进入;
-      if(from.path == "/"){
-          next(vm => {
-            vm.uploadStatistics();
-          })
-      }else{
-         next();
-      }
-   },
     created(){
-      this.getUserInfo();
+      this.uploadStatistics();
     },
     computed:{
       ...mapGetters(['userInfo','statistics'])
@@ -196,16 +187,7 @@
           if(res.data.code === 200 && res.data.data){
              this.$store.commit("set_user_statistics",res.data.data);
             }
-            this.isLoading = false;
          })
-      },
-      getUserInfo(){ //获取用户信息存储到vuex
-        let url = "user/getUserInfo";
-        this.$https.get(url).then(res => {
-          if(res.data.code === 200 && Object.keys(res.data.data).length != 0){
-                this.$store.commit("set_user_info",res.data.data);
-           }
-        })
       },
       setUp() { //设置按钮
        this.$router.push('/personCenter/editPersonInfo')
@@ -253,11 +235,11 @@
            return ;
         })
       },
-      onRefresh(){ //下拉刷新,更新vuex中的用户资产数据
-        setTimeout(() => {
-          this.uploadStatistics();
-        },1000);
-      }
+      // onRefresh(){ //下拉刷新,更新vuex中的用户资产数据
+      //   setTimeout(() => {
+      //     this.uploadStatistics();
+      //   },1000);
+      // }
     }
   }
 

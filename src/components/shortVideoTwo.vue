@@ -1,122 +1,102 @@
 <template>
   <section class="shortVideoTwo">
-    <van-search v-model="search_text" placeholder="请输入搜索关键词" show-action clearable shape="round">
-      <div slot="action" @click="onSearch">搜索</div>
-    </van-search>
-    <!--<van-tabs>
-      <van-tab v-for="(item,index) in 8" :title="'推荐' + index" :key="index"></van-tab>
-    </van-tabs>-->
-    <div class="video_main" ref="shortScroll">
+      <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="刷新成功">
 
-    <van-pull-refresh v-model="isLoading" @refresh="onRefresh" success-text="刷新成功">
-        <van-list v-model="loading" :finished="finished" finished-text="暂时没有更多了" @load="onLoad" :offset="100">
-          <ul>
-            <li class="video_item" v-for="(vItem,vIndex) in videosList" :key="vIndex">
-              <div class="video_content">
-                <div class="video_title">
-                  <span>{{vItem.title}}</span>
+        <van-search v-model="search_text" placeholder="请输入搜索关键词" show-action clearable shape="round">
+          <div slot="action" @click="onSearch">搜索</div>
+        </van-search>
+        <div class="video_main" ref="shortScroll">
+              <van-swipe :show-indicators="false" @change="onChange" vertical :loop="false" :initial-swipe="current" :duration="800" :height="500">
+                <van-swipe-item v-for="(vItem, vIndex) in videosList" :key="vIndex" class="product_swiper" style="width:100%;height:500px">
+                  <div class="video_content">
+                    <div class="video_title">{{vItem.title}}</div>
+                    <div class="video_container" style="width:100%;height:400px">
+                      <video
+                        class="video_box"
+                        width="100%"
+                        height="100%"
+                        webkit-playsinline="true"
+                        x5-playsinline
+                        x5-video-player-type="h5"
+                        playsinline
+                        preload="auto"
+                        :poster="vItem.poster"
+                        :playOrPause="playOrPause"
+                        x-webkit-airplay="allow"
+                        x5-video-orientation="landscape"
+                        style="display:inline"
+                        controls
+                        controlslist="nodownload"
+                      >
+                      <source :data-src="vItem.video_url" type="video/mp4">
+                      </video>
+                    </div>
+                  </div>
+                  <div class="video_info">
+                    <div class="video_info_left">
+                      <div class="video_info_img"  @click="photoBtn(vItem.user_id,vItem.username)">
+                        <img :src="vItem.avatar" alt />
+                      </div>
+                      <div class="video_info_watch">
+                          <div v-if="vItem.uid !== 0">
+                              <van-tag color="#f2826a" v-if="!vItem.is_follow" class="video_info_title" @click="attentionBtn(vItem,vIndex)">关注</van-tag>
+                              <van-tag color="#F00" v-else class="video_info_title" @click="attentionBtn(vItem,vIndex)">已关注</van-tag>
+                          </div>
+                          <p>@<span style="color:#ae8ee8">{{vItem.username}}</span></p>
+                      </div>
+                    </div>
+                    <div class="video_info_icons">
+
+                    <!-- 
+                    <van-icon
+                        name="thumb-circle-o"
+                        :class="vItem.is_praise?'follow_active':''"
+                        :info="vItem.praise_num"
+                        @click="shortLike(vItem,vIndex)"
+                      />
+                      <van-icon name="chat-o" :info="vItem.collect_num" />
+                      <van-icon name="ellipsis" /> -->
+
+                      <van-icon class="iconfont" class-prefix='icon' name='dashang' @click.stop="vItem.isReward = true"/>
+                      <div class="icons_right">
+                        <span class="collect_num">{{vItem.collect_num}}</span>
+                        <van-icon :class="vItem.is_collect == true ? 'follow_active':''"  name="like" @click.stop="likeBtn(vItem,vIndex)"/>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- 底部礼物列表 -->
+              <div class="mask_bottom" v-if="vItem.isReward">
+                <van-icon
+                  name="close"
+                  class="closeBtn"
+                  @click.stop="vItem.isReward = false"
+                />
+                <h3>使用积分送礼物&nbsp;奖励12%邮票</h3>
+                <div>
+                  <ul class="mask_bottom_gifts">
+                    <li class="mask_gift_item" :class="selGiftIndex == gIndex ?'selActive':''" v-for="(gItem,gIndex) in giftList" :key="gIndex" @click.stop="selGiftIndex = gIndex">
+                      <div class="mask_gift_img">
+                        <img :src="gItem.picture" />
+                      </div>
+                      <p>{{gItem.amount*1}}积分</p>
+                    </li>
+                  </ul>
                 </div>
-                <div class="video_container" style="width:100%;height:400px">
-                  <video
-                     class="video_box"
-                     width="100%"
-                     height="100%"
-                     webkit-playsinline="true"
-                     x5-playsinline
-                     x5-video-player-type="h5"
-                     playsinline
-                     preload="auto"
-                    :poster="vItem.poster"
-                    :src="vItem.video_url"
-                    :playOrPause="playOrPause"
-                    x-webkit-airplay="allow"
-                    x5-video-orientation="landscape"
-                    style="display:inline"
-                    controls
-                    controlslist="nodownload"
-                    @play="playVideo(vIndex)"
-                    @click="pauseVideo(vIndex)"
-                    @ended="onPlayerEnded($event)"
-                  ></video>
-
-                  <!-- <div class="playOrPause" v-if="vItem.isPlay||vItem.isPause">
-                    <van-icon name="play-circle" v-show="vItem.isPlay" class="play" @click="playVideo(vIndex)"/>
-
-                   <van-icon
-                      name="pause-circle"
-                      v-show="vItem.isPause"
-                      class="icon_play"
-                      @click="pauseVideo(vIndex)"
-                    />
-                  </div> -->
+                <div class="gift_queryBox">
+                  请选择数量:&nbsp;<van-stepper v-model="sel_gift_number" integer min="1"/>
+                </div>
+                <div class="mask_bottom_column">
+                  <div class="mask_bottom_left">
+                    <p >可用积分&nbsp;{{statistics.integral|numberFilter}}</p>
+                    <van-button round type="primary" size="small" class="rechargeBtn" @click.stop="$router.push('/personCenter/recharge')">充值</van-button>
+                  </div>
+                  <van-button round size="small" class="presentBtn" @click.stop="presentBtn(vItem)">赠送</van-button>
                 </div>
               </div>
-              <div class="video_info">
-                <div class="video_info_left">
-                  <div class="video_info_img"  @click="photoBtn(vItem.user_id,vItem.username)">
-                    <img :src="vItem.avatar" alt />
-                  </div>
-                  <div class="video_info_watch">
-                       <div v-if="vItem.uid !== 0">
-                          <van-tag color="#f2826a" v-if="!vItem.is_follow" class="video_info_title" @click="attentionBtn(vItem,vIndex)">关注</van-tag>
-                          <van-tag color="#F00" v-else class="video_info_title" @click="attentionBtn(vItem,vIndex)">已关注</van-tag>
-                       </div>
-                       <p>@<span style="color:#ae8ee8">{{vItem.username}}</span></p>
-                  </div>
-                </div>
-                <div class="video_info_icons">
-
-                <!-- 
-                 <van-icon
-                    name="thumb-circle-o"
-                    :class="vItem.is_praise?'follow_active':''"
-                    :info="vItem.praise_num"
-                    @click="shortLike(vItem,vIndex)"
-                  />
-                  <van-icon name="chat-o" :info="vItem.collect_num" />
-                  <van-icon name="ellipsis" /> -->
-
-                  <van-icon class="iconfont" class-prefix='icon' name='dashang' @click.stop="vItem.isReward = true"/>
-                  <div class="icons_right">
-                    <span class="collect_num">{{vItem.collect_num}}</span>
-                    <van-icon :class="vItem.is_collect == true ? 'follow_active':''"  name="like" @click.stop="likeBtn(vItem,vIndex)"/>
-                  </div>
-                </div>
-              </div>
-               <!-- 底部礼物列表 -->
-          <div class="mask_bottom" v-if="vItem.isReward">
-             <van-icon
-              name="close"
-              class="closeBtn"
-              @click.stop="vItem.isReward = false"
-            />
-            <h3>使用积分送礼物&nbsp;奖励12%邮票</h3>
-            <div>
-              <ul class="mask_bottom_gifts">
-                <li class="mask_gift_item" :class="selGiftIndex == gIndex ?'selActive':''" v-for="(gItem,gIndex) in giftList" :key="gIndex" @click.stop="selGiftIndex = gIndex">
-                  <div class="mask_gift_img">
-                    <img :src="gItem.picture" />
-                  </div>
-                  <p>{{gItem.amount*1}}积分</p>
-                </li>
-              </ul>
-            </div>
-            <div class="gift_queryBox">
-              请选择数量:&nbsp;<van-stepper v-model="sel_gift_number" integer min="1"/>
-            </div>
-            <div class="mask_bottom_column">
-              <div class="mask_bottom_left">
-                 <p >可用积分&nbsp;{{statistics.integral|numberFilter}}</p>
-                <van-button round type="primary" size="small" class="rechargeBtn" @click.stop="$router.push('/personCenter/recharge')">充值</van-button>
-              </div>
-              <van-button round size="small" class="presentBtn" @click.stop="presentBtn(vItem)">赠送</van-button>
-            </div>
-          </div>
-            </li>
-          </ul>
-        </van-list>
-      </van-pull-refresh>
-    </div>
+              </van-swipe-item>  
+            </van-swipe>   
+        </div>
+     </van-pull-refresh> 
   </section>
 </template>
 <script>
@@ -124,7 +104,6 @@ import { mapGetters } from 'vuex'
 export default {
   name: "shortVideoTwo",
   data() {
-    // let u = navigator.userAgent;
     return {
       isPresent:false,//是否赠送礼物
       giftList:[],//礼物列表
@@ -132,8 +111,6 @@ export default {
       sel_gift_number:1,//选择礼物数量
       current: 0, //当前播放视频索引
       playOrPause: true,
-      // isAndroid: u.indexOf("Android") > -1 || u.indexOf("Adr") > -1, // android终端
-      // isiOS: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), // ios终端
       search_text: "",
       loading: false,
       finished: false,
@@ -149,6 +126,7 @@ export default {
   },
   created(){
     this.fetchGifts();
+    this.fetchVideoList();
   },
   mounted(){
      this.$refs.shortScroll.addEventListener('scroll', this.handleScroll);
@@ -157,74 +135,63 @@ export default {
     ...mapGetters(["statistics"])
   },
   methods: {
+    onChange(index){ //视频滑动
+
+      this.isPlayEnd(index);
+
+      let video = document.querySelectorAll("video")[this.current]; //关闭前一个视频播放
+      video.pause();
+
+      this.playOrPause = false;
+
+      this.current = index; //播放当前视频
+      this.playVideo();
+    },
+     isPlayEnd(index){ //列表播放到最后增加数据
+    
+       let len = this.videosList.length; //视频列表长度
+
+       if((len-1) === index){  //滑动到最后追加数据
+          let url = "video/shortVideoList";
+          this.$https.get(url,this.shortVideoConfig).then(res => {
+            if(res.data.code === 200 && res.data.data.length > 0){
+                this.videosList = this.videosList.concat(res.data.data);
+                this.shortVideoConfig.page++;
+              }
+          });
+       }
+    },
+     playVideo(){ //播放视频
+      let curVideo = document.querySelectorAll("video")[this.current];
+      if(curVideo.src){
+         curVideo.play();
+      }else{
+         let curVideoSrc = document.querySelectorAll("source")[this.current];
+         curVideo.src = curVideoSrc.getAttribute('data-src');
+         curVideo.play();
+      }
+    },
      fetchGifts(){ //获取礼物列表
       let giftUrl = "video/giftList";  
       this.$https.get(giftUrl).then(res => {
         if(res.data.code === 200 && res.data.data){
-          // console.log(res.data.data);
           this.giftList = res.data.data;
         }
       });
     },
-    fetchVideoList() {
-      //获取短视频列表
+    fetchVideoList() { //获取短视频列表
       let url = "video/shortVideoList";
       this.$https.get(url,this.shortVideoConfig).then(res => {
-        // console.log(res);
         if (res.data.code === 200 && res.data.data && res.data.data.length > 0) {
           let list = res.data.data;
           for (let i = 0; i < list.length; i++){
-            list[i].isPlay = true;
-            list[i].isPause = false;
             list[i].isReward = false;
           }
-          this.videosList = this.videosList.concat(list);
+          this.videosList = list;
           this.shortVideoConfig.page++;
-          this.loading = false;
-        }else{
-          this.loading = false;
-          this.finished = true;
         }
         this.isLoading = false; 
       });
-    },
-    playVideo(index) { //点击播放按钮
-
-      this.current = index;
-
-      let video = document.querySelectorAll("video")[this.current];
- 
-      this.otherVideoPause(index);
-    
-      // this.videosList[this.current].isPlay = false; //隐藏播放按钮
-
-      video.play();
-    },
-    pauseVideo(index) { //暂停\播放
-      // this.current = index;
-      // let video = document.querySelectorAll("video")[this.current];
-      // if (this.playOrPause) {
-      //   video.pause();
-      //   this.videosList[this.current].isPause = true; //显示暂停按钮
-      // } else {
-      //   this.otherVideoPause(index);
-      //   video.play();
-      //   this.videosList[this.current].isPause = false; //隐藏暂停按钮
-      // }
-      // this.playOrPause = !this.playOrPause;
-    },
-    otherVideoPause(index){ //暂停其他视频播放
-        let allVideo = document.querySelectorAll("video");
-        for(let i = 0; i < allVideo.length ;i++){
-            if(index === i){
-              continue;
-            }else{
-              allVideo[i].pause();
-            }
-        }
-    },
-    onPlayerEnded(player) { //视频结束
-      // this.videosList[this.current].isPlay = true; //显示播放按钮
     },
      //查看视频资料
     photoBtn(id,name){
@@ -232,8 +199,21 @@ export default {
     },
     onRefresh() { //下拉刷新
       setTimeout(() => {
-        // this.isLoading = false;
-        this.fetchVideoList();
+         this.shortVideoConfig.page = 1; //将page设置为1获取最新数据
+         let url = "video/shortVideoList";
+          this.$https.get(url,this.shortVideoConfig).then(res => {
+            if (res.data.code === 200 && res.data.data && res.data.data.length > 0) {
+              this.videosList = []; //清空视频数组
+              let list = res.data.data;
+              for (let i = 0; i < list.length; i++){
+                list[i].isReward = false;
+              }
+              this.videosList = list;
+              this.current = 0; //视频跳回到第一个视频
+              this.shortVideoConfig.page++;
+            }
+            this.isLoading = false; 
+          });
       }, 500);
     },
     // shortLike(item, val) { //短视频点赞
@@ -294,9 +274,7 @@ export default {
               uid:item.user_id
           }
           this.$https.post(url,data).then(res => {
-
               if(res.data.code === 200){
-
                 this.videosList[index].is_follow = !this.videosList[index].is_follow;
                 if(this.videosList[index].is_follow){ //增加、减少关注的数量
                   this.$store.commit("follow");
@@ -325,10 +303,8 @@ export default {
     },
     //赠送礼物
     presentBtn(obj){
-
       let selGift = this.giftList[this.selGiftIndex]; //选中的礼物
       let number = this.sel_gift_number; //礼物的数量
-
       let url = "video/sendAGift";
       let data = {
         video_id:obj.id,
@@ -336,15 +312,11 @@ export default {
         num:number
       }
        this.$https.post(url,data).then(res => {
-
           if(res.data.code == 200 ){          
-
             let integral  = selGift.amount * number; //赠送成功扣除积分
             this.$store.commit("reduceIntegral",integral);
-
             let returnStamp = selGift.amount * number * 0.12; //使用积分打赏返回12%的邮票;
             this.$store.commit("increaseStamp",returnStamp);
-
             this.$notify({
                   message:'礼物赠送成功',
                   className:"notifyClass",
@@ -363,12 +335,10 @@ export default {
          })
       },
     onSearch() {
-      console.log("点击搜索按钮" + this.search_text);
-    },
-    onLoad() {
-      this.fetchVideoList();
+      // console.log("点击搜索按钮" + this.search_text);
     },
     handleScroll(){ //页面滚动位置
+         console.log(this.$refs.shortScroll.scrollTop);
          this.scrollPosition  = this.$refs.shortScroll.scrollTop;
      }
   },
@@ -386,11 +356,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 
-.product_swiper{
-  width:100%;
-  height:250px;
-}
-
 .video_box {
   object-fit: fill !important;
   z-index: 999;
@@ -401,38 +366,9 @@ export default {
   top: 0;
   overflow: hidden;
 }
-
 video {
   object-position: 0 0;
 }
-
-/*.icon_play {
-  font-size: 50px;
-  position: absolute;
-  top: 44%;
-  right: 0;
-  left: 0;
-  bottom: auto;
-  margin: auto;
-  z-index:999;
-  height: 60px;
-  border-radius: 50%;
-  color: blueviolet;
-}
-
-.play {
-  font-size: 50px;
-  position: absolute;
-  top: 44%;
-  right: 0;
-  left: 0;
-  bottom: auto;
-  margin: auto;
-  z-index:999;
-  height: 60px;
-  border-radius: 50%;
-  color: blueviolet;
-}*/
 
 .playOrPause {
   position: absolute;
@@ -450,7 +386,6 @@ video {
     border-radius: 50%;
     color: rgba(255,255,255,0.4);
   }
-
   .play {
     font-size: 45px;
     position: absolute;
@@ -461,13 +396,12 @@ video {
     color: rgba(255,255,255,0.4);
   }
 }
-
 .shortVideoTwo {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  bottom: 0;
+  bottom:60px;
   background: #ffffff;
   .van-field__control {
     color: #000000;
@@ -480,21 +414,26 @@ video {
     background: linear-gradient(to right, #b40cff, #793dff);
   }
 
+  // 下拉刷新样式
+  .van-pull-refresh{ 
+    width:100%;
+    height:100%;
+  }
+
   .video_main {
     position: absolute;
     top: 54px;
     left: 0;
     width: 100%;
-    bottom: 60px;
+    bottom:0;
     box-sizing:border-box;
     padding: 0 5px;
-    overflow: scroll;
-
+    // overflow: scroll;
+   
    .video_item{
      margin-bottom:15px;
      position: relative;
    }
-
     .video_content {
       position: relative;
       .video_title {
@@ -503,9 +442,10 @@ video {
         font-size: 15px;
         line-height: 24px;
         font-weight:500;
-        padding:10px 0;
+        height:40px;
+        line-height:40px;
         letter-spacing:2px;
-        border-top:1px solid rgba(0,0,0,0.1);
+        // border-top:1px solid rgba(0,0,0,0.1);
       }
       .video_container{
         width:100%;
@@ -513,7 +453,6 @@ video {
         position: relative;
       }
     }
-
     .video_info {
       display: flex;
       align-items: center;
@@ -521,7 +460,8 @@ video {
       background: #ffffff;
       height:50px;
       padding:5px 10px;
-      border-bottom:1px solid rgba(0,0,0,0.1);
+      box-shadow: rgba(0,0,0,.2) 0 1px 5px 0px;
+      border-radius: 0 0 10px 10px;
       .video_info_left {
         height:100%;
         flex: 1;
@@ -579,7 +519,6 @@ video {
     }
   }
 }
-
 // 礼物列表
 .mask_bottom {
     z-index:1002;
@@ -629,7 +568,6 @@ video {
            width:100px;
            height:100px;
          }
-
         }
     }
     .mask_bottom_column {
@@ -657,7 +595,5 @@ video {
       }
     }
   }
-
-
 </style>
 
