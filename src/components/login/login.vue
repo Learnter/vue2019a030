@@ -88,7 +88,7 @@ export default {
   }
 };
 </script> 
-<style lang="scss">
+<style lang="scss" scoped>
 .login {
   position: fixed;
   left: 0;
@@ -134,6 +134,9 @@ export default {
       border: none;
       background: linear-gradient(to right, #6495ed, #9d33ff, #756afd);
       letter-spacing: 4px;
+      .van-icon__image{
+        width:1em;
+      }
     }
 
     .login_tips {

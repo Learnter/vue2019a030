@@ -217,7 +217,6 @@ export default {
               duration:5000
               });
      }else{
-
        if(!objVideo.is_praise){
           let url = "video/praiseVideo";
           let data = { id:item.id }
