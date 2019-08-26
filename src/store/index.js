@@ -10,9 +10,6 @@ const store = new Vuex.Store({
 		user_statistics:{} //用户的统计信息
 	},
 	mutations:{
-		clearState(state){ //退出时清空vuex;
-			state = {};
-		},
 		change_uploadType(state,type){ //改变视频类型,区分为小视频、短视频
 		   state.uploadType = type;
 		},

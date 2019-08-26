@@ -140,6 +140,8 @@ export default {
       this.isPlayEnd(index);
 
       let video = document.querySelectorAll("video")[this.current]; //关闭前一个视频播放
+      this.videosList[this.current].isReward = false; //关闭前一个视频的赠送页面
+      this.sel_gift_number = 1; //礼物数量重新初始化为1
       video.pause();
 
       this.playOrPause = false;
@@ -329,9 +331,7 @@ export default {
                   className:"notifyClass",
                   duration: 5000,
                 });
-            }
-            obj.isReward = false;
-            this.sel_gift_number = 1;
+            } 
          })
       },
     onSearch() {

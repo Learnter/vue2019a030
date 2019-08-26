@@ -176,12 +176,13 @@
     },
     created(){
       this.uploadStatistics();
+      this.getUserInfo();
     },
     computed:{
       ...mapGetters(['userInfo','statistics'])
     },
     methods: { 
-      uploadStatistics(){ //此方法用户充值成功后、重新获取用户新的资产数据、并重新存储到vuex;
+      uploadStatistics(){ //重新获取用户新的资产数据、并重新存储到vuex;
           let url = "user/getStatistics"; 
           this.$https.get(url).then(res => {
           if(res.data.code === 200 && res.data.data){
@@ -189,6 +190,13 @@
             }
          })
       },
+       getUserInfo(){ //获取用户信息存储到vuex
+        let url = "user/getUserInfo";
+        this.$https.get(url).then(res => {
+          if(res.data.code === 200 && Object.keys(res.data.data).length != 0){
+                this.$store.commit("set_user_info",res.data.data);
+           }
+        })},
       setUp() { //设置按钮
        this.$router.push('/personCenter/editPersonInfo')
       },
@@ -229,7 +237,6 @@
           message: '您确定要退出吗'
         }).then(()=>{
             localStorage.removeItem("LOGININFO"); //移除永久缓存信息
-            this.$store.commit("clearState"); //退出清空vuex数据
             this.$router.push('/login'); //跳转到登录页面
         }).catch(()=>{
            return ;
