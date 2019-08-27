@@ -187,14 +187,14 @@ export default {
    deactivated(){
      this.$refs.smallScroll.removeEventListener('scroll', this.handleScroll);
     },
-    watch:{
-       $route (to,from){
-        if(from.path =="/video/fullScreen"){
-          this.scrollPosition = 0; //回到顶部
-          this.onRefresh(); //重新获取新数据 
-        }
-      }
-    }
+    // watch:{
+    //    $route (to,from){
+    //     if(from.path =="/video/fullScreen"){
+    //       this.scrollPosition = 0; //回到顶部
+    //       this.onRefresh(); //重新获取新数据 
+    //     }
+    //   }
+    // }
 };
 </script>
 
