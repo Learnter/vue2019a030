@@ -90,7 +90,7 @@
                     <p >可用积分&nbsp;{{statistics.integral|numberFilter}}</p>
                     <van-button round type="primary" size="small" class="rechargeBtn" @click.stop="$router.push('/personCenter/recharge')">充值</van-button>
                   </div>
-                  <van-button round size="small" class="presentBtn" @click.stop="presentBtn(vItem)">赠送</van-button>
+                  <van-button round size="small" class="presentBtn" @click.stop="presentBtn(vItem,vIndex)">赠送</van-button>
                 </div>
               </div>
               </van-swipe-item>  
@@ -110,6 +110,8 @@ export default {
       selGiftIndex:0,//选中礼物索引
       sel_gift_number:1,//选择礼物数量
       current: 0, //当前播放视频索引
+      // currentVideoId:'',//当前视频id
+      // currentVideoAttr:{},//当前视频参数
       playOrPause: true,
       search_text: "",
       loading: false,
@@ -135,6 +137,15 @@ export default {
     ...mapGetters(["statistics"])
   },
   methods: {
+    //  fetchCurrentVideo(){ //获取当前视频参数
+    //   let stampUrl = "video/smallVideoInfo";
+    //   let data = {id:this.currentVideoId };
+    //   this.$https.get(stampUrl,data).then( res => {
+    //     if(res.data.code === 200 && res.data.data != {}){
+    //       this.currentVideoAttr = res.data.data;
+    //     }
+    //   })
+    // },
     onChange(index){ //视频滑动
 
       this.isPlayEnd(index);
@@ -304,7 +315,7 @@ export default {
          })
     },
     //赠送礼物
-    presentBtn(obj){
+    presentBtn(obj,index){
       let selGift = this.giftList[this.selGiftIndex]; //选中的礼物
       let number = this.sel_gift_number; //礼物的数量
       let url = "video/sendAGift";
@@ -318,6 +329,7 @@ export default {
             let integral  = selGift.amount * number; //赠送成功扣除积分
             this.$store.commit("reduceIntegral",integral);
             let returnStamp = selGift.amount * number * 0.12; //使用积分打赏返回12%的邮票;
+            this.videosList[index].amount = parseInt(this.videosList[index].amount)+selGift.amount * number*0.02; //每次赠送礼物视频自身增加2%邮票
             this.$store.commit("increaseStamp",returnStamp);
             this.$notify({
                   message:'礼物赠送成功',

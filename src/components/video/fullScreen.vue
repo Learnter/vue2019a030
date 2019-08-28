@@ -42,7 +42,7 @@
           <!-- 顶部邮票功能 -->
           <div class="tools_top">
             <h2>邮票</h2>
-            <p>{{vItem.amount*1}}</p>
+            <p>{{currentVideoAttr.amount*1}}</p>
           </div>
 
           <!-- 右侧点赞、分享功能 -->
@@ -106,7 +106,7 @@
                  <p>可用积分&nbsp;{{statistics.integral|numberFilter}}</p>
                 <van-button round type="primary" size="small" class="rechargeBtn" @click.stop="$router.push('/personCenter/recharge')">充值</van-button>
               </div>
-              <van-button round size="small" class="presentBtn" @click.stop="presentBtn(vItem)">赠送</van-button>
+              <van-button round size="small" class="presentBtn" @click.stop="presentBtn(vItem,vIndex)">赠送</van-button>
             </div>
           </div>
         </van-swipe-item>
@@ -149,6 +149,8 @@ export default {
       sel_gift_number:1,//选择礼物数量
       selActive:0,
       current: 0, //当前视频索引
+      currentVideoId:'',//当前视频id
+      currentVideoAttr:{},//当前视频参数
       isVideoShow: true,
       playOrPause: true, //播放或暂停
       video: null,
@@ -166,13 +168,13 @@ export default {
   },
   created(){
     this.current =  parseInt(this.$route.query.vIndex); //获取传过来的视频索引;
-    this.videoList = JSON.parse(this.$route.query.list); //获取视频列表
+    this.videoList = JSON.parse(this.$route.query.list); //获取视频列表;
     this.videoConfig.page = parseInt(this.$route.query.page); 
-
+    this.currentVideoId = this.videoList[0].id;
     this.videoConfig.uid = this.$route.query.uid; //获取作品页面传入的会员id;
     this.fetchLikes();
-
     this.fetchGifts();//获取礼物列表;
+    // this.fetchCurrentVideo();//获取当前视频参数
 
   },
   mounted(){
@@ -187,6 +189,16 @@ export default {
     ...mapGetters(["statistics"])
   },
   methods: {
+    fetchCurrentVideo(){ //获取当前视频参数
+      let stampUrl = "video/smallVideoInfo";
+      let data = {id:this.currentVideoId };
+      this.$https.get(stampUrl,data).then( res => {
+        if(res.data.code === 200 && res.data.data != {}){
+          this.currentVideoAttr = res.data.data;
+          console.log("当前参数");
+        }
+      })
+    },
     fetchLikes() { //获取点赞数
       let likeUrl = "user/userTodayLavePraiseNum"; 
       this.$https.get(likeUrl).then(res => {
@@ -225,7 +237,7 @@ export default {
                this.videoList[index].is_praise = true; //设置为已点赞
                this.videoList[index].praise_num++; //视频点赞数+1
                this.likeNum--; //用户每日点赞数减1
-               this.videoList[index].amount = parseInt(this.videoList[index].amount)+2; //每次点赞视频增加2枚邮票
+               this.fetchCurrentVideo();//获取最新邮票参数
                this.$store.commit("increaseStamp",6); //每次点赞用户增加6枚邮票
                 this.$notify({
                        message:"今天还剩下"+this.likeNum+"点赞",
@@ -252,6 +264,7 @@ export default {
     },
     //滑动改变播放的视频
     onChange(index){
+      this.currentVideoId = this.videoList[index].id; //获取当前视频id;
       this.isPlayEnd(index);
       //改变的时候 暂停当前播放的视频
       let frontVideo = document.querySelectorAll("video")[this.current];
@@ -317,7 +330,7 @@ export default {
       
     },
     //赠送礼物
-    presentBtn(obj){
+    presentBtn(obj,index){
 
       let selGift = this.giftList[this.selGiftIndex]; //选中的礼物
       let number = this.sel_gift_number; //礼物的数量
@@ -336,6 +349,7 @@ export default {
             this.$store.commit("reduceIntegral",integral);
 
             let returnStamp = selGift.amount * number * 0.12; //使用积分打赏返回12%的邮票;
+             this.fetchCurrentVideo();//获取最新邮票参数;
             this.$store.commit("increaseStamp",returnStamp);
 
             this.$notify({
@@ -353,6 +367,9 @@ export default {
             }
          })
       }
+   },
+   watch:{
+     currentVideoId:'fetchCurrentVideo'
    }
 };
 </script>
