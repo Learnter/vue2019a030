@@ -46,9 +46,9 @@
               :class="index == con_actived ? 'convert_actived':''"
               @click="convertTab(index,item)"
             >
-              <span class="integral">赠送{{item.give_integral}}积分</span>
-              <p class="convert_youBi">{{item.amount}}邮币</p>
-              <p class="convert_monery">&yen;{{item.price}}</p>
+              <span class="integral" v-if="item.give_integral">赠送{{item.give_integral}}积分</span>
+              <p class="convert_youBi" v-if="item.amount">{{item.amount}}邮币</p>
+              <p class="convert_monery" v-if="item.price">&yen;{{item.price}}</p>
             </li>
           </ul>
         </div>

@@ -42,7 +42,7 @@
           <!-- 顶部邮票功能 -->
           <div class="tools_top">
             <h2>邮票</h2>
-            <p>{{currentVideoAttr.amount*1}}</p>
+            <p>{{currentVideoAttr.amount*1 || 0}}</p>
           </div>
 
           <!-- 右侧点赞、分享功能 -->
@@ -50,22 +50,21 @@
             <div class="tools_r_li" @click="photoBtn(vItem.user_id,vItem.username)">
               <div class="tools_user_avatar">
                   <img :src="vItem.avatar" />
-              </div>
-              
+              </div> 
             </div>
             <div class="tools_r_li" @click.stop="changeFollow(vItem,vIndex)">
               <van-tag type="danger">{{likeNum || 0}}</van-tag>
               <!-- {{vItem.is_praise}} -->
               <van-icon class="iconfont icon-iconfontforward icon_right" class-prefix='icon' name='like' :class="vItem.is_praise?'follow_active':''" />
-              <div class="tools_r_num">{{vItem.praise_num}}</div>
+              <div class="tools_r_num">{{vItem.praise_num || 0}}</div>
             </div>
             <div class="tools_r_li" @click.stop="changeShare">
               <van-icon class-prefix='icon' name='icon_pinglun' class="iconfont icon-iconfontforward icon_right"/>
-              <div class="tools_r_num">{{vItem.collect_num}}</div>
+              <div class="tools_r_num">{{vItem.collect_num || 0}}</div>
             </div>
             <div class="tools_r_li" @click.stop="changeShare">
               <van-icon name="zhuanfa" class-prefix='icon' class="iconfont icon-iconfontforward icon_right" />
-              <div class="tools_r_num">{{vItem.collect_num}}</div>
+              <div class="tools_r_num">{{vItem.collect_num || 0}}</div>
             </div>
           </div>
           <!-- 底部作品描述 -->
@@ -94,7 +93,7 @@
                   <div class="mask_gift_img">
                     <img :src="gItem.picture" />
                   </div>
-                  <p>{{gItem.amount*1}}积分</p>
+                  <p>{{gItem.amount*1 || 0}}积分</p>
                 </li>
               </ul>
             </div>
@@ -102,7 +101,7 @@
               请选择数量:&nbsp;<van-stepper v-model="sel_gift_number" integer min="1"/>
             </div>
             <div class="mask_bottom_column">
-              <div class="mask_bottom_left">
+              <div class="mask_bottom_left" v-if="statistics.integral">
                  <p>可用积分&nbsp;{{statistics.integral|numberFilter}}</p>
                 <van-button round type="primary" size="small" class="rechargeBtn" @click.stop="$router.push('/personCenter/recharge')">充值</van-button>
               </div>
@@ -195,7 +194,7 @@ export default {
       this.$https.get(stampUrl,data).then( res => {
         if(res.data.code === 200 && res.data.data != {}){
           this.currentVideoAttr = res.data.data;
-          console.log("当前参数");
+          // console.log("当前参数");
         }
       })
     },
