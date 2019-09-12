@@ -49,16 +49,16 @@ export default {
     toLogin(){ //登录
      
       /* 账号/密码非空判断*/
-      if (!(/^1[34578]\d{9}$/).test(this.user.account) ) {
-        this.$toast("手机号码不存在!");
-        return false;
-      } else if (!(/^[a-zA-Z0-9]{6,}$/).test(this.user.password)) {/* 密码规则最少需要6位数*/
-        this.$toast("密码输入有误!");
-        return false;
-      }
+      // if (!(/^1[34578]\d{9}$/).test(this.user.account) ) {
+      //   this.$toast("请输入正确的手机号码!");
+      //   return false;
+      // } else if (!(/^[a-zA-Z0-9]{6,}$/).test(this.user.password)) {/* 密码规则最少需要6位数*/
+      //   this.$toast("密码输入有误!");
+      //   return false;
+      // }
 
       let url = "user/login";  
-      this.$https.post(url, this.user).then(res => {
+      this.$https.post(url,this.user).then(res => {
 
         if (res.data.code == 200 && res.data.data) {
                this.$notify({
@@ -74,10 +74,10 @@ export default {
             }, 2000);
         }else{
              this.$notify({
-                        message:res.data.msg,
-                        duration: 2000,
-                        className:"notifyClass"
-                    });
+                  message:res.data.msg,
+                  duration: 2000,
+                  className:"notifyClass"
+               });
             localStorage.removeItem("LOGININFO"); //移除本地token
           }
       });

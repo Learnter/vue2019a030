@@ -42,6 +42,7 @@ axios.interceptors.response.use(response => {
   return Promise.resolve(error.response)
 })
 
+// baseURL: 'http://api.huyouhulian.com/v1',//正式火牛服务器地址
 export default {
   post (url,data,fileType) {
     //判断是否已经登录...
@@ -52,7 +53,7 @@ export default {
     // console.log(encryptSign,timeStamp,random);
     return axios({
       method:'post',
-      baseURL:'http://api.huyouhulian.com/v1',
+      baseURL:'http://2019a030api.jiafuw.com/v1/',//测试服务器地址
       url,
       data: data,
       timeout: 10000,
@@ -74,7 +75,7 @@ export default {
     
     return axios({
       method: 'get',
-      baseURL: 'http://api.huyouhulian.com/v1',
+      baseURL:'http://2019a030api.jiafuw.com/v1/',//测试服务器地址
       url,
       params, // get 请求时带的参数
       timeout: 10000,

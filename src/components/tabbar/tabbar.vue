@@ -68,7 +68,7 @@
 					path:"/release"
 				},
 			{
-				name:'商城',
+				name:'直播',
 				name_code:'live',
 				icon:require('@/assets/tabImg/2019_a030_11.png'),
 				select_icon:require('@/assets/tabImg/2019_a030_12.png'),
