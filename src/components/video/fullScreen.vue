@@ -101,8 +101,8 @@
               请选择数量:&nbsp;<van-stepper v-model="sel_gift_number" integer min="1"/>
             </div>
             <div class="mask_bottom_column">
-              <div class="mask_bottom_left" v-if="statistics.integral">
-                 <p>可用积分&nbsp;{{statistics.integral|numberFilter}}</p>
+              <div class="mask_bottom_left">
+                 <p>可用积分&nbsp;{{(statistics.integral*1) || 0}}</p>
                 <van-button round type="primary" size="small" class="rechargeBtn" @click.stop="$router.push('/personCenter/recharge')">充值</van-button>
               </div>
               <van-button round size="small" class="presentBtn" @click.stop="presentBtn(vItem,vIndex)">赠送</van-button>

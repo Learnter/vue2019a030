@@ -100,14 +100,14 @@ export default {
       return '';
       },
     toRegister() {//注册账号
-      if(!(/^[a-zA-Z0-9]{3,}$/).test(this.user.reg_code)){
+      if(!(/^[a-zA-Z0-9]{4,}$/).test(this.user.reg_code)){
           this.$toast("请输入正确的推荐码!");
           return false;
-        }else if(!/^1[34578]\d{9}$/.test(this.user.account)) {
+        }else if(!/^1[3456789]\d{9}$/.test(this.user.account)) {
           this.$toast("请输入正确的手机号!");
           return false;
        }else if(!(/^[a-zA-Z0-9]{6,}$/).test(this.user.password)){
-          this.$toast("密码输入有误!"); 
+          this.$toast("密码至少为6位字母,数字、下划线!"); 
           return false;
        }   
       // else if(!(/^[0-9]{4}$/).test(this.user.verify_code)){
@@ -137,7 +137,7 @@ export default {
       });
     },
     getVerifyCode() { //获取短信验证码
-      if(!/^1[34578]\d{9}$/.test(this.user.account)) {
+      if(!/^1[3456789]\d{9}$/.test(this.user.account)) {
           this.$toast("请输入正确的手机号!");
           return false;
        }
