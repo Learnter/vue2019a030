@@ -247,6 +247,13 @@
       //     this.uploadStatistics();
       //   },1000);
       // }
+    },
+    beforeRouteLeave (to, from, next) {
+       if(to.path =="/video/parseVideo"){
+         next(false);
+       }else{
+         next();
+       } 
     }
   }
 
